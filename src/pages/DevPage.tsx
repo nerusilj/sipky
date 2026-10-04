@@ -83,7 +83,6 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
       {recording.lost > 0 && <span className="rec-error">Fronta byla plná, {recording.lost.toLocaleString('cs-CZ')} řádků se nezapsalo.</span>}
     </div>
     {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Zavřít oznámení">×</button></div>}
-    <CallerPanel />
     <div className="metrics"><div><span className="field-label">ZPRÁVY V BUFFERU</span><strong>{stats.count.toLocaleString('cs-CZ')}<small> / {MAX_MESSAGES.toLocaleString('cs-CZ')}</small></strong></div>
       <div><span className="field-label">PŘIJATO OD VYMAZÁNÍ</span><strong>{stats.received.toLocaleString('cs-CZ')}</strong></div>
       <div><span className="field-label">VYŘAZENO Z BUFFERU</span><strong>{stats.dropped.toLocaleString('cs-CZ')}</strong></div>
@@ -98,6 +97,7 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
       <Filters channels={channels} channel={channel} direction={direction} search={search} onChannel={v => {setChannel(v);setPage(0);}} onDirection={v => {setDirection(v);setPage(0);}} onSearch={v => {setSearch(v);setPage(0);}} />
       <div className="split"><EventLog messages={filtered} hasCaptured={messages.length > 0} page={page} selectedId={selectedId} onPage={setPage} onSelect={select} /><EventDetails message={selected} /></div>
     </section>
+    <CallerPanel />
     <footer><span><span className="orange">●</span> Záznam celých obálek · JSONL · Časy s milisekundami</span><span>Zdroj: lokální Board Manager · pouze čtení</span></footer>
   </div>;
 }
