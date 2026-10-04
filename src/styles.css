@@ -15,7 +15,7 @@
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:7px;background:transparent;border:0;border-radius:0;border-left:3px solid transparent;padding:16px 4px 14px;color:#aeb4be;font-size:12px;font-weight:550}
 .nav-item:hover:not(:disabled){background:#171a1f;color:#fff;border-color:transparent;border-left-color:#3a3f48}
 .nav-item.active,.nav-item.active:hover:not(:disabled){background:#1d1610;color:var(--orange);border-left-color:var(--orange)}
-.nav-dev{margin-top:auto;border-top:1px solid var(--line)}.nav-dev span{letter-spacing:1px;font-weight:700}
+.nav-dev span{letter-spacing:1px;font-weight:700}.icon-button.active,.icon-button.active:hover:not(:disabled){color:var(--orange);background:#1d1610}
 .content{overflow-y:auto;min-width:0}
 .page{max-width:1500px;padding:34px 40px 26px}
 .page-heading{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:26px}.page-heading h1{font-size:32px;letter-spacing:-.8px;margin:6px 0 6px}.page-heading p{font-size:15px}

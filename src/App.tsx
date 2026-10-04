@@ -12,7 +12,6 @@ const NAV: { id: Section; label: string; Icon: ComponentType<{ size?: number }> 
   { id: 'home', label: 'Domů', Icon: HomeIcon },
   { id: 'game', label: 'Hra', Icon: DartIcon },
   { id: 'players', label: 'Hráči', Icon: PlayersIcon },
-  { id: 'settings', label: 'Nastavení', Icon: SettingsIcon },
   { id: 'dev', label: 'DEV', Icon: DevIcon },
 ];
 
@@ -31,7 +30,8 @@ export default function App() {
         <span className={`dot ${online ? '' : 'amber-dot'}`}></span>
         <div><strong className={online ? 'online' : ''}>{online ? 'Autodarts připojeno' : 'Autodarts nepřipojeno'}</strong><span>Board: {connection.address}</span></div>
       </div>
-      <button className="icon-button" onClick={() => setSection('settings')} aria-label="Nastavení" title="Nastavení"><SettingsIcon size={20} /></button>
+      <button className={`icon-button ${section === 'settings' ? 'active' : ''}`} onClick={() => setSection('settings')} aria-label="Nastavení" title="Nastavení"
+        aria-current={section === 'settings' ? 'page' : undefined}><SettingsIcon size={20} /></button>
     </header>
     <nav className="sidebar" aria-label="Hlavní navigace">
       {NAV.map(({ id, label, Icon }) => <button key={id} className={`nav-item ${section === id ? 'active' : ''} ${id === 'dev' ? 'nav-dev' : ''}`}
