@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { ComponentType } from 'react';
-import { DartIcon, DartMark, DevIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
+import DartMark from './components/DartMark.tsx';
+import { DartIcon, DevIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
 import { boardConnection, useConnection } from './connection.ts';
-import { useVenueName } from './settings.ts';
+import { useDartTheme, useVenueName } from './settings.ts';
 import ComingSoonPage from './pages/ComingSoonPage.tsx';
 import DevPage from './pages/DevPage.tsx';
 import HomePage from './pages/HomePage.tsx';
@@ -20,6 +21,7 @@ export default function App() {
   const [section, setSection] = useState<Section>('home');
   const connection = useConnection();
   const venueName = useVenueName();
+  const dartTheme = useDartTheme();
   const online = connection.state === 'connected';
 
   // Desktopová aplikace se k terči připojí sama; spojení je pouze pro čtení.
@@ -27,7 +29,7 @@ export default function App() {
 
   return <div className="shell">
     <header className="topbar">
-      <div className="brand"><span>{venueName}</span><DartMark /></div>
+      <div className="brand"><span>{venueName}</span><DartMark theme={dartTheme} /></div>
       <div className="topbar-status">
         <span className={`dot ${online ? '' : 'amber-dot'}`}></span>
         <strong className={online ? 'online' : ''}>{online ? 'Autodarts připojeno' : 'Autodarts nepřipojeno'}</strong>
