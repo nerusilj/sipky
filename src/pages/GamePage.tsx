@@ -32,6 +32,8 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
   const [selected, setSelected] = useState<string[]>([]);
   const [legsToWin, setLegsToWin] = useState(1);
   const [doubleOut, setDoubleOut] = useState(true);
+  // Výchozí je náhodné pořadí (vylosuje se při startu).
+  const [randomOrder, setRandomOrder] = useState(true);
   useEffect(() => setScore(initialScore), [initialScore]);
   const toggle = (id: string) => setSelected(list => list.includes(id) ? list.filter(other => other !== id)
     : list.length < MAX_GAME_PLAYERS ? [...list, id] : list);
@@ -39,7 +41,8 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
   const chosen = selected.flatMap(id => players.filter(player => player.id === id));
   const others = players.filter(player => !selected.includes(player.id)).sort((a, b) => a.name.localeCompare(b.name, 'cs'));
   function start() {
-    if (chosen.length) startGame({ startScore: score, doubleOut, legsToWin } satisfies X01Settings, chosen.map(({ id, name, color }) => ({ id, name, color })));
+    const order = randomOrder ? shuffle(chosen) : chosen;
+    if (order.length) startGame({ startScore: score, doubleOut, legsToWin } satisfies X01Settings, order.map(({ id, name, color }) => ({ id, name, color })));
   }
   return <div className="page">
     <div className="page-heading"><div><h1>Nová hra</h1><p>Vyberte hru, hráče a pravidla.</p></div></div>
@@ -49,14 +52,18 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
     </section>
     <section className="settings-card card setup-section">
       <div className="setup-players-head">
-        <span className="eyebrow">HRÁČI · POŘADÍ HRY</span>
-        <button className="text-button" disabled={chosen.length < 2} onClick={() => setSelected(list => shuffle(list))}>⤨ Náhodné pořadí</button>
+        <span className="eyebrow">HRÁČI</span>
+        <div className="segmented small" role="group" aria-label="Pořadí hráčů">
+          <button className={randomOrder ? '' : 'selected'} onClick={() => setRandomOrder(false)}>Podle výběru</button>
+          <button className={randomOrder ? 'selected' : ''} onClick={() => setRandomOrder(true)}>⤨ Náhodné</button>
+        </div>
       </div>
       {!loaded ? <p className="muted">Načítám hráče…</p> : players.length === 0
         ? <p className="muted">Nejdřív přidejte hráče. <button className="text-button" onClick={onPlayers}>Přejít na Hráče ›</button></p>
         : <>
-          {chosen.length ? <div className="setup-players">{chosen.map((player, order) => <PlayerChip key={player.id} player={player} order={order} onClick={() => toggle(player.id)} />)}</div>
-            : <p className="muted small">Klepnutím na hráče ho přidáte do hry. Pořadí hry je pořadí výběru.</p>}
+          {chosen.length ? <div className="setup-players">{chosen.map((player, order) =>
+            <PlayerChip key={player.id} player={player} order={randomOrder ? 'random' : order} onClick={() => toggle(player.id)} />)}</div>
+            : <p className="muted small">{randomOrder ? 'Klepnutím vyberte hráče. Pořadí se vylosuje při startu hry.' : 'Klepnutím vyberte hráče. Pořadí hry je pořadí výběru.'}</p>}
           {others.length > 0 && <>
             <span className="field-label setup-others">{chosen.length ? 'OSTATNÍ HRÁČI' : 'HRÁČI'}</span>
             <div className="setup-players">{others.map(player => <PlayerChip key={player.id} player={player} onClick={() => toggle(player.id)} />)}</div>
@@ -71,17 +78,19 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
       </div>
     </section>
     <div className="setup-start">
-      <span className="muted">{selected.length ? `${score} · ${legsText(legsToWin)} · ${selected.length} ${selected.length === 1 ? 'hráč' : selected.length < 5 ? 'hráči' : 'hráčů'}` : 'Vyberte alespoň jednoho hráče.'}</span>
+      <span className="muted">{selected.length ? `${score} · ${legsText(legsToWin)} · ${selected.length} ${selected.length === 1 ? 'hráč' : selected.length < 5 ? 'hráči' : 'hráčů'}${randomOrder && selected.length > 1 ? ' · pořadí se vylosuje' : ''}` : 'Vyberte alespoň jednoho hráče.'}</span>
       <button className="primary big" disabled={!selected.length} onClick={start}>Začít hru</button>
     </div>
   </div>;
 }
 
-function PlayerChip({ player, order, onClick }: { player: Player; order?: number; onClick: () => void }) {
+// Vybraný hráč: číslo pořadí, nebo při náhodném pořadí jen zelená fajfka.
+function PlayerChip({ player, order, onClick }: { player: Player; order?: number | 'random'; onClick: () => void }) {
   const active = order !== undefined;
   return <button className={`setup-player ${active ? 'selected' : ''}`} onClick={onClick} aria-pressed={active}
     title={active ? 'Odebrat ze hry' : 'Přidat do hry'}>
-    {active && <b className="order">{order + 1}</b>}<PlayerAvatar player={player} size={40} /><span>{player.name}</span></button>;
+    {order === 'random' ? <b className="order check" aria-label="Hraje">✓</b> : active && <b className="order">{order + 1}</b>}
+    <PlayerAvatar player={player} size={40} /><span>{player.name}</span></button>;
 }
 
 function GameBoard({ state }: { state: X01State }) {
