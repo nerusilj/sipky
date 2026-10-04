@@ -4,8 +4,12 @@ import type { Dart } from '../caller/visitTracker.ts';
 
 export type { Dart };
 // legsToWin: kolik vyhraných legů ukončí zápas; ENDLESS = hra dokola (legy se počítají, zápas nekončí).
-export interface X01Settings { startScore: 301 | 501; doubleOut: boolean; legsToWin: number }
+// nextLegOrder: pořadí v dalším legu – 'loserFirst' = první hází ten s nejvyšším zbytkem, vítěz poslední;
+// 'rotate' = stejné pořadí, začíná další hráč.
+export type NextLegOrder = 'loserFirst' | 'rotate';
+export interface X01Settings { startScore: 301 | 501; doubleOut: boolean; legsToWin: number; nextLegOrder?: NextLegOrder }
 export const ENDLESS = 0;
+export const DEFAULT_NEXT_LEG_ORDER: NextLegOrder = 'loserFirst';
 export const isEndless = (settings: X01Settings) => settings.legsToWin === ENDLESS;
 export interface GamePlayer { id: string; name: string; color: string }
 
@@ -16,7 +20,7 @@ export interface X01State {
   settings: X01Settings;
   players: GamePlayer[];
   leg: number;             // číslo legu od 1
-  legStarter: number;      // index hráče, který leg začínal
+  order: number[];         // pořadí házení v tomto legu (indexy hráčů), order[0] leg začínal
   current: number;         // index hráče na řadě
   remaining: number[];
   legsWon: number[];
@@ -77,12 +81,19 @@ export function createGame(settings: X01Settings, players: GamePlayer[]): X01Gam
   return { settings, players, visits: [], current: [] };
 }
 
+// Pořadí v dalším legu. 'loserFirst': od nejvyššího zbytku (nejhorší začíná), vítěz s nulou hází poslední,
+// při shodě rozhoduje dosavadní pořadí. 'rotate': stejné pořadí, začíná další hráč.
+export function nextLegOrder(order: readonly number[], remaining: readonly number[], mode: NextLegOrder): number[] {
+  if (mode === 'rotate') return [...order.slice(1), order[0]];
+  return [...order].sort((a, b) => remaining[b] - remaining[a] || order.indexOf(a) - order.indexOf(b));
+}
+
 // Dopočítá celý stav ze seznamu dokončených kol a rozehraného kola.
 export function deriveState(game: X01Game): X01State {
   const { settings, players } = game;
   const n = players.length;
   const s: X01State = {
-    settings, players, leg: 1, legStarter: 0, current: 0,
+    settings, players, leg: 1, order: players.map((_, i) => i), current: 0,
     remaining: players.map(() => settings.startScore), legsWon: players.map(() => 0),
     visit: [], visitResult: evaluateVisit(settings.startScore, [], settings.doubleOut), history: [],
     dartsThrown: players.map(() => 0), pointsScored: players.map(() => 0),
@@ -102,11 +113,11 @@ export function deriveState(game: X01Game): X01State {
       s.lastLegWinner = p;
       if (!isEndless(settings) && s.legsWon[p] >= settings.legsToWin) { s.winner = p; break; }
       s.leg++;
-      s.legStarter = (s.legStarter + 1) % n;
-      s.current = s.legStarter;
+      s.order = nextLegOrder(s.order, s.remaining, settings.nextLegOrder ?? DEFAULT_NEXT_LEG_ORDER);
+      s.current = s.order[0];
       s.remaining = players.map(() => settings.startScore);
     } else {
-      s.current = (p + 1) % n;
+      s.current = s.order[(s.order.indexOf(p) + 1) % n];
     }
   }
   if (s.winner === undefined) {

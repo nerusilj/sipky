@@ -1,8 +1,11 @@
+import { DEFAULT_NEXT_LEG_ORDER } from './x01.ts';
+import type { NextLegOrder } from './x01.ts';
+
 // Sestava poslední hry (hráči a pravidla), aby se nová hra předvyplnila.
-export interface LastSetup { playerIds: string[]; randomOrder: boolean; legsToWin: number; doubleOut: boolean }
+export interface LastSetup { playerIds: string[]; randomOrder: boolean; legsToWin: number; doubleOut: boolean; nextLegOrder: NextLegOrder }
 
 const KEY = 'sipky.lastGameSetup';
-export const DEFAULT_SETUP: LastSetup = { playerIds: [], randomOrder: true, legsToWin: 1, doubleOut: true };
+export const DEFAULT_SETUP: LastSetup = { playerIds: [], randomOrder: true, legsToWin: 1, doubleOut: true, nextLegOrder: DEFAULT_NEXT_LEG_ORDER };
 
 export function parseLastSetup(json: string | null): LastSetup {
   try {
@@ -14,6 +17,7 @@ export function parseLastSetup(json: string | null): LastSetup {
       // 0 = hra dokola, 1–5 = zápas na tolik vítězných legů.
       legsToWin: Number.isInteger(value.legsToWin) && value.legsToWin! >= 0 && value.legsToWin! <= 5 ? value.legsToWin! : DEFAULT_SETUP.legsToWin,
       doubleOut: typeof value.doubleOut === 'boolean' ? value.doubleOut : DEFAULT_SETUP.doubleOut,
+      nextLegOrder: value.nextLegOrder === 'rotate' || value.nextLegOrder === 'loserFirst' ? value.nextLegOrder : DEFAULT_SETUP.nextLegOrder,
     };
   } catch { return DEFAULT_SETUP; }
 }

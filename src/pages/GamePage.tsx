@@ -4,7 +4,7 @@ import { useConnection } from '../connection.ts';
 import { suggestCheckout } from '../game/checkout.ts';
 import { endGame, enterDart, nextPlayer, rematch, startGame, undoDart, useGame } from '../game/gameStore.ts';
 import { dartLabel, DARTS_PER_VISIT, ENDLESS, isEndless, makeDart, threeDartAverage } from '../game/x01.ts';
-import type { Dart, X01Settings, X01State } from '../game/x01.ts';
+import type { Dart, NextLegOrder, X01Settings, X01State } from '../game/x01.ts';
 import { loadLastSetup, saveLastSetup } from '../game/lastSetup.ts';
 import { shuffle } from '../game/order.ts';
 import type { Player } from '../players/playerList.ts';
@@ -38,6 +38,7 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
   const [legsToWin, setLegsToWin] = useState(last.legsToWin);
   const [doubleOut, setDoubleOut] = useState(last.doubleOut);
   const [randomOrder, setRandomOrder] = useState(last.randomOrder);
+  const [legOrder, setLegOrder] = useState<NextLegOrder>(last.nextLegOrder);
   useEffect(() => setScore(initialScore), [initialScore]);
   const toggle = (id: string) => setSelected(list => list.includes(id) ? list.filter(other => other !== id)
     : list.length < MAX_GAME_PLAYERS ? [...list, id] : list);
@@ -45,9 +46,10 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
   const chosen = selected.flatMap(id => players.filter(player => player.id === id));
   const others = players.filter(player => !selected.includes(player.id)).sort((a, b) => a.name.localeCompare(b.name, 'cs'));
   function start() {
-    saveLastSetup({ playerIds: chosen.map(player => player.id), randomOrder, legsToWin, doubleOut });
+    saveLastSetup({ playerIds: chosen.map(player => player.id), randomOrder, legsToWin, doubleOut, nextLegOrder: legOrder });
     const order = randomOrder ? shuffle(chosen) : chosen;
-    if (order.length) startGame({ startScore: score, doubleOut, legsToWin } satisfies X01Settings, order.map(({ id, name, color }) => ({ id, name, color })));
+    if (order.length) startGame({ startScore: score, doubleOut, legsToWin, nextLegOrder: legOrder } satisfies X01Settings,
+      order.map(({ id, name, color }) => ({ id, name, color })));
   }
   return <div className="page">
     <div className="page-heading"><div><h1>Nová hra</h1><p>Vyberte hru, hráče a pravidla.</p></div></div>
@@ -82,6 +84,12 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
           <div className="segmented">{LEG_OPTIONS.map(n => <button key={n} className={legsToWin === n ? 'selected' : ''} onClick={() => setLegsToWin(n)}
             title={n === ENDLESS ? 'Hraje se dokola, legy se počítají, zápas nekončí' : `Vyhrává, kdo první vyhraje ${legCount(n)}`}>{n === ENDLESS ? '∞ Dokola' : n}</button>)}</div>
           <span className="small">{legsToWin === ENDLESS ? 'Legy se počítají, zápas ukončíte tlačítkem Konec hry.' : `Vyhrává, kdo první vyhraje ${legCount(legsToWin)}.`}</span></label>
+        <label>Další leg začíná
+          <div className="segmented">
+            <button className={legOrder === 'loserFirst' ? 'selected' : ''} onClick={() => setLegOrder('loserFirst')}>Od posledního</button>
+            <button className={legOrder === 'rotate' ? 'selected' : ''} onClick={() => setLegOrder('rotate')}>Střídání</button>
+          </div>
+          <span className="small">{legOrder === 'loserFirst' ? 'První hází ten, komu zbylo nejvíc bodů; vítěz legu hází poslední.' : 'Pořadí zůstává, začíná vždy další hráč.'}</span></label>
         <label className="switch"><input type="checkbox" checked={doubleOut} onChange={event => setDoubleOut(event.target.checked)} /><span>Double Out (zavřít doublem nebo bullem)</span></label>
       </div>
     </section>
@@ -121,7 +129,8 @@ function GameBoard({ state }: { state: X01State }) {
     </div>
     {banner && <div className="leg-banner" role="status">{banner}</div>}
     {finished && <WinnerPanel state={state} />}
-    <div className="game-players">{players.map((_, i) => <PlayerScore key={players[i].id} state={state} index={i} />)}</div>
+    {/* Karty v pořadí házení v aktuálním legu. */}
+    <div className="game-players">{state.order.map(i => <PlayerScore key={players[i].id} state={state} index={i} />)}</div>
     {!finished && <div className="game-actions">
       <button onClick={undoDart} disabled={!state.history.length && !state.visit.length}>↶ Zpět</button>
       <button className={state.visitResult.closed ? 'primary' : ''} onClick={nextPlayer}>Další hráč ›</button>

@@ -1,14 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addDart, commitVisit, createGame, dartLabel, deriveState, ENDLESS, evaluateVisit, makeDart, setVisit, threeDartAverage, undo } from '../src/game/x01.ts';
+import { addDart, commitVisit, createGame, dartLabel, deriveState, ENDLESS, evaluateVisit, makeDart, nextLegOrder, setVisit, threeDartAverage, undo } from '../src/game/x01.ts';
 import type { X01Game } from '../src/game/x01.ts';
 import { suggestCheckout } from '../src/game/checkout.ts';
 import { shuffle } from '../src/game/order.ts';
 import { DEFAULT_SETUP, parseLastSetup } from '../src/game/lastSetup.ts';
 
 test('sestava poslední hry: platné hodnoty se převezmou, neplatné nahradí výchozími', () => {
-  assert.deepEqual(parseLastSetup('{"playerIds":["a","b","a",3],"randomOrder":false,"legsToWin":3,"doubleOut":false}'),
-    { playerIds: ['a', 'b'], randomOrder: false, legsToWin: 3, doubleOut: false });
+  assert.deepEqual(parseLastSetup('{"playerIds":["a","b","a",3],"randomOrder":false,"legsToWin":3,"doubleOut":false,"nextLegOrder":"rotate"}'),
+    { playerIds: ['a', 'b'], randomOrder: false, legsToWin: 3, doubleOut: false, nextLegOrder: 'rotate' });
+  assert.equal(parseLastSetup('{"nextLegOrder":"nahodne"}').nextLegOrder, 'loserFirst');
   assert.deepEqual(parseLastSetup('{"legsToWin":9,"randomOrder":"ano"}'), DEFAULT_SETUP);
   assert.deepEqual(parseLastSetup(null), DEFAULT_SETUP);
   assert.deepEqual(parseLastSetup('nejson'), DEFAULT_SETUP);
@@ -72,7 +73,7 @@ test('zavření legu, střídání začínajícího hráče a konec zápasu', ()
   let s = deriveState(game);
   assert.deepEqual(s.legsWon, [1, 0]);
   assert.equal(s.leg, 2);
-  assert.equal(s.legStarter, 1);
+  assert.deepEqual(s.order, [1, 0]);
   assert.equal(s.current, 1);
   assert.deepEqual(s.remaining, [301, 301]);
   game = play(game, ...LEG);
@@ -84,6 +85,22 @@ test('zavření legu, střídání začínajícího hráče a konec zápasu', ()
   s = deriveState(game);
   assert.equal(s.winner, 0);
   assert.equal(s.lastLegWinner, 0);
+});
+
+test('pořadí dalšího legu: od posledního (vítěz poslední) nebo střídání', () => {
+  const three = [...players, { id: 'c', name: 'Míša', color: '#00f' }];
+  // 301: Jarda 180, Petr 140 (zbývá 161), Míša 60 (zbývá 241), Jarda zavře.
+  const leg = [[T(20), T(20), T(20)], [T(20), T(20), S(20)], [S(20), S(20), S(20)], [T(20), T(19), D(2)]];
+  let s = deriveState(play(createGame({ startScore: 301, doubleOut: true, legsToWin: 3 }, three), ...leg));
+  assert.deepEqual(s.order, [2, 1, 0]);
+  assert.equal(s.current, 2);
+  s = deriveState(play(createGame({ startScore: 301, doubleOut: true, legsToWin: 3, nextLegOrder: 'rotate' }, three), ...leg));
+  assert.deepEqual(s.order, [1, 2, 0]);
+  assert.equal(s.current, 1);
+  // Po Míšovi hází v novém pořadí Petr, pak Jarda.
+  s = deriveState(play(createGame({ startScore: 301, doubleOut: true, legsToWin: 3 }, three), ...leg, [MISS]));
+  assert.equal(s.current, 1);
+  assert.deepEqual(nextLegOrder([0, 1, 2], [0, 100, 100], 'loserFirst'), [1, 2, 0]);
 });
 
 test('hra dokola: legy se počítají, začínající se střídá, zápas nikdy neskončí', () => {
