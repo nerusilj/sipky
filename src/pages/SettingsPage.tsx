@@ -8,7 +8,6 @@ import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setCallerEnabled, setCallerVoice, s
   useCallerEnabled, useCallerVoice, useDartTheme, useDisabledEffects, useEffectsEnabled, useVenueName } from '../settings.ts';
 import { caller } from '../caller/caller.ts';
 import { EFFECT_IDS, EFFECTS } from '../effects/effectRules.ts';
-import { triggerEffect } from '../effects/effects.ts';
 import { VOICES } from '../caller/voices.ts';
 import type { VoiceId } from '../caller/voices.ts';
 
@@ -79,8 +78,6 @@ export default function SettingsPage() {
           <label className="switch"><input type="checkbox" checked={!disabledEffects.includes(id)} disabled={!effectsEnabled}
             onChange={event => setEffectEnabled(id, event.target.checked)} /><strong>{EFFECTS[id].name}</strong></label>
           <span className="muted small">{EFFECTS[id].trigger}{EFFECTS[id].replacesScore ? ' · nahradí hlášení součtu' : ''}</span>
-          <span className="spacer"></span>
-          <button className="text-button" onClick={() => triggerEffect(id)}>▶ Vyzkoušet</button>
         </li>)}
       </ul>
     </section>
