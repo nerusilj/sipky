@@ -44,19 +44,23 @@ Používejte jeden správce balíčků. Součástí dodávky je `pnpm-lock.yaml`
 
 ## Co funguje v základu
 
-- Připojení k Board Manageru na nastavitelné adrese (výchozí `127.0.0.1:3180`, zapamatuje se). Pouze naslouchá, nic neodesílá. Při výpadku se spojení obnovuje s rostoucím odstupem 1–30 s.
-- Čitelné rozhraní inspektoru, viditelný stav připojení, typ/kanál zprávy, detail formátovaného JSON a přepnutí na přesný raw text.
-- Filtrace podle typu, směru a obsahu. Nejnovější zprávy první, nejvýše 100 řádků najednou.
-- Kruhový buffer nejvýše 10 000 zpráv a hrubý textový rozpočet 32 MiB. Odhad není měření skutečného heapu. Jeden raw rámec smí mít nejvýše 2 Mi znaků; větší se nezachová a započítá se jako vyřazený.
-- Pozastavení zmrazí snapshot UI; přidávání do úložiště pokračuje nezávisle. Vymazat odstraní buffer i snapshot a vynuluje počítadla.
-- Export JSONL přes nativní Tauri dialog; ukládá celý aktuální buffer, nikoli jen filtr nebo zmrazený pohled. Žádné indexy vyhledávání v exportu. Časy ISO 8601 UTC s milisekundami (`Z`); seznam používá místní čas.
-- Parser zachová celé obálky, neznámá pole, chyby odběru i neplatný JSON. Nedělá závěry o hodech či skóre.
+- Rámec aplikace podle návrhu UI: horní lišta se stavem Autodarts, levé menu se sekcemi Domů, Hra, Hráči, Nastavení a DEV. Hra a Hráči jsou zatím jen zástupné stránky; turnaje a statistiky nejsou v plánu v0.1.
+- Domů ukazuje skutečný stav spojení s terčem a čas poslední události. Herní dlaždice jsou zatím neaktivní.
+- Aplikace se po spuštění sama připojí na uloženou adresu terče. Adresa se mění v Nastavení.
+- DEV je inspektor událostí:
+  - Připojení k Board Manageru na nastavitelné adrese (výchozí `127.0.0.1:3180`, zapamatuje se). Pouze naslouchá, nic neodesílá. Při výpadku se spojení obnovuje s rostoucím odstupem 1–30 s.
+  - Čitelné rozhraní inspektoru, viditelný stav připojení, typ/kanál zprávy, detail formátovaného JSON a přepnutí na přesný raw text.
+  - Filtrace podle typu, směru a obsahu. Nejnovější zprávy první, nejvýše 100 řádků najednou.
+  - Kruhový buffer nejvýše 10 000 zpráv a hrubý textový rozpočet 32 MiB. Odhad není měření skutečného heapu. Jeden raw rámec smí mít nejvýše 2 Mi znaků; větší se nezachová a započítá se jako vyřazený.
+  - Pozastavení zmrazí snapshot UI; přidávání do úložiště pokračuje nezávisle. Vymazat odstraní buffer i snapshot a vynuluje počítadla.
+  - Export JSONL přes nativní Tauri dialog; ukládá celý aktuální buffer, nikoli jen filtr nebo zmrazený pohled. Žádné indexy vyhledávání v exportu. Časy ISO 8601 UTC s milisekundami (`Z`); seznam používá místní čas.
+  - Parser zachová celé obálky, neznámá pole, chyby odběru i neplatný JSON. Nedělá závěry o hodech či skóre.
 
 ## Závislosti a struktura
 
 Runtime JS: pouze React, React DOM a `@tauri-apps/api` pro IPC. Vývoj: TypeScript, Vite, typy Reactu, Tauri CLI. Rust: Tauri, build helper, `tauri-plugin-dialog` pro nativní dialog a `serde_json` pro kontrolu exportu. Žádná UI knihovna ani testovací framework; čistá logika používá vestavěný Node test runner.
 
-`src/autodarts/` obsahuje klienta lokálního Board Manageru (`LocalBoardClient`), sestavení adresy (`boardAddress`) a parser obálky. `src/inspector/` spravuje obecné zachycené zprávy. React komponenty neinterpretují Autodarts payloady. Rust zatím jen spouští Tauri a ukládá uživatelem vybraný soubor. WebSocket běží přímo ve WebView; CSP proto povoluje `ws:`.
+`src/connection.ts` drží jediné spojení s terčem pro celou aplikaci. `src/pages/` obsahuje sekce, `src/components/Icons.tsx` vlastní SVG ikony (žádná knihovna ikon). `src/autodarts/` obsahuje klienta lokálního Board Manageru (`LocalBoardClient`), sestavení adresy (`boardAddress`) a parser obálky. `src/inspector/` spravuje obecné zachycené zprávy. React komponenty neinterpretují Autodarts payloady. Rust zatím jen spouští Tauri a ukládá uživatelem vybraný soubor. WebSocket běží přímo ve WebView; CSP proto povoluje `ws:`.
 
 ## Omezení a další krok
 
