@@ -13,13 +13,28 @@ export const SettingsIcon = (p: IconProps) => <Svg {...p}><circle cx="12" cy="12
 export const DevIcon = (p: IconProps) => <Svg {...p}><path d="m8 7-5 5 5 5" /><path d="m16 7 5 5-5 5" /><path d="m13.5 4.5-3 15" /></Svg>;
 export const ChevronIcon = (p: IconProps) => <Svg {...p}><path d="m9 5 7 7-7 7" /></Svg>;
 
-export function BoardLogo({ size = 34 }: IconProps) {
-  const sectors = Array.from({ length: 20 }, (_, i) => i * 18);
-  return <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true">
-    <circle cx="20" cy="20" r="19" fill="#1b1410" stroke="var(--orange)" strokeWidth="2" />
-    {sectors.map(angle => <path key={angle} d="M20 20 L20 3.5" stroke={angle % 36 ? '#3a2a1f' : 'var(--orange)'} strokeWidth="2.6" transform={`rotate(${angle} 20 20)`} />)}
-    <circle cx="20" cy="20" r="11" fill="none" stroke="var(--orange)" strokeWidth="1.4" />
-    <circle cx="20" cy="20" r="3.4" fill="var(--orange)" />
+// Ležatá šipka letící doprava: oranžové letky, tmavý násadec, rýhovaný kovový barel a hrot.
+export function DartMark({ width = 104 }: { width?: number }) {
+  return <svg className="dart-mark" width={width} height={width * 24 / 120} viewBox="0 0 120 24" aria-hidden="true">
+    <defs>
+      <linearGradient id="dart-metal" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#f7f8fa" /><stop offset="0.45" stopColor="#c3c9d1" /><stop offset="0.55" stopColor="#8d96a1" /><stop offset="1" stopColor="#dfe3e8" />
+      </linearGradient>
+      <linearGradient id="dart-flight-top" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#ffb06e" /><stop offset="1" stopColor="#ff7a1f" />
+      </linearGradient>
+      <linearGradient id="dart-flight-bottom" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0" stopColor="#c4520c" /><stop offset="1" stopColor="#ff7a1f" />
+      </linearGradient>
+    </defs>
+    <path d="M3 12 L12 1.5 L33 1.5 L29 12 Z" fill="url(#dart-flight-top)" />
+    <path d="M3 12 L12 22.5 L33 22.5 L29 12 Z" fill="url(#dart-flight-bottom)" />
+    <path d="M5 12 H31" stroke="#5a2406" strokeWidth="1" />
+    <rect x="27" y="10.1" width="36" height="3.8" rx="1.6" fill="#2a2e35" />
+    <rect x="56" y="9.9" width="3" height="4.2" rx="0.8" fill="var(--orange)" />
+    <path d="M61 8.2 Q62 7.2 64 7.2 H95 Q98 7.2 99.5 9 L101 10.6 V13.4 L99.5 15 Q98 16.8 95 16.8 H64 Q62 16.8 61 15.8 Z" fill="url(#dart-metal)" />
+    <path d="M69 7.6 V16.4 M73 7.4 V16.6 M77 7.4 V16.6 M81 7.4 V16.6 M85 7.4 V16.6 M89 7.6 V16.4" stroke="#6f7883" strokeWidth="0.9" />
+    <path d="M100.5 10.7 L118.5 12 L100.5 13.3 Z" fill="#d6dbe1" stroke="#9aa2ac" strokeWidth="0.4" />
   </svg>;
 }
 

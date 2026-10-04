@@ -49,6 +49,7 @@ Používejte jeden správce balíčků. Součástí dodávky je `pnpm-lock.yaml`
 - Rámec aplikace podle návrhu UI: horní lišta se stavem Autodarts, levé menu se sekcemi Domů, Hra, Hráči, Nastavení a DEV. Hra a Hráči jsou zatím jen zástupné stránky; turnaje a statistiky nejsou v plánu v0.1.
 - Domů ukazuje skutečný stav spojení s terčem a čas poslední události. Herní dlaždice jsou zatím neaktivní.
 - Aplikace se po spuštění sama připojí na uloženou adresu terče. Adresa se mění v Nastavení.
+- V horní liště je název podniku (výchozí „HOLICE“, mění se v Nastavení) a obrázek ležaté šipky.
 - **Průběžný bezztrátový záznam na disk** (jen desktopová aplikace): každé spuštění zapisuje do `Dokumenty/HOLICE-Sipky/zaznamy/RRRR-MM-DD_HH-MM-SS.jsonl`. Zapisuje se každá přijatá zpráva (stejný formát jako export) a události aplikace s polem `meta` (`start`, `connect`, `state`, `version`, `disconnect`). Zápis probíhá v dávkách po 250 ms. Při chybě disku řádky čekají ve frontě a zápis se opakuje. Stav záznamu je vidět v DEV.
 - DEV je inspektor událostí:
   - Připojení k Board Manageru na nastavitelné adrese (výchozí `127.0.0.1:3180`, zapamatuje se). Pouze naslouchá, nic neodesílá. Při výpadku se spojení obnovuje s rostoucím odstupem 1–30 s.

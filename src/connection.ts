@@ -51,6 +51,12 @@ class BoardConnection {
     next.connect();
   }
 
+  // Automatické připojení po startu; podruhé (React StrictMode) už nic nedělá.
+  start(): void {
+    if (this.client) return;
+    try { this.connect(); } catch { /* Neplatnou adresu opraví uživatel v Nastavení. */ }
+  }
+
   disconnect(): void {
     if (this.client) recorder.meta('disconnect');
     this.client?.disconnect(); this.client = undefined;

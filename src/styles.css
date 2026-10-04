@@ -8,7 +8,7 @@
 /* Rámec aplikace */
 .shell{display:grid;grid-template-columns:96px 1fr;grid-template-rows:72px 1fr;height:100vh}
 .topbar{grid-column:1/-1;display:flex;align-items:center;gap:40px;padding:0 22px;border-bottom:1px solid var(--line);background:var(--sidebar)}
-.brand{display:flex;align-items:center;gap:13px;font-weight:750;font-size:20px;letter-spacing:.2px}
+.brand{display:flex;align-items:center;gap:14px;font-weight:800;font-size:22px;letter-spacing:1.5px;white-space:nowrap}.dart-mark{flex-shrink:0;filter:drop-shadow(0 2px 3px #0008)}
 .topbar-status{display:flex;align-items:center;gap:10px;font-size:13px;margin-left:auto;margin-right:-22px}.topbar-status strong{color:#ffc285;font-weight:650}.topbar-status strong.online{color:var(--green)}
 .icon-button{background:transparent;border:0;padding:8px;color:#b9bfc9;display:grid;place-items:center;border-radius:8px}.icon-button:hover:not(:disabled){background:#1d2027;color:#fff}
 .sidebar{background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;padding-top:8px;overflow-y:auto}
@@ -43,6 +43,8 @@
 .coming-soon{padding:30px 28px;display:flex;flex-direction:column;align-items:flex-start;gap:14px}.coming-soon p{font-size:14px;max-width:620px}
 
 /* Nastavení */
+.settings-card{padding:24px 28px;margin-bottom:18px;display:flex;flex-direction:column;gap:8px}.settings-card h2{margin-bottom:10px}
+.settings-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.settings-row input{background:#1b1f27;border:1px solid #343a45;color:#e8ebf0;padding:10px 12px;border-radius:6px;font-size:15px;width:min(320px,100%)}
 .connection{padding:24px 28px;border-left:3px solid var(--orange)}.section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.connection p{margin-top:9px;font-size:14px;max-width:930px}
 .connection-grid{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:24px;margin:24px 0}.connection-grid>div{display:flex;flex-direction:column;gap:7px}.connection-grid code{font-size:14px;overflow-wrap:anywhere}
 .address-field{display:flex;flex-direction:column;gap:7px}.address-field input{background:#1b1f27;border:1px solid #343a45;color:#e8ebf0;padding:8px 11px;border-radius:6px;font-family:ui-monospace,"Cascadia Code",Consolas,monospace;font-size:14px;max-width:260px}.address-field input:disabled{opacity:.6}
@@ -67,4 +69,4 @@ footer{display:flex;justify-content:space-between;gap:20px;font-size:11px;color:
 
 @media(min-width:1800px){:root{font-size:18px}.event-row strong{font-size:18px}.preview{font-size:14px}.event-meta{font-size:14px}.event-list,.detail-empty{height:480px}}
 @media(max-width:1100px){.page{padding:28px 26px}.readonly{display:none}.connection{padding:22px}.connection-actions{flex-wrap:wrap}.connection-actions .small{width:100%;margin:6px 0 0}.metrics{gap:8px}.metrics .field-label{font-size:9px}.inspector-toolbar{align-items:flex-start;flex-direction:column}.filters{padding:18px 22px}.filters select{min-width:140px}.connection-grid{gap:12px}.pane-heading{padding:0 15px}.modes{grid-template-columns:1fr 1fr}}
-@media(max-width:760px){.shell{grid-template-columns:72px 1fr}.topbar{gap:18px;padding:0 14px}.brand span{display:none}.nav-item{font-size:10px}.page{padding:22px 16px}.connection-grid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr;row-gap:20px}.metrics>div:nth-child(2){border:0}.filters{flex-wrap:wrap}.filters label{flex:1}.filters .search{flex-basis:100%}.toolbar-actions{flex-wrap:wrap}.split{grid-template-columns:1fr}.log-pane{border-right:0;border-bottom:1px solid var(--line)}footer{flex-direction:column;gap:8px}.modes{grid-template-columns:1fr}.status-logo{display:none}.status-card{padding:20px}.status-card dl{grid-template-columns:1fr;gap:3px}.status-card dd{margin-bottom:10px}.dev-connection{flex-wrap:wrap}}
+@media(max-width:760px){.shell{grid-template-columns:72px 1fr}.topbar{gap:18px;padding:0 14px}.dart-mark{display:none}.nav-item{font-size:10px}.page{padding:22px 16px}.connection-grid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr;row-gap:20px}.metrics>div:nth-child(2){border:0}.filters{flex-wrap:wrap}.filters label{flex:1}.filters .search{flex-basis:100%}.toolbar-actions{flex-wrap:wrap}.split{grid-template-columns:1fr}.log-pane{border-right:0;border-bottom:1px solid var(--line)}footer{flex-direction:column;gap:8px}.modes{grid-template-columns:1fr}.status-logo{display:none}.status-card{padding:20px}.status-card dl{grid-template-columns:1fr;gap:3px}.status-card dd{margin-bottom:10px}.dev-connection{flex-wrap:wrap}}
