@@ -1,43 +1,31 @@
 import { useSyncExternalStore } from 'react';
-import { invoke, isTauri } from '@tauri-apps/api/core';
 import { DEFAULT_BOARD_ADDRESS } from './autodarts/boardAddress.ts';
 import { LocalBoardClient } from './autodarts/LocalBoardClient.ts';
 import { fetchBoardVersion } from './autodarts/boardVersion.ts';
 import type { ConnectionState } from './autodarts/types.ts';
 import { messageStore } from './inspector/messageStore.ts';
-import { FLUSH_INTERVAL_MS, Recorder } from './inspector/recorder.ts';
-import type { RecorderSnapshot } from './inspector/recorder.ts';
-import { caller } from './caller/caller.ts';
 import { VisitTracker } from './caller/visitTracker.ts';
 import type { BoardEvent } from './caller/visitTracker.ts';
-import { isCallerEnabled, isEffectActive } from './settings.ts';
-import { EFFECTS, matchEffects } from './effects/effectRules.ts';
-import { triggerEffect } from './effects/effects.ts';
+import { feedGameFromBoard, isGameRunning } from './game/gameStore.ts';
+import { reactToVisit } from './reactions.ts';
+import { recorder } from './recording.ts';
 
-// Průběžný záznam na disk běží jen v desktopové aplikaci; jeden soubor na spuštění.
-export const recorder = new Recorder(isTauri() ? (session, lines) => invoke<string>('append_recording', { session, lines }) : undefined);
-if (isTauri()) window.setInterval(() => { void recorder.flush(); }, FLUSH_INTERVAL_MS);
-recorder.meta('start', { app: 'Šipky' });
+export { useRecorder } from './recording.ts';
 
-// Události hodů (šipka, kolo) pro hlasatele a později efekty.
+// Události hodů (šipka, kolo) z terče pro hru, hlasatele a efekty.
 const visitTracker = new VisitTracker();
 const boardEventListeners = new Set<(event: BoardEvent) => void>();
 export function onBoardEvent(listener: (event: BoardEvent) => void): () => void {
   boardEventListeners.add(listener);
   return () => { boardEventListeners.delete(listener); };
 }
-// Efekty mají přednost: jejich hláška zazní první a může nahradit hlášení součtu.
+// Během hry šipky počítá hra a reaguje až na vyhodnocené kolo; jinak hlásí přímo kola z terče.
 onBoardEvent(event => {
-  const fired = matchEffects(event, isEffectActive);
-  fired.forEach(id => { triggerEffect(id); recorder.meta('effect', { effect: id }); });
-  const speakScore = isCallerEnabled() && !fired.some(id => EFFECTS[id].replacesScore);
-  caller.handle(event, speakScore, fired.map(id => EFFECTS[id].name).join(', ') || undefined);
+  if (isGameRunning()) feedGameFromBoard(event);
+  else if (event.kind === 'visit') reactToVisit(event);
 });
-// Ohlášená kola jdou i do záznamu, aby šla po testu porovnat se surovými zprávami.
+// Kola z terče jdou vždy i do záznamu, aby šla po testu porovnat se surovými zprávami.
 onBoardEvent(event => { if (event.kind === 'visit') recorder.meta('visit', { total: event.total, darts: event.darts.map(dart => dart.name) }); });
-export function useRecorder(): RecorderSnapshot {
-  return useSyncExternalStore(recorder.subscribe, recorder.get);
-}
 
 const ADDRESS_KEY = 'sipky.boardAddress';
 

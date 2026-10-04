@@ -48,6 +48,14 @@ Používejte jeden správce balíčků. Součástí dodávky je `pnpm-lock.yaml`
 
 - Rámec aplikace podle návrhu UI: horní lišta se stavem Autodarts, levé menu se sekcemi Domů, Hra, Hráči, Nastavení a DEV. Hra a Hráči jsou zatím jen zástupné stránky; turnaje a statistiky nejsou v plánu v0.1.
 - Domů ukazuje skutečný stav spojení s terčem a čas poslední události. Herní dlaždice jsou zatím neaktivní.
+- **Hra 501/301** (dlaždice na Domů nebo sekce Hra):
+  - Nastavení zápasu: hra, výběr hráčů (pořadí podle výběru, až 8), počet vítězných legů (1–5) a Double Out.
+  - Pravidla: přehoz pod nulou, při zbytku 1 a při nule bez doublu. Double Out zavírá doublem nebo bullem. Začínající hráč se v každém legu střídá.
+  - Šipky se počítají z terče: kolo uzavře kolo z terče, tedy vytažení šipek nebo třetí šipka. Druhá možnost je ruční zadání (Single/Double/Triple + číslo, 25, Bull, Mimo), kde se uzavřené kolo potvrdí samo.
+  - Zpět odebírá šipky i přes hranici kola a legu. Stav hry se dopočítává z odehraných kol (`src/game/x01.ts`).
+  - Karty hráčů ukazují živý zbytek, šipky kola, body kola nebo přehoz, průměr na 3 šipky a doporučený checkout (`src/game/checkout.ts`). Dál je tu průběh legu, oznámení „Leg pro …“ a panel vítěze s Odvetou.
+  - Během hry hlasatel hlásí body vyhodnoceného kola (přehoz = „Nula“) a efekty reagují na vyhodnocená kola.
+  - Rozehraná hra je jen v paměti. Sety, ukládání zápasů a další hlášky zatím chybí.
 - **Hráči:** přidání, přejmenování a smazání (s potvrzením). Hráč má jméno a přidělenou barvu avataru. Jména se nesmí opakovat, bez ohledu na velikost písmen a diakritiku. Na Domů jsou „Poslední hráči“. Desktopová aplikace ukládá hráče do `Dokumenty/Sipky/hraci.json` bezpečně přes dočasný soubor a přejmenování. Když se soubor nepodaří načíst, úpravy se zablokují, aby se nepřepsal. Při vývoji v prohlížeči jsou hráči jen v localStorage.
 - Aplikace se po spuštění sama připojí na uloženou adresu terče. Adresa se mění v Nastavení.
 - V horní liště je název podniku (výchozí „HOLICE“, mění se v Nastavení) a obrázek ležaté šipky.

@@ -9,9 +9,9 @@ import { usePlayers } from '../players/players.ts';
 const RECENT_PLAYERS = 5;
 
 const MODES = [
-  { id: 'x301', title: '301', subtitle: 'Classic' },
-  { id: 'x501', title: '501', subtitle: 'Classic' },
-  { id: 'cricket', title: 'Cricket', subtitle: 'Zavírání čísel' },
+  { id: 'x301', title: '301', subtitle: 'Classic', score: 301 },
+  { id: 'x501', title: '501', subtitle: 'Classic', score: 501 },
+  { id: 'cricket', title: 'Cricket', subtitle: 'Zavírání čísel', score: undefined },
 ] as const;
 
 export function sinceText(at: number | undefined, now: number): string {
@@ -22,7 +22,7 @@ export function sinceText(at: number | undefined, now: number): string {
   return minutes < 60 ? `před ${minutes} min` : `před ${Math.round(minutes / 60)} h`;
 }
 
-export default function HomePage({ onPlayers }: { onPlayers: () => void }) {
+export default function HomePage({ onPlayers, onPlay }: { onPlayers: () => void; onPlay: (score: 301 | 501) => void }) {
   const connection = useConnection();
   const { players } = usePlayers();
   // Zatím bez her: „poslední“ = naposledy přidaní.
@@ -33,10 +33,11 @@ export default function HomePage({ onPlayers }: { onPlayers: () => void }) {
   return <div className="page">
     <div className="page-heading"><div><h1>Vítejte u šipek</h1><p>Vyberte herní mód a začněte hrát.</p></div></div>
     <div className="modes">
-      {MODES.map(mode => <button key={mode.id} className={`mode-tile ${mode.id}`} disabled title="Herní režimy přijdou v další verzi">
+      {MODES.map(mode => { const score = mode.score; return <button key={mode.id} className={`mode-tile ${mode.id}`} disabled={!score}
+        title={score ? `Nová hra ${mode.title}` : 'Připravujeme'} onClick={() => { if (score) onPlay(score); }}>
         <TileBoard /><strong>{mode.title}</strong><span>{mode.subtitle}</span>
-        <span className="mode-soon">PŘIPRAVUJEME</span><span className="mode-chevron"><ChevronIcon size={18} /></span>
-      </button>)}
+        {!score && <span className="mode-soon">PŘIPRAVUJEME</span>}<span className="mode-chevron"><ChevronIcon size={18} /></span>
+      </button>; })}
     </div>
     <section className="status-card card" aria-labelledby="status-title">
       <div>

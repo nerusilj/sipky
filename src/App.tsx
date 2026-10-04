@@ -5,8 +5,8 @@ import EffectOverlay from './components/EffectOverlay.tsx';
 import { DartIcon, DevIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
 import { boardConnection, useConnection } from './connection.ts';
 import { useDartTheme, useVenueName } from './settings.ts';
-import ComingSoonPage from './pages/ComingSoonPage.tsx';
 import DevPage from './pages/DevPage.tsx';
+import GamePage from './pages/GamePage.tsx';
 import HomePage from './pages/HomePage.tsx';
 import PlayersPage from './pages/PlayersPage.tsx';
 import SettingsPage from './pages/SettingsPage.tsx';
@@ -21,6 +21,7 @@ const NAV: { id: Section; label: string; Icon: ComponentType<{ size?: number }> 
 
 export default function App() {
   const [section, setSection] = useState<Section>('home');
+  const [startScore, setStartScore] = useState<301 | 501>(501);
   const connection = useConnection();
   const venueName = useVenueName();
   const dartTheme = useDartTheme();
@@ -44,8 +45,8 @@ export default function App() {
         aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon /><span>{label}</span></button>)}
     </nav>
     <main className="content">
-      {section === 'home' && <HomePage onPlayers={() => setSection('players')} />}
-      {section === 'game' && <ComingSoonPage title="Hra" text="301, 501 a Cricket s automatickým počítáním z terče." />}
+      {section === 'home' && <HomePage onPlayers={() => setSection('players')} onPlay={score => { setStartScore(score); setSection('game'); }} />}
+      {section === 'game' && <GamePage startScore={startScore} onPlayers={() => setSection('players')} />}
       {section === 'players' && <PlayersPage />}
       {section === 'settings' && <SettingsPage />}
       {section === 'dev' && <DevPage onSettings={() => setSection('settings')} />}
