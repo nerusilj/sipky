@@ -3,13 +3,14 @@ import EventLog from '../components/EventLog.tsx';
 import EventDetails from '../components/EventDetails.tsx';
 import Filters from '../components/Filters.tsx';
 import { STATE_LABELS } from '../components/ConnectionPanel.tsx';
-import { boardConnection, useConnection } from '../connection.ts';
+import { boardConnection, useConnection, useRecorder } from '../connection.ts';
 import { filterMessages, messageStore, MAX_MESSAGES } from '../inspector/messageStore.ts';
 import { saveSession } from '../inspector/saveSession.ts';
 import type { StoredMessage } from '../inspector/types.ts';
 
 export default function DevPage({ onSettings }: { onSettings: () => void }) {
   const connection = useConnection();
+  const recording = useRecorder();
   const [messages, setMessages] = useState<readonly StoredMessage[]>([]);
   const [stats, setStats] = useState(messageStore.stats());
   const [paused, setPaused] = useState(false);
@@ -68,6 +69,17 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
       <span className="spacer"></span>
       <button onClick={onSettings} className="text-button">Změnit adresu</button>
       {active ? <button onClick={() => boardConnection.disconnect()}>Odpojit</button> : <button className="primary" onClick={connect}>Připojit</button>}
+    </div>
+    <div className={`recording card ${recording.error || recording.lost ? 'failing' : ''}`}>
+      <span className={`rec-dot ${recording.enabled && !recording.error ? 'on' : ''}`} aria-hidden="true"></span>
+      {!recording.enabled ? <span className="muted">Průběžný záznam na disk běží jen v desktopové aplikaci.</span> : <>
+        <strong>Záznam na disk</strong>
+        <code>{recording.path ?? `…/HOLICE-Sipky/zaznamy/${recording.session}.jsonl`}</code>
+        <span className="spacer"></span>
+        <span className="muted">zapsáno {recording.written.toLocaleString('cs-CZ')} řádků{recording.pending ? ` · čeká ${recording.pending.toLocaleString('cs-CZ')}` : ''}</span>
+      </>}
+      {recording.error && <span className="rec-error">Zápis selhává: {recording.error} Řádky čekají ve frontě.</span>}
+      {recording.lost > 0 && <span className="rec-error">Fronta byla plná, {recording.lost.toLocaleString('cs-CZ')} řádků se nezapsalo.</span>}
     </div>
     {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Zavřít oznámení">×</button></div>}
     <div className="metrics"><div><span className="field-label">ZPRÁVY V BUFFERU</span><strong>{stats.count.toLocaleString('cs-CZ')}<small> / {MAX_MESSAGES.toLocaleString('cs-CZ')}</small></strong></div>

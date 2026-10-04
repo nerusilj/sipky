@@ -1,9 +1,20 @@
 import { useSyncExternalStore } from 'react';
+import { invoke, isTauri } from '@tauri-apps/api/core';
 import { DEFAULT_BOARD_ADDRESS } from './autodarts/boardAddress.ts';
 import { LocalBoardClient } from './autodarts/LocalBoardClient.ts';
 import { fetchBoardVersion } from './autodarts/boardVersion.ts';
 import type { ConnectionState } from './autodarts/types.ts';
 import { messageStore } from './inspector/messageStore.ts';
+import { FLUSH_INTERVAL_MS, Recorder } from './inspector/recorder.ts';
+import type { RecorderSnapshot } from './inspector/recorder.ts';
+
+// Průběžný záznam na disk běží jen v desktopové aplikaci; jeden soubor na spuštění.
+export const recorder = new Recorder(isTauri() ? (session, lines) => invoke<string>('append_recording', { session, lines }) : undefined);
+if (isTauri()) window.setInterval(() => { void recorder.flush(); }, FLUSH_INTERVAL_MS);
+recorder.meta('start', { app: 'HOLICE-Šipky' });
+export function useRecorder(): RecorderSnapshot {
+  return useSyncExternalStore(recorder.subscribe, recorder.get);
+}
 
 const ADDRESS_KEY = 'darts-cz.boardAddress';
 
@@ -25,17 +36,23 @@ class BoardConnection {
     this.client = next;
     this.update({ address: address.trim(), version: undefined });
     try { localStorage.setItem(ADDRESS_KEY, address.trim()); } catch { /* Adresa se jen nezapamatuje. */ }
+    recorder.meta('connect', { address: address.trim() });
     next.onState(state => {
-      if (this.client !== next) return;
+      if (this.client !== next || state === this.snapshot.state) return;
       this.update({ state });
+      recorder.meta('state', { state });
       // Verzi čteme při každém (znovu)připojení; Board Manager se mezitím mohl aktualizovat.
-      if (state === 'connected') void fetchBoardVersion(address).then(version => { if (this.client === next) this.update({ version }); });
+      if (state === 'connected') void fetchBoardVersion(address).then(version => {
+        if (this.client !== next) return;
+        this.update({ version }); recorder.meta('version', { boardManager: version ?? null });
+      });
     });
-    next.onMessage(message => { messageStore.append(message); this.update({ lastMessageAt: Date.now() }); });
+    next.onMessage(message => { messageStore.append(message); recorder.message(message); this.update({ lastMessageAt: Date.now() }); });
     next.connect();
   }
 
   disconnect(): void {
+    if (this.client) recorder.meta('disconnect');
     this.client?.disconnect(); this.client = undefined;
     this.update({ state: 'disconnected', version: undefined });
   }

@@ -61,7 +61,11 @@ export function filterMessages(messages: readonly StoredMessage[], channel: stri
     (!query || message.searchText.includes(query)));
 }
 
+// Jeden řádek JSONL; stejný formát pro ruční export i průběžný záznam na disk.
+export function messageLine({ id, timestamp, direction, channel, topic, payload, raw, format }: CapturedWsMessage): string {
+  return JSON.stringify({ id, timestamp, direction, channel, topic, payload, raw, format });
+}
+
 export function toJsonl(messages: readonly CapturedWsMessage[]): string {
-  return messages.map(({ id, timestamp, direction, channel, topic, payload, raw, format }) =>
-    JSON.stringify({ id, timestamp, direction, channel, topic, payload, raw, format })).join('\n') + (messages.length ? '\n' : '');
+  return messages.map(messageLine).join('\n') + (messages.length ? '\n' : '');
 }
