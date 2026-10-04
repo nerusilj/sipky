@@ -13,7 +13,7 @@
   "app": {
     "windows": [{ "label": "main", "title": "HOLICE-Šipky", "width": 1440, "height": 960, "minWidth": 800, "minHeight": 640 }],
     "security": {
-      "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost ws:; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
+      "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost ws: http:; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
     }
   },
   "bundle": { "active": true, "targets": "all", "icon": ["icons/icon.png", "icons/icon.ico"] }

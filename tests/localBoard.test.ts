@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { eventsUrl } from '../src/autodarts/boardAddress.ts';
+import { eventsUrl, versionUrl } from '../src/autodarts/boardAddress.ts';
+import { fetchBoardVersion, parseVersion } from '../src/autodarts/boardVersion.ts';
 import { LocalBoardClient, RECONNECT_MAX_MS } from '../src/autodarts/LocalBoardClient.ts';
 import type { ListenSocket } from '../src/autodarts/LocalBoardClient.ts';
 import type { ConnectionState } from '../src/autodarts/types.ts';
@@ -36,6 +37,24 @@ test('adresa vede vždy jen na /api/events přes ws', () => {
   for (const bad of ['', 'ws://127.0.0.1:3180', '127.0.0.1:3180/api/start', '127.0.0.1:0', '127.0.0.1:70000', 'a b', 'host:', '-bad']) {
     assert.throws(() => eventsUrl(bad), undefined, bad);
   }
+});
+
+test('verze se čte jen přes GET /api/version a zobrazí se jen platné číslo verze', async () => {
+  assert.equal(versionUrl('127.0.0.1'), 'http://127.0.0.1:3180/api/version');
+  assert.throws(() => versionUrl('127.0.0.1/api/system'));
+  assert.equal(parseVersion('2.0.2\n'), '2.0.2');
+  assert.equal(parseVersion('v1.0.7'), 'v1.0.7');
+  assert.equal(parseVersion('2.1.0-beta.1'), '2.1.0-beta.1');
+  for (const bad of ['', '<html>', 'api key 123', '2.0.2 extra']) assert.equal(parseVersion(bad), undefined, bad);
+  const calls: [string, RequestInit | undefined][] = [];
+  const ok = (async (url: string, init?: RequestInit) => { calls.push([url, init]); return new Response('2.0.2\n'); }) as typeof fetch;
+  assert.equal(await fetchBoardVersion('127.0.0.1:3180', ok), '2.0.2');
+  assert.equal(calls[0][0], 'http://127.0.0.1:3180/api/version');
+  assert.equal(calls[0][1]?.method, 'GET');
+  const failing = (async () => { throw new TypeError('offline'); }) as typeof fetch;
+  assert.equal(await fetchBoardVersion('127.0.0.1:3180', failing), undefined);
+  const notFound = (async () => new Response('nope', { status: 404 })) as typeof fetch;
+  assert.equal(await fetchBoardVersion('127.0.0.1:3180', notFound), undefined);
 });
 
 test('připojí se, předá zprávy beze změny a nic neodešle', () => {

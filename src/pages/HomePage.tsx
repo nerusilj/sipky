@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import AutodartsLogo from '../components/AutodartsLogo.tsx';
 import { STATE_LABELS } from '../components/ConnectionPanel.tsx';
 import { ChevronIcon, TargetArt } from '../components/Icons.tsx';
 import { useConnection } from '../connection.ts';
@@ -36,11 +37,12 @@ export default function HomePage() {
         <span className={`status-line ${online ? 'online' : ''}`}><span className={`dot ${online ? '' : 'amber-dot'}`}></span>{STATE_LABELS[connection.state]}</span>
         <dl>
           <dt>Board</dt><dd><code>{connection.address}</code></dd>
+          <dt>Verze Board Manageru</dt><dd>{connection.version ?? (online ? 'zjišťuji…' : '—')}</dd>
           <dt>Stav</dt><dd>{online ? 'Online' : 'Offline'}</dd>
           <dt>Poslední událost</dt><dd>{sinceText(connection.lastMessageAt, now)}</dd>
         </dl>
       </div>
-      <div className={`status-target ${online ? 'online' : ''}`}><TargetArt /></div>
+      <AutodartsLogo className={`status-logo ${online ? 'online' : ''}`} />
     </section>
   </div>;
 }

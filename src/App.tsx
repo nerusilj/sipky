@@ -28,7 +28,7 @@ export default function App() {
       <div className="brand"><BoardLogo /><span>HOLICE-Šipky</span></div>
       <div className="topbar-status">
         <span className={`dot ${online ? '' : 'amber-dot'}`}></span>
-        <div><strong className={online ? 'online' : ''}>{online ? 'Autodarts připojeno' : 'Autodarts nepřipojeno'}</strong><span>Board: {connection.address}</span></div>
+        <strong className={online ? 'online' : ''}>{online ? 'Autodarts připojeno' : 'Autodarts nepřipojeno'}</strong>
       </div>
       <button className={`icon-button ${section === 'settings' ? 'active' : ''}`} onClick={() => setSection('settings')} aria-label="Nastavení" title="Nastavení"
         aria-current={section === 'settings' ? 'page' : undefined}><SettingsIcon size={20} /></button>

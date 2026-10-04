@@ -18,7 +18,7 @@ Pozor: `/api/state` z tohoto zařízení neobsahuje klíč `throws`, pokud nejso
 
 ## Pravidla pouze pro čtení
 
-- Inspektor otevírá jen `ws://<host>:<port>/api/events` a nic na něj neodesílá.
+- Aplikace otevírá jen `ws://<host>:<port>/api/events` (nic na něj neodesílá) a po každém připojení jednou volá `GET /api/version`. Verze se zobrazí, jen když odpověď vypadá jako číslo verze.
 - Nikdy nevolá `/api/config` ani `/api/system`: vracejí API klíč terče a TLS klíč.
 - Nikdy nevolá PUT, POST ani PATCH (start, stop, reset, restart, kalibrace, streamy).
 
