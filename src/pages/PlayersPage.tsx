@@ -26,7 +26,7 @@ export default function PlayersPage() {
       {addError && <p className="field-error">{addError}</p>}
     </section>
     {!loaded ? <p className="muted">Načítám hráče…</p> : sorted.length === 0 ? <div className="card coming-soon">
-      <p>Přidejte prvního hráče. Hráči se ukládají do <code>Dokumenty/Sipky/hraci.json</code>.</p></div>
+      <p>Přidejte prvního hráče.</p></div>
       : <ul className="player-grid">{sorted.map(player => <PlayerCard key={player.id} player={player} players={players} readOnly={readOnly} />)}</ul>}
   </div>;
 }

@@ -5,6 +5,7 @@ import CallerPanel from '../components/CallerPanel.tsx';
 import Filters from '../components/Filters.tsx';
 import { STATE_LABELS } from '../components/ConnectionPanel.tsx';
 import { boardConnection, useConnection, useRecorder } from '../connection.ts';
+import { usePlayers } from '../players/players.ts';
 import { filterMessages, messageStore, MAX_MESSAGES } from '../inspector/messageStore.ts';
 import { saveSession } from '../inspector/saveSession.ts';
 import type { StoredMessage } from '../inspector/types.ts';
@@ -12,6 +13,7 @@ import type { StoredMessage } from '../inspector/types.ts';
 export default function DevPage({ onSettings }: { onSettings: () => void }) {
   const connection = useConnection();
   const recording = useRecorder();
+  const players = usePlayers();
   const [messages, setMessages] = useState<readonly StoredMessage[]>([]);
   const [stats, setStats] = useState(messageStore.stats());
   const [paused, setPaused] = useState(false);
@@ -81,6 +83,13 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
       </>}
       {recording.error && <span className="rec-error">Zápis selhává: {recording.error} Řádky čekají ve frontě.</span>}
       {recording.lost > 0 && <span className="rec-error">Fronta byla plná, {recording.lost.toLocaleString('cs-CZ')} řádků se nezapsalo.</span>}
+    </div>
+    <div className="recording card">
+      <strong>Hráči</strong>
+      <code>{recording.enabled ? 'Dokumenty/Sipky/hraci.json' : 'localStorage prohlížeče (vývoj)'}</code>
+      <span className="spacer"></span>
+      <span className="muted">{players.loaded ? `${players.players.length} hráčů${players.readOnly ? ' · jen ke čtení' : ''}` : 'načítám…'}</span>
+      {players.error && <span className="rec-error">{players.error}</span>}
     </div>
     {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Zavřít oznámení">×</button></div>}
     <div className="metrics"><div><span className="field-label">ZPRÁVY V BUFFERU</span><strong>{stats.count.toLocaleString('cs-CZ')}<small> / {MAX_MESSAGES.toLocaleString('cs-CZ')}</small></strong></div>
