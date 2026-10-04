@@ -3,6 +3,17 @@ import assert from 'node:assert/strict';
 import { addDart, commitVisit, createGame, dartLabel, deriveState, evaluateVisit, makeDart, setVisit, threeDartAverage, undo } from '../src/game/x01.ts';
 import type { X01Game } from '../src/game/x01.ts';
 import { suggestCheckout } from '../src/game/checkout.ts';
+import { shuffle } from '../src/game/order.ts';
+
+test('náhodné pořadí zachová všechny hráče a nemění původní seznam', () => {
+  const list = ['a', 'b', 'c', 'd'];
+  const sequence = [0.1, 0.9, 0.5];
+  const mixed = shuffle(list, () => sequence.shift()!);
+  assert.deepEqual([...mixed].sort(), list);
+  assert.deepEqual(list, ['a', 'b', 'c', 'd']);
+  assert.notDeepEqual(mixed, list);
+  assert.deepEqual(shuffle([]), []);
+});
 
 const S = (n: number) => makeDart(n, 1), D = (n: number) => makeDart(n, 2), T = (n: number) => makeDart(n, 3);
 const BULL = makeDart(25, 2), MISS = makeDart(0, 0);
