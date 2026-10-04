@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import PlayerAvatar from '../components/PlayerAvatar.tsx';
+import Toggle from '../components/Toggle.tsx';
 import { useConnection } from '../connection.ts';
 import { suggestCheckout } from '../game/checkout.ts';
 import { decideBullOffWinner, endGame, enterDart, nextPlayer, rematch, startGame, undoDart, useGame } from '../game/gameStore.ts';
@@ -103,7 +104,7 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
             <button className={legOrder === 'rotate' ? 'selected' : ''} onClick={() => setLegOrder('rotate')}>Střídání</button>
           </div>
           <span className="small">{legOrder === 'loserFirst' ? 'První hází ten, komu zbylo nejvíc bodů; vítěz legu hází poslední.' : 'Pořadí zůstává, začíná vždy další hráč.'}</span></label>
-        <label className="switch"><input type="checkbox" checked={doubleOut} onChange={event => setDoubleOut(event.target.checked)} /><span>Double Out (zavřít doublem nebo bullem)</span></label>
+        <Toggle checked={doubleOut} onChange={setDoubleOut}>Double Out (zavřít doublem nebo bullem)</Toggle>
       </div>
     </section>
     <div className="setup-start">

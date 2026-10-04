@@ -14,6 +14,8 @@ const EFFECTS_KEY = 'sipky.effectsEnabled';
 const DISABLED_EFFECTS_KEY = 'sipky.disabledEffects';
 const CONFETTI_KEY = 'sipky.confettiEnabled';
 const DEV_KEY = 'sipky.showDev';
+const ACCENT_KEY = 'sipky.accent';
+export const DEFAULT_ACCENT: DartThemeId = 'orange';
 export const DEFAULT_VENUE_NAME = 'HOLICE';
 export const MAX_VENUE_NAME = 32;
 
@@ -29,6 +31,9 @@ let disabledEffects: readonly EffectId[] = parseDisabledEffects(read(DISABLED_EF
 let confettiEnabled = read(CONFETTI_KEY) !== 'false';
 // Sekce DEV (inspektor, kontrola hlášení a efektů) je v menu jen po zapnutí v Nastavení.
 let showDev = read(DEV_KEY) === 'true';
+// Barva aplikace ze stejné palety jako šipka; výchozí oranžová.
+const storedAccent = read(ACCENT_KEY);
+let accent: DartThemeId = isDartThemeId(storedAccent) ? storedAccent : DEFAULT_ACCENT;
 const listeners = new Set<() => void>();
 
 function read(key: string): string | null {
@@ -96,6 +101,12 @@ export function setConfettiEnabled(value: boolean): void {
 }
 export function isConfettiActive(): boolean { return effectsEnabled && confettiEnabled; }
 export function useConfettiEnabled(): boolean { return useSyncExternalStore(subscribe, () => confettiEnabled); }
+export function setAccent(value: DartThemeId): void {
+  accent = isDartThemeId(value) ? value : DEFAULT_ACCENT;
+  write(ACCENT_KEY, accent);
+}
+export function useAccent(): DartThemeId { return useSyncExternalStore(subscribe, () => accent); }
+
 export function setShowDev(value: boolean): void {
   showDev = value;
   write(DEV_KEY, String(value));

@@ -5,7 +5,8 @@ import DartMark from './components/DartMark.tsx';
 import EffectOverlay from './components/EffectOverlay.tsx';
 import { DartIcon, DevIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
 import { boardConnection, useConnection } from './connection.ts';
-import { useDartTheme, useShowDev, useVenueName } from './settings.ts';
+import { DART_THEMES } from './dartThemes.ts';
+import { useAccent, useDartTheme, useShowDev, useVenueName } from './settings.ts';
 import DevPage from './pages/DevPage.tsx';
 import GamePage from './pages/GamePage.tsx';
 import HomePage from './pages/HomePage.tsx';
@@ -34,6 +35,14 @@ export default function App() {
 
   // Desktopová aplikace se k terči připojí sama; spojení je pouze pro čtení.
   useEffect(() => boardConnection.start(), []);
+  // Barva aplikace: odstíny zvolené barvy do CSS proměnných (odvozené tóny dopočítá CSS).
+  const accent = useAccent();
+  useEffect(() => {
+    const theme = DART_THEMES[accent], root = document.documentElement.style;
+    root.setProperty('--accent', theme.mid);
+    root.setProperty('--accent-light', theme.light);
+    root.setProperty('--accent-dark', theme.dark);
+  }, [accent]);
 
   return <div className="shell">
     <header className="topbar">
