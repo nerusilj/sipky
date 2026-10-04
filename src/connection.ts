@@ -10,7 +10,9 @@ import type { RecorderSnapshot } from './inspector/recorder.ts';
 import { caller } from './caller/caller.ts';
 import { VisitTracker } from './caller/visitTracker.ts';
 import type { BoardEvent } from './caller/visitTracker.ts';
-import { isCallerEnabled } from './settings.ts';
+import { isCallerEnabled, isEffectActive } from './settings.ts';
+import { EFFECTS, matchEffects } from './effects/effectRules.ts';
+import { triggerEffect } from './effects/effects.ts';
 
 // Průběžný záznam na disk běží jen v desktopové aplikaci; jeden soubor na spuštění.
 export const recorder = new Recorder(isTauri() ? (session, lines) => invoke<string>('append_recording', { session, lines }) : undefined);
@@ -24,7 +26,13 @@ export function onBoardEvent(listener: (event: BoardEvent) => void): () => void 
   boardEventListeners.add(listener);
   return () => { boardEventListeners.delete(listener); };
 }
-onBoardEvent(event => caller.handle(event, isCallerEnabled()));
+// Efekty mají přednost: jejich hláška zazní první a může nahradit hlášení součtu.
+onBoardEvent(event => {
+  const fired = matchEffects(event, isEffectActive);
+  fired.forEach(id => { triggerEffect(id); recorder.meta('effect', { effect: id }); });
+  const speakScore = isCallerEnabled() && !fired.some(id => EFFECTS[id].replacesScore);
+  caller.handle(event, speakScore, fired.map(id => EFFECTS[id].name).join(', ') || undefined);
+});
 // Ohlášená kola jdou i do záznamu, aby šla po testu porovnat se surovými zprávami.
 onBoardEvent(event => { if (event.kind === 'visit') recorder.meta('visit', { total: event.total, darts: event.darts.map(dart => dart.name) }); });
 export function useRecorder(): RecorderSnapshot {

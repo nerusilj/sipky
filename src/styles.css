@@ -65,6 +65,11 @@
 .switch{display:flex;align-items:center;gap:9px;font-size:14px;cursor:pointer}.switch input{width:18px;height:18px;accent-color:var(--orange)}
 .caller-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.caller-controls input{width:92px;background:#1b1f27;border:1px solid #343a45;color:#e8ebf0;padding:9px 11px;border-radius:6px;font-size:15px}
 .caller-quick{display:flex;gap:6px;flex-wrap:wrap}.caller-quick button{padding:7px 12px;font-size:13px;min-width:52px}.caller-quick button.playing{border-color:var(--orange);color:var(--orange)}
+.caller-effects{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.caller-effect{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.caller-effect button{padding:7px 12px;font-size:13px}
+.caller-darts em{color:var(--orange);font-style:normal;font-family:system-ui,"Segoe UI",sans-serif;font-weight:650}
+.effect-list{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.effect-list li{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 12px;background:#101317;border:1px solid var(--line);border-radius:8px}.effect-list li.muted-row{opacity:.55}
 .caller-log{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}.caller-log ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;max-height:220px;overflow:auto}
 .caller-log li{display:flex;align-items:center;gap:14px;font-size:13px;padding:5px 0;border-bottom:1px solid #1d2026}.caller-log time{color:var(--muted);font-variant-numeric:tabular-nums}.caller-darts{flex:1;color:#c9ced6;font-family:ui-monospace,Consolas,monospace}.caller-log strong{font-size:16px;min-width:36px;text-align:right}
 .recording{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px 16px 12px 20px;font-size:14px;margin-top:10px}.recording code{color:var(--muted);font-size:12px;overflow-wrap:anywhere}.recording .muted{font-size:13px}.recording.failing{border-color:#745033}
@@ -81,6 +86,31 @@
 .detail-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:15px 22px;font-size:11px;color:var(--muted)}pre{margin:0 22px 22px;padding:18px;background:#0b0e13;border:1px solid var(--line);border-radius:6px;font-size:12px;line-height:1.65;max-height:360px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
 .notice,.pause-note{padding:14px 20px;background:#302317;color:#ffc79f;border:1px solid #745033;border-radius:8px;margin-top:14px;font-size:14px;line-height:1.6}.notice{display:flex;align-items:center;gap:20px}.notice button{margin-left:auto;background:transparent;padding:2px 9px}.pause-note{margin:0;border:0;border-top:1px solid #745033;border-radius:0;padding:10px 28px;font-size:12px}
 footer{display:flex;justify-content:space-between;gap:20px;font-size:11px;color:#919ba9;margin-top:20px}footer .orange{font-size:8px;margin-right:6px}
+
+/* Zábavné efekty přes celou obrazovku */
+.effect-overlay{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;overflow:hidden;cursor:pointer;
+  background:radial-gradient(circle at center,#3fcfbf38 0%,#06090cdd 62%,#06090cf2 100%);animation:effect-fade 3.2s ease forwards}
+.effect-text{position:relative;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:0 4vw}
+.effect-text strong{font-size:clamp(54px,10.5vw,190px);font-weight:900;letter-spacing:.02em;line-height:1;
+  background:linear-gradient(100deg,#ffd29a 0%,#ff7a1f 35%,#ffb06e 55%,#3fcfbf 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 22px #ff7a1f88) drop-shadow(0 6px 0 #0008);animation:effect-pop 3.2s cubic-bezier(.2,1.4,.4,1) both}
+.effect-text span{font-family:ui-monospace,"Cascadia Code",Consolas,monospace;font-size:clamp(20px,3vw,46px);letter-spacing:.3em;color:#b6f5ea;
+  text-shadow:0 0 18px #40e0c8;animation:effect-sub 3.2s ease both}
+.effect-rings{position:absolute;inset:0;display:grid;place-items:center}
+.effect-rings span{grid-area:1/1;width:30vmin;height:30vmin;border-radius:50%;border:6px solid #3fcfbf;box-shadow:0 0 30px #40e0c8,inset 0 0 30px #40e0c8;
+  opacity:0;animation:effect-ring 1.6s ease-out forwards}
+.effect-rings span:nth-child(2){animation-delay:.25s;border-color:#ff7a1f;box-shadow:0 0 30px #ff7a1f,inset 0 0 30px #ff7a1f}
+.effect-rings span:nth-child(3){animation-delay:.5s}
+.effect-confetti{position:absolute;inset:0;display:grid;place-items:center}
+.effect-confetti i{grid-area:1/1;width:12px;height:20px;border-radius:2px;background:var(--color);opacity:0;
+  animation:effect-confetti 2.4s cubic-bezier(.15,.7,.3,1) var(--delay) forwards}
+@keyframes effect-fade{0%{opacity:0}7%{opacity:1}86%{opacity:1}100%{opacity:0}}
+@keyframes effect-pop{0%{transform:scale(.15) rotate(-12deg);opacity:0}14%{transform:scale(1.18) rotate(4deg);opacity:1}22%{transform:scale(.94) rotate(-2deg)}
+  30%{transform:scale(1.04) rotate(1deg)}38%,100%{transform:scale(1) rotate(0)}}
+@keyframes effect-sub{0%,18%{opacity:0;transform:translateY(16px)}30%,100%{opacity:1;transform:none}}
+@keyframes effect-ring{0%{opacity:.95;transform:scale(.2)}100%{opacity:0;transform:scale(4.2)}}
+@keyframes effect-confetti{0%{opacity:1;transform:translate(0,0) rotate(0) scale(.6)}75%{opacity:1}100%{opacity:0;transform:translate(var(--dx),calc(var(--dy) + 12vmax)) rotate(var(--rot)) scale(1)}}
+@media(prefers-reduced-motion:reduce){.effect-text strong,.effect-text span,.effect-rings span,.effect-confetti i{animation:none}.effect-rings,.effect-confetti{display:none}}
 
 @media(min-width:1800px){:root{font-size:18px}.event-row strong{font-size:18px}.preview{font-size:14px}.event-meta{font-size:14px}.event-list,.detail-empty{height:480px}}
 @media(max-width:1100px){.venue-card{grid-template-columns:1fr;gap:24px}.page{padding:28px 26px}.readonly{display:none}.connection{padding:22px}.connection-actions{flex-wrap:wrap}.connection-actions .small{width:100%;margin:6px 0 0}.metrics{gap:8px}.metrics .field-label{font-size:9px}.inspector-toolbar{align-items:flex-start;flex-direction:column}.filters{padding:18px 22px}.filters select{min-width:140px}.connection-grid{gap:12px}.pane-heading{padding:0 15px}.modes{grid-template-columns:1fr 1fr}}

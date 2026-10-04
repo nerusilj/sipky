@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { caller, useCaller } from '../caller/caller.ts';
 import { MAX_VISIT_SCORE, scoreAnnouncement } from '../caller/czechNumbers.ts';
 import { VOICES } from '../caller/voices.ts';
+import { EFFECT_IDS, EFFECTS } from '../effects/effectRules.ts';
+import { triggerEffect } from '../effects/effects.ts';
 import { useCallerEnabled, useCallerVoice } from '../settings.ts';
 
 const QUICK = [180, 140, 100, 60, 45, 26, 0];
@@ -27,14 +29,22 @@ export default function CallerPanel() {
       {state.sequence ? <button onClick={() => caller.stop()}>■ Zastavit</button>
         : <button onClick={() => void caller.playRange(0, MAX_VISIT_SCORE)}>Přehrát vše 0–{MAX_VISIT_SCORE}</button>}
     </div>
-    <div className="caller-quick">{QUICK.map(n => <button key={n} className={state.playing === n ? 'playing' : ''} onClick={() => void caller.play(n)}>{n}</button>)}</div>
+    <div className="caller-quick">{QUICK.map(n => <button key={n} className={state.playing === String(n) ? 'playing' : ''} onClick={() => void caller.play(n)}>{n}</button>)}</div>
+    <div className="caller-effects">
+      <span className="field-label">EFEKTY</span>
+      {EFFECT_IDS.map(id => <span key={id} className="caller-effect">
+        <strong>{EFFECTS[id].name}</strong><span className="muted small">{EFFECTS[id].trigger}</span>
+        <button onClick={() => triggerEffect(id)}>▶ Efekt s hláškou</button>
+        <button onClick={() => void caller.playPhrase(EFFECTS[id].phrase)}>Jen hláška</button>
+      </span>)}
+    </div>
     {state.playing !== undefined && <p className="small muted">Hraje: {state.playing}</p>}
     {state.error && <div className="notice" role="status"><span>{state.error}</span></div>}
     <div className="caller-log">
       <span className="field-label">OHLÁŠENÁ KOLA Z TERČE</span>
       {state.log.length ? <ol>{state.log.map(visit => <li key={visit.at}>
         <time>{new Date(visit.at).toLocaleTimeString('cs-CZ', { hour12: false })}</time>
-        <span className="caller-darts">{visit.darts.map(dart => dart.name).join(' · ')}</span>
+        <span className="caller-darts">{visit.darts.map(dart => dart.name).join(' · ')}{visit.effect && <em> · {visit.effect}</em>}</span>
         <strong>{visit.total}</strong>
         <button className="text-button" onClick={() => void caller.play(visit.total)} aria-label={`Přehrát ${visit.total}`}>▶</button>
       </li>)}</ol> : <p className="small muted">Zatím žádné kolo. Po třetí šipce nebo vytažení šipek se tu objeví součet.</p>}

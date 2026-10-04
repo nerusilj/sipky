@@ -4,9 +4,11 @@ import DartMark from '../components/DartMark.tsx';
 import { boardConnection, useConnection } from '../connection.ts';
 import { DART_THEMES } from '../dartThemes.ts';
 import type { DartThemeId } from '../dartThemes.ts';
-import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setCallerEnabled, setCallerVoice, setDartTheme, setVenueName,
-  useCallerEnabled, useCallerVoice, useDartTheme, useVenueName } from '../settings.ts';
+import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setCallerEnabled, setCallerVoice, setDartTheme, setEffectEnabled, setEffectsEnabled, setVenueName,
+  useCallerEnabled, useCallerVoice, useDartTheme, useDisabledEffects, useEffectsEnabled, useVenueName } from '../settings.ts';
 import { caller } from '../caller/caller.ts';
+import { EFFECT_IDS, EFFECTS } from '../effects/effectRules.ts';
+import { triggerEffect } from '../effects/effects.ts';
 import { VOICES } from '../caller/voices.ts';
 import type { VoiceId } from '../caller/voices.ts';
 
@@ -20,6 +22,8 @@ export default function SettingsPage() {
   const dartTheme = useDartTheme();
   const callerEnabled = useCallerEnabled();
   const callerVoice = useCallerVoice();
+  const effectsEnabled = useEffectsEnabled();
+  const disabledEffects = useDisabledEffects();
   const [address, setAddress] = useState(connection.address);
   const [venueDraft, setVenueDraft] = useState(venueName);
   const [notice, setNotice] = useState('');
@@ -63,6 +67,22 @@ export default function SettingsPage() {
         </div>)}
       </div>
       <p className="small muted">Hlasy: {VOICE_IDS.map(id => VOICES[id].credit).join(' · ')}.</p>
+    </section>
+    <section className="settings-card card" aria-labelledby="effects-title">
+      <div className="caller-head">
+        <div><span className="eyebrow">ZÁBAVA</span><h2 id="effects-title">Zábavné efekty</h2></div>
+        <label className="switch"><input type="checkbox" checked={effectsEnabled} onChange={event => setEffectsEnabled(event.target.checked)} />
+          <span>{effectsEnabled ? 'Efekty zapnuté' : 'Efekty vypnuté'}</span></label>
+      </div>
+      <ul className="effect-list">
+        {EFFECT_IDS.map(id => <li key={id} className={effectsEnabled ? '' : 'muted-row'}>
+          <label className="switch"><input type="checkbox" checked={!disabledEffects.includes(id)} disabled={!effectsEnabled}
+            onChange={event => setEffectEnabled(id, event.target.checked)} /><strong>{EFFECTS[id].name}</strong></label>
+          <span className="muted small">{EFFECTS[id].trigger}{EFFECTS[id].replacesScore ? ' · nahradí hlášení součtu' : ''}</span>
+          <span className="spacer"></span>
+          <button className="text-button" onClick={() => triggerEffect(id)}>▶ Vyzkoušet</button>
+        </li>)}
+      </ul>
     </section>
     <ConnectionPanel address={address} state={connection.state} onAddress={setAddress} onConnect={connect} onDisconnect={() => boardConnection.disconnect()} />
     {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Zavřít oznámení">×</button></div>}

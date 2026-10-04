@@ -4,7 +4,25 @@ import { czechNumber, scoreAnnouncement } from '../src/caller/czechNumbers.ts';
 import { parseDart, VisitTracker } from '../src/caller/visitTracker.ts';
 import type { BoardEvent } from '../src/caller/visitTracker.ts';
 import { scoreSoundUrl } from '../src/caller/caller.ts';
-import { normalizeVoice } from '../src/settings.ts';
+import { normalizeVoice, parseDisabledEffects } from '../src/settings.ts';
+import { phraseSoundUrl } from '../src/caller/phrases.ts';
+import { matchEffects } from '../src/effects/effectRules.ts';
+
+test('Ambrožovina: kolo S1, S20, S5 v libovolném pořadí, jen když je efekt zapnutý', () => {
+  const dart = (number: number, multiplier = 1) => ({ name: `${'SDT'[multiplier - 1] ?? 'M'}${number}`, number, multiplier, score: number * multiplier });
+  const visit = (...darts: ReturnType<typeof dart>[]): BoardEvent => ({ kind: 'visit', darts, total: darts.reduce((s, d) => s + d.score, 0) });
+  const on = () => true;
+  assert.deepEqual(matchEffects(visit(dart(1), dart(20), dart(5)), on), ['ambrozovina']);
+  assert.deepEqual(matchEffects(visit(dart(5), dart(1), dart(20)), on), ['ambrozovina']);
+  for (const other of [visit(dart(1, 3), dart(20), dart(5)), visit(dart(20), dart(5)), visit(dart(20), dart(6), dart(0, 0)), visit(dart(1), dart(20), dart(20))]) {
+    assert.deepEqual(matchEffects(other, on), []);
+  }
+  assert.deepEqual(matchEffects({ kind: 'dart', index: 0, dart: dart(1) }, on), []);
+  assert.deepEqual(matchEffects(visit(dart(1), dart(20), dart(5)), () => false), []);
+  assert.equal(phraseSoundUrl('ambrozovina', 'kasandra'), '/sounds/cs/kasandra/fun/ambrozovina.wav');
+  assert.deepEqual(parseDisabledEffects('["ambrozovina","neznamy",1,"ambrozovina"]'), ['ambrozovina']);
+  assert.deepEqual(parseDisabledEffects('nejson'), []);
+});
 
 test('nahrávka hlášení podle hlasu; neznámý hlas se vrátí na Jirku', () => {
   assert.equal(scoreSoundUrl(180, 'kasandra'), '/sounds/cs/kasandra/score/180.wav');

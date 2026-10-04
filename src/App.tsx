@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ComponentType } from 'react';
 import DartMark from './components/DartMark.tsx';
+import EffectOverlay from './components/EffectOverlay.tsx';
 import { DartIcon, DevIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
 import { boardConnection, useConnection } from './connection.ts';
 import { useDartTheme, useVenueName } from './settings.ts';
@@ -48,5 +49,6 @@ export default function App() {
       {section === 'settings' && <SettingsPage />}
       {section === 'dev' && <DevPage onSettings={() => setSection('settings')} />}
     </main>
+    <EffectOverlay />
   </div>;
 }
