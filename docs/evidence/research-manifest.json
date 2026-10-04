@@ -1,0 +1,61 @@
+{
+  "researchDate": "2026-10-03",
+  "authenticated": false,
+  "realMessagesReceived": 0,
+  "sources": [
+    {
+      "url": "https://api.autodarts.com/.well-known/openid-configuration",
+      "httpStatus": 200,
+      "downloadedAt": "2026-10-03T16:35:02.685Z",
+      "sha256": "094b6fc97a08d3e1870e4414631c7a7da2b4009700ed07db0499944d2e8fbdef"
+    },
+    {
+      "url": "https://api.autodarts.io/.well-known/openid-configuration",
+      "httpStatus": 200,
+      "downloadedAt": "2026-10-03T16:35:02.685Z",
+      "sha256": "af64e1832f64ec177bb1df2ab1d958a4004a766a2d177806d2a9f4a87a224022"
+    },
+    {
+      "url": "https://play.autodarts.com/",
+      "httpStatus": 200,
+      "downloadedAt": "2026-10-03T16:47:01.748Z",
+      "sha256": "76214c696cb4308d541a72805d513b83ccb4bbacab233422b52e7b6cf8fbc2a3"
+    },
+    {
+      "url": "https://play.autodarts.com/assets/clients-CqbIjROi.js",
+      "httpStatus": 200,
+      "downloadedAt": "2026-10-03T16:47:40.359Z",
+      "sha256": "2bdeda6d77a77f402886e5e0fc788d83800afa57e34f301ce8663fc7cda72b8b"
+    },
+    {
+      "url": "https://play.autodarts.com/assets/src-DxMWx8xG.js",
+      "httpStatus": 200,
+      "downloadedAt": "2026-10-03T17:39:28.474Z",
+      "sha256": "bb586334cfb86d94128943e241ef65a51c37ffa8759b1ea1a8fad526b87ed843"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/inventwo/ioBroker.autodarts/main/lib/cloud.js",
+      "httpStatus": 200,
+      "downloadedAt": "2026-10-03T16:35:03.018Z",
+      "sha256": "cfd68a02101888d3eb9ef2b5375d0f07dad10da88f4b3c23dfa0cc4d5d0a467a"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/creazy231/tools-for-autodarts/main/entrypoints/auth-cookie.ts",
+      "httpStatus": 200,
+      "downloadedAt": "2026-10-03T16:35:48.912Z",
+      "sha256": "87f7b7612b0190dad7fe84190380e4d2719ce2f424f8ce9bc6d86c35eb29644f"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/creazy231/tools-for-autodarts/main/utils/websocket-helpers.ts",
+      "httpStatus": 200,
+      "downloadedAt": "2026-10-03T16:35:48.913Z",
+      "sha256": "1641c4d26429c158ca617588d27d696e0834c0cce40182edf55eaab2102100b4"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/thomasasen/autodarts_local_tournament/main/docs/autodarts-api-capabilities.md",
+      "httpStatus": 200,
+      "downloadedAt": "2026-10-03T16:35:48.913Z",
+      "sha256": "d6f6878844f2b52221b72015a61a370d998e5eb5ad0a6ac4d9ac0f54b9773ce7"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "token_endpoint_auth_methods_supported": [
+    "none",
+    "client_secret_post"
+  ],
+  "code_challenge_methods_supported": [
+    "S256"
+  ],
+  "jwks_uri": "https://api.autodarts.com/auth/.well-known/jwks.json",
+  "authorization_endpoint": "https://api.autodarts.com/auth/v1/oauth/authorize",
+  "token_endpoint": "https://api.autodarts.com/auth/v1/exchange",
+  "revocation_endpoint": "https://api.autodarts.com/auth/v1/logout",
+  "grant_types_supported": [
+    "authorization_code",
+    "client_credentials",
+    "urn:ietf:params:oauth:grant-type:device_code",
+    "password",
+    "otp",
+    "refresh_token"
+  ],
+  "providers_supported": [
+    "google",
+    "apple"
+  ],
+  "issuer": "https://api.autodarts.com/auth",
+  "device_authorization_endpoint": "https://api.autodarts.com/auth/v1/device/code",
+  "userinfo_endpoint": "https://api.autodarts.com/auth/v1/userinfo",
+  "subject_types_supported": [
+    "public"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "RS256"
+  ],
+  "scopes_supported": [
+    "openid",
+    "profile",
+    "email"
+  ]
+}
