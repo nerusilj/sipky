@@ -1,10 +1,13 @@
 import { useSyncExternalStore } from 'react';
 import { DEFAULT_DART_THEME, isDartThemeId } from './dartThemes.ts';
 import type { DartThemeId } from './dartThemes.ts';
+import { DEFAULT_VOICE, isVoiceId } from './caller/voices.ts';
+import type { VoiceId } from './caller/voices.ts';
 
 const VENUE_KEY = 'sipky.venueName';
 const DART_KEY = 'sipky.dartTheme';
 const CALLER_KEY = 'sipky.callerEnabled';
+const VOICE_KEY = 'sipky.callerVoice';
 export const DEFAULT_VENUE_NAME = 'HOLICE';
 export const MAX_VENUE_NAME = 32;
 
@@ -13,6 +16,7 @@ let venueName = normalizeVenueName(read(VENUE_KEY) ?? '');
 let dartTheme: DartThemeId = normalizeDartTheme(read(DART_KEY));
 // Hlasatel je ve výchozím stavu zapnutý.
 let callerEnabled = read(CALLER_KEY) !== 'false';
+let callerVoice: VoiceId = normalizeVoice(read(VOICE_KEY));
 const listeners = new Set<() => void>();
 
 function read(key: string): string | null {
@@ -46,6 +50,16 @@ export function setCallerEnabled(value: boolean): void {
   write(CALLER_KEY, String(value));
 }
 export function isCallerEnabled(): boolean { return callerEnabled; }
+
+export function normalizeVoice(value: unknown): VoiceId {
+  return isVoiceId(value) ? value : DEFAULT_VOICE;
+}
+export function setCallerVoice(value: VoiceId): void {
+  callerVoice = normalizeVoice(value);
+  write(VOICE_KEY, callerVoice);
+}
+export function getCallerVoice(): VoiceId { return callerVoice; }
+export function useCallerVoice(): VoiceId { return useSyncExternalStore(subscribe, () => callerVoice); }
 
 export function useVenueName(): string { return useSyncExternalStore(subscribe, () => venueName); }
 export function useCallerEnabled(): boolean { return useSyncExternalStore(subscribe, () => callerEnabled); }

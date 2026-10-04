@@ -3,6 +3,17 @@ import assert from 'node:assert/strict';
 import { czechNumber, scoreAnnouncement } from '../src/caller/czechNumbers.ts';
 import { parseDart, VisitTracker } from '../src/caller/visitTracker.ts';
 import type { BoardEvent } from '../src/caller/visitTracker.ts';
+import { scoreSoundUrl } from '../src/caller/caller.ts';
+import { normalizeVoice } from '../src/settings.ts';
+
+test('nahrávka hlášení podle hlasu; neznámý hlas se vrátí na Jirku', () => {
+  assert.equal(scoreSoundUrl(180, 'kasandra'), '/sounds/cs/kasandra/score/180.wav');
+  assert.equal(scoreSoundUrl(0, 'jirka'), '/sounds/cs/jirka/score/0.wav');
+  assert.throws(() => scoreSoundUrl(181, 'jirka'));
+  assert.throws(() => scoreSoundUrl(60, '../x' as never));
+  assert.equal(normalizeVoice('kasandra'), 'kasandra');
+  for (const bad of [null, '', 'hasOwnProperty', 'pepa']) assert.equal(normalizeVoice(bad), 'jirka');
+});
 
 test('čísla se vysloví česky', () => {
   const cases: [number, string][] = [[0, 'nula'], [1, 'jedna'], [2, 'dva'], [15, 'patnáct'], [20, 'dvacet'], [26, 'dvacet šest'],

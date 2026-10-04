@@ -4,7 +4,13 @@ import DartMark from '../components/DartMark.tsx';
 import { boardConnection, useConnection } from '../connection.ts';
 import { DART_THEMES } from '../dartThemes.ts';
 import type { DartThemeId } from '../dartThemes.ts';
-import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setDartTheme, setVenueName, useDartTheme, useVenueName } from '../settings.ts';
+import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setCallerEnabled, setCallerVoice, setDartTheme, setVenueName,
+  useCallerEnabled, useCallerVoice, useDartTheme, useVenueName } from '../settings.ts';
+import { caller } from '../caller/caller.ts';
+import { VOICES } from '../caller/voices.ts';
+import type { VoiceId } from '../caller/voices.ts';
+
+const VOICE_IDS = Object.keys(VOICES) as VoiceId[];
 
 const THEME_IDS = Object.keys(DART_THEMES) as DartThemeId[];
 
@@ -12,6 +18,8 @@ export default function SettingsPage() {
   const connection = useConnection();
   const venueName = useVenueName();
   const dartTheme = useDartTheme();
+  const callerEnabled = useCallerEnabled();
+  const callerVoice = useCallerVoice();
   const [address, setAddress] = useState(connection.address);
   const [venueDraft, setVenueDraft] = useState(venueName);
   const [notice, setNotice] = useState('');
@@ -40,6 +48,21 @@ export default function SettingsPage() {
             onClick={() => setDartTheme(id)}><DartMark theme={id} width={96} /><span>{DART_THEMES[id].name}</span></button>)}
         </div>
       </div>
+    </section>
+    <section className="settings-card card" aria-labelledby="voice-title">
+      <div className="caller-head">
+        <div><span className="eyebrow">HLASATEL</span><h2 id="voice-title">Hlas hlášení</h2></div>
+        <label className="switch"><input type="checkbox" checked={callerEnabled} onChange={event => setCallerEnabled(event.target.checked)} />
+          <span>{callerEnabled ? 'Hlásit součet kola' : 'Hlášení vypnuto'}</span></label>
+      </div>
+      <div className="voice-options" role="radiogroup" aria-labelledby="voice-title">
+        {VOICE_IDS.map(id => <div key={id} className={`voice-option ${callerVoice === id ? 'selected' : ''}`}>
+          <button role="radio" aria-checked={callerVoice === id} className="voice-pick" onClick={() => setCallerVoice(id)}>
+            <strong>{VOICES[id].name}</strong><span>{VOICES[id].kind}</span></button>
+          <button className="text-button" onClick={() => void caller.play(180, id)} aria-label={`Ukázka hlasu ${VOICES[id].name}`}>▶ Ukázka</button>
+        </div>)}
+      </div>
+      <p className="small muted">Hlasy: {VOICE_IDS.map(id => VOICES[id].credit).join(' · ')}.</p>
     </section>
     <ConnectionPanel address={address} state={connection.state} onAddress={setAddress} onConnect={connect} onDisconnect={() => boardConnection.disconnect()} />
     {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Zavřít oznámení">×</button></div>}

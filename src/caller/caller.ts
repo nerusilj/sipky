@@ -1,16 +1,20 @@
 import { useSyncExternalStore } from 'react';
 import { MAX_VISIT_SCORE } from './czechNumbers.ts';
+import { isVoiceId } from './voices.ts';
+import type { VoiceId } from './voices.ts';
 import type { BoardEvent, Dart } from './visitTracker.ts';
+import { getCallerVoice } from '../settings.ts';
 
 export interface AnnouncedVisit { at: number; darts: Dart[]; total: number }
 export interface CallerSnapshot { playing?: number; sequence: boolean; error?: string; log: readonly AnnouncedVisit[] }
 
 const LOG_SIZE = 20;
 
-// Nahrávky leží v public/sounds/cs/score; lze je nahradit vlastními se stejnými názvy.
-export function scoreSoundUrl(total: number): string {
+// Nahrávky leží v public/sounds/cs/<hlas>/score; lze je nahradit vlastními se stejnými názvy.
+export function scoreSoundUrl(total: number, voice: VoiceId): string {
   if (!Number.isInteger(total) || total < 0 || total > MAX_VISIT_SCORE) throw new RangeError(`Součet kola mimo rozsah: ${total}`);
-  return `/sounds/cs/score/${total}.wav`;
+  if (!isVoiceId(voice)) throw new RangeError(`Neznámý hlas: ${String(voice)}`);
+  return `/sounds/cs/${voice}/score/${total}.wav`;
 }
 
 // Hlasatel: po ohlášeném kole přehraje součet, pokud je zapnutý; v DEV umí přehrát libovolné hlášení.
@@ -29,10 +33,10 @@ class Caller {
     if (enabled) void this.play(event.total);
   }
 
-  // Přehraje jedno hlášení; předchozí přeruší. Vrací se po dohrání nebo chybě.
-  play(total: number): Promise<void> {
+  // Přehraje jedno hlášení zvoleným (nebo zadaným) hlasem; předchozí přeruší. Vrací se po dohrání nebo chybě.
+  play(total: number, voice: VoiceId = getCallerVoice()): Promise<void> {
     this.stopSequence?.();
-    return this.playOne(total);
+    return this.playOne(total, voice);
   }
 
   // Přehraje postupně hlášení from..to (kontrola nahrávek v DEV).
@@ -41,7 +45,8 @@ class Caller {
     let stopped = false;
     this.stopSequence = () => { stopped = true; this.stopSequence = undefined; this.update({ sequence: false }); };
     this.update({ sequence: true });
-    for (let n = from; n <= to && !stopped; n++) await this.playOne(n);
+    const voice = getCallerVoice();
+    for (let n = from; n <= to && !stopped; n++) await this.playOne(n, voice);
     if (!stopped) this.stopSequence?.();
   }
 
@@ -51,9 +56,9 @@ class Caller {
     this.update({ playing: undefined });
   }
 
-  private playOne(total: number): Promise<void> {
+  private playOne(total: number, voice: VoiceId): Promise<void> {
     this.audio?.pause();
-    const audio = new Audio(scoreSoundUrl(total));
+    const audio = new Audio(scoreSoundUrl(total, voice));
     this.audio = audio;
     this.update({ playing: total, error: undefined });
     return new Promise(resolve => {
