@@ -25,7 +25,7 @@ export default function App() {
 
   return <div className="shell">
     <header className="topbar">
-      <div className="brand"><BoardLogo /><span>Darts CZ</span></div>
+      <div className="brand"><BoardLogo /><span>HOLICE-Šipky</span></div>
       <div className="topbar-status">
         <span className={`dot ${online ? '' : 'amber-dot'}`}></span>
         <div><strong className={online ? 'online' : ''}>{online ? 'Autodarts připojeno' : 'Autodarts nepřipojeno'}</strong><span>Board: {connection.address}</span></div>

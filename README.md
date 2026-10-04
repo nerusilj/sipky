@@ -1,4 +1,6 @@
-# Darts CZ · v0.1 WebSocket inspektor
+# HOLICE-Šipky · v0.1
+
+Lokální šipkařská aplikace pro naši hospodu. Interní název projektu je `darts-cz`.
 
 Lehký desktopový základ v Tauri 2, Reactu, TypeScriptu a Vite. Rozhraní je česky, tmavé s oranžovým akcentem. Žádná herní logika ani databáze.
 

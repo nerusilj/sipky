@@ -14,7 +14,7 @@ async fn save_session(app: tauri::AppHandle, jsonl: String) -> Result<bool, Stri
     tauri::async_runtime::spawn_blocking(move || {
         let selected = app.dialog().file()
             .set_title("Uložit záznam WebSocket zpráv")
-            .set_file_name("darts-cz-session.jsonl")
+            .set_file_name("holice-sipky-zaznam.jsonl")
             .add_filter("Záznam JSONL", &["jsonl"])
             .blocking_save_file();
         let Some(selected) = selected else { return Ok(false); };
@@ -34,5 +34,5 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![save_session])
         .run(tauri::generate_context!())
-        .expect("Aplikaci Darts CZ nelze spustit");
+        .expect("Aplikaci HOLICE-Šipky nelze spustit");
 }

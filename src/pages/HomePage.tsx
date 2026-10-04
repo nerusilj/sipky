@@ -23,7 +23,7 @@ export default function HomePage() {
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
   const online = connection.state === 'connected';
   return <div className="page">
-    <div className="page-heading"><div><h1>Vítejte v Darts CZ</h1><p>Vyberte herní mód a začněte hrát.</p></div></div>
+    <div className="page-heading"><div><h1>Vítejte u šipek</h1><p>Vyberte herní mód a začněte hrát.</p></div></div>
     <div className="modes">
       {MODES.map(mode => <button key={mode.id} className={`mode-tile ${mode.id}`} disabled title="Herní režimy přijdou v další verzi">
         <TargetArt /><strong>{mode.title}</strong><span>{mode.subtitle}</span>
