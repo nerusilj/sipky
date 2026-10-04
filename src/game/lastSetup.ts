@@ -1,11 +1,17 @@
-import { DEFAULT_NEXT_LEG_ORDER } from './x01.ts';
+import { DEFAULT_NEXT_LEG_ORDER, NO_ROUND_LIMIT } from './x01.ts';
 import type { NextLegOrder } from './x01.ts';
 
 // Sestava poslední hry (hráči a pravidla), aby se nová hra předvyplnila.
-export interface LastSetup { playerIds: string[]; randomOrder: boolean; legsToWin: number; doubleOut: boolean; nextLegOrder: NextLegOrder }
+export interface LastSetup {
+  playerIds: string[]; randomOrder: boolean; legsToWin: number; doubleOut: boolean; nextLegOrder: NextLegOrder;
+  maxRounds: number; minFinishers: number;
+}
 
 const KEY = 'sipky.lastGameSetup';
-export const DEFAULT_SETUP: LastSetup = { playerIds: [], randomOrder: true, legsToWin: 1, doubleOut: true, nextLegOrder: DEFAULT_NEXT_LEG_ORDER };
+export const ROUND_LIMITS = [NO_ROUND_LIMIT, 10, 15, 20, 30];
+export const DEFAULT_SETUP: LastSetup = {
+  playerIds: [], randomOrder: true, legsToWin: 1, doubleOut: true, nextLegOrder: DEFAULT_NEXT_LEG_ORDER, maxRounds: NO_ROUND_LIMIT, minFinishers: 1,
+};
 
 export function parseLastSetup(json: string | null): LastSetup {
   try {
@@ -18,6 +24,8 @@ export function parseLastSetup(json: string | null): LastSetup {
       legsToWin: Number.isInteger(value.legsToWin) && value.legsToWin! >= 0 && value.legsToWin! <= 5 ? value.legsToWin! : DEFAULT_SETUP.legsToWin,
       doubleOut: typeof value.doubleOut === 'boolean' ? value.doubleOut : DEFAULT_SETUP.doubleOut,
       nextLegOrder: value.nextLegOrder === 'rotate' || value.nextLegOrder === 'loserFirst' ? value.nextLegOrder : DEFAULT_SETUP.nextLegOrder,
+      maxRounds: ROUND_LIMITS.includes(value.maxRounds as number) ? value.maxRounds! : DEFAULT_SETUP.maxRounds,
+      minFinishers: Number.isInteger(value.minFinishers) && value.minFinishers! >= 1 && value.minFinishers! <= 7 ? value.minFinishers! : DEFAULT_SETUP.minFinishers,
     };
   } catch { return DEFAULT_SETUP; }
 }

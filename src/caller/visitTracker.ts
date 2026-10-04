@@ -1,7 +1,8 @@
 // Události hodů odvozené ze zpráv Board Manageru {type:"state", data:{throws, event, status, numThrows}}.
 // Formát zatím vychází z komunitních zdrojů; ověřit na skutečném terči (docs/board-manager-local.md).
 
-export interface Dart { name: string; number: number; multiplier: number; score: number }
+// distance: vzdálenost od středu v poměru k vnějšímu okraji doublu (z coords terče, pokud je pošle).
+export interface Dart { name: string; number: number; multiplier: number; score: number; distance?: number }
 export type BoardEvent =
   | { kind: 'dart'; index: number; dart: Dart }
   | { kind: 'visit'; darts: Dart[]; total: number };
@@ -18,7 +19,10 @@ export function parseDart(value: unknown): Dart | undefined {
   const valid = (n >= 0 && n <= 20 && m >= 0 && m <= 3) || (n === 25 && m >= 0 && m <= 2);
   if (!valid) return undefined;
   const score = n * m;
-  return { name: typeof name === 'string' ? name : String(score), number: n, multiplier: m, score };
+  const dart: Dart = { name: typeof name === 'string' ? name : String(score), number: n, multiplier: m, score };
+  const coords = (value as { coords?: { x?: unknown; y?: unknown } }).coords;
+  if (coords && Number.isFinite(coords.x) && Number.isFinite(coords.y)) dart.distance = Math.hypot(coords.x as number, coords.y as number);
+  return dart;
 }
 
 // Sleduje jedno kolo: hlásí každou novou šipku a součet kola právě jednou,

@@ -137,6 +137,14 @@ footer{display:flex;justify-content:space-between;gap:20px;font-size:11px;color:
 .score-darts span.empty{color:#4a505a}.score-card.active .score-darts span:not(.empty){color:#ffb06e;border-color:#5a3418}
 .score-stats{display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:8px}.score-stats div{display:flex;flex-direction:column;gap:4px}.score-stats strong{font-size:18px}
 .score-stats .checkout strong{color:#ffb06e;font-size:15px}.bust{color:#ff8a70}.checkout-hit{color:var(--green)}
+.score-card{position:relative}.score-card.done{opacity:.6}.score-card.done .score-remaining{color:var(--green)}
+.place-badge{position:absolute;top:12px;right:14px;font-size:12px;font-weight:800;color:#06210f;background:var(--green);padding:3px 9px;border-radius:999px}
+.bulloff{margin:0 0 14px;padding:18px 22px;border:2px solid var(--orange);background:linear-gradient(150deg,#2a170b,#13161b 65%);display:flex;flex-direction:column;gap:12px}
+.bulloff h2{font-size:26px;margin:6px 0 4px}
+.bulloff-throws{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.bulloff-player{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#101317;border:1px solid var(--line);border-radius:10px}
+.bulloff-player.current{border-color:var(--orange)}.bulloff-player strong{flex:1}.bulloff-dart{font-weight:800;color:#ffb06e;min-width:56px;text-align:right}
+.bulloff-keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.bulloff-keys button{padding:16px;font-size:18px}.bulloff-keys .miss{color:#ff8a70}
 .game-actions{display:flex;gap:10px;align-items:center;margin:16px 0}.game-actions button{padding:12px 20px}
 .keypad{padding:16px;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
 .keypad-mods{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.keypad-mods button.selected{background:var(--orange);color:#17100b;border-color:var(--orange)}

@@ -1,14 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addDart, commitVisit, createGame, dartLabel, deriveState, ENDLESS, evaluateVisit, makeDart, nextLegOrder, setVisit, threeDartAverage, undo } from '../src/game/x01.ts';
+import { addDart, commitVisit, compareBullThrows, createGame, dartLabel, decideBullOff, deriveState, ENDLESS, evaluateVisit, makeDart, nextLegOrder, setVisit,
+  threeDartAverage, undo } from '../src/game/x01.ts';
 import type { X01Game } from '../src/game/x01.ts';
 import { suggestCheckout } from '../src/game/checkout.ts';
 import { shuffle } from '../src/game/order.ts';
 import { DEFAULT_SETUP, parseLastSetup } from '../src/game/lastSetup.ts';
 
 test('sestava poslední hry: platné hodnoty se převezmou, neplatné nahradí výchozími', () => {
-  assert.deepEqual(parseLastSetup('{"playerIds":["a","b","a",3],"randomOrder":false,"legsToWin":3,"doubleOut":false,"nextLegOrder":"rotate"}'),
-    { playerIds: ['a', 'b'], randomOrder: false, legsToWin: 3, doubleOut: false, nextLegOrder: 'rotate' });
+  assert.deepEqual(parseLastSetup('{"playerIds":["a","b","a",3],"randomOrder":false,"legsToWin":3,"doubleOut":false,"nextLegOrder":"rotate","maxRounds":15,"minFinishers":2}'),
+    { playerIds: ['a', 'b'], randomOrder: false, legsToWin: 3, doubleOut: false, nextLegOrder: 'rotate', maxRounds: 15, minFinishers: 2 });
+  assert.equal(parseLastSetup('{"maxRounds":13}').maxRounds, 0);
   assert.equal(parseLastSetup('{"nextLegOrder":"nahodne"}').nextLegOrder, 'loserFirst');
   assert.deepEqual(parseLastSetup('{"legsToWin":9,"randomOrder":"ano"}'), DEFAULT_SETUP);
   assert.deepEqual(parseLastSetup(null), DEFAULT_SETUP);
@@ -101,6 +103,71 @@ test('pořadí dalšího legu: od posledního (vítěz poslední) nebo střídá
   s = deriveState(play(createGame({ startScore: 301, doubleOut: true, legsToWin: 3 }, three), ...leg, [MISS]));
   assert.equal(s.current, 1);
   assert.deepEqual(nextLegOrder([0, 1, 2], [0, 100, 100], 'loserFirst'), [1, 2, 0]);
+});
+
+test('zavřít musí 2 ze 3: leg pokračuje, kdo zavřel, nehází; vítěz je první; pořadí dalšího legu', () => {
+  const three = [...players, { id: 'c', name: 'Míša', color: '#00f' }];
+  let game = createGame({ startScore: 301, doubleOut: true, legsToWin: 3, minFinishers: 2 }, three);
+  // Jarda 180, Petr 180, Míša 60, Jarda zavře (121 = T20 T19 D2).
+  game = play(game, [T(20), T(20), T(20)], [T(20), T(20), T(20)], [S(20), S(20), S(20)], [T(20), T(19), D(2)]);
+  let s = deriveState(game);
+  assert.deepEqual(s.finished, [0]);
+  assert.deepEqual(s.legsWon, [0, 0, 0]);
+  assert.equal(s.current, 1);
+  // Petr mimo, Míša mimo, Jarda už nehází → zase Petr.
+  game = play(game, [MISS], [MISS]);
+  s = deriveState(game);
+  assert.equal(s.current, 1);
+  assert.equal(s.round, 3);
+  game = play(game, [T(20), T(19), D(2)]);
+  s = deriveState(game);
+  assert.deepEqual(s.lastLegPlaces, [0, 1]);
+  assert.deepEqual(s.legsWon, [1, 0, 0]);
+  assert.deepEqual(s.order, [2, 1, 0]);
+  assert.equal(s.leg, 2);
+  // Nastavení víc, než dává smysl, se omezí na počet hráčů − 1.
+  assert.equal(deriveState(createGame({ startScore: 301, doubleOut: true, legsToWin: 1, minFinishers: 5 }, three)).finishersNeeded, 2);
+});
+
+test('limit kol: po posledním kole rozhoz na střed; bull > 25 > ostatní, shoda se hází znovu', () => {
+  let game = createGame({ startScore: 501, doubleOut: true, legsToWin: 2, maxRounds: 2 }, players);
+  game = play(game, [MISS], [MISS], [MISS]);
+  let s = deriveState(game);
+  assert.equal(s.bullOff, undefined);
+  assert.equal(s.round, 2);
+  game = play(game, [MISS]);
+  s = deriveState(game);
+  assert.deepEqual(s.bullOff?.contenders, [0, 1]);
+  assert.equal(s.current, 0);
+  // Oba 25 → shoda, házejí znovu; pak Petr bull.
+  game = play(game, [makeDart(25, 1)], [makeDart(25, 1)]);
+  s = deriveState(game);
+  assert.equal(s.bullOff?.round, 2);
+  assert.equal(s.current, 0);
+  game = play(game, [S(20)], [BULL]);
+  s = deriveState(game);
+  assert.equal(s.bullOff, undefined);
+  assert.deepEqual(s.legsWon, [0, 1]);
+  assert.equal(s.lastLegByBullOff, true);
+  assert.deepEqual(s.order, [0, 1]);
+  assert.equal(s.dartsThrown[1], 6);
+});
+
+test('rozhoz: vzdálenost od středu rozhodne mezi ostatními šipkami; ruční rozhodnutí a krok zpět', () => {
+  const near = { ...S(20), distance: 0.2 }, far = { ...S(1), distance: 0.6 };
+  assert.ok(compareBullThrows(near, far) < 0);
+  assert.equal(compareBullThrows(S(20), S(1)), 0);
+  assert.ok(compareBullThrows(BULL, makeDart(25, 1)) < 0);
+  let game = createGame({ startScore: 501, doubleOut: true, legsToWin: 2, maxRounds: 1 }, players);
+  game = play(game, [MISS], [MISS]);
+  assert.ok(deriveState(game).bullOff);
+  game = play(game, [near], [far]);
+  assert.deepEqual(deriveState(game).legsWon, [1, 0]);
+  game = undo(undo(game));
+  game = decideBullOff(game, 1);
+  assert.deepEqual(deriveState(game).legsWon, [0, 1]);
+  assert.ok(deriveState(undo(game)).bullOff);
+  assert.equal(decideBullOff(createGame({ startScore: 501, doubleOut: true, legsToWin: 1 }, players), 0).visits.length, 0);
 });
 
 test('hra dokola: legy se počítají, začínající se střídá, zápas nikdy neskončí', () => {

@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import PlayerAvatar from '../components/PlayerAvatar.tsx';
 import { useConnection } from '../connection.ts';
 import { suggestCheckout } from '../game/checkout.ts';
-import { endGame, enterDart, nextPlayer, rematch, startGame, undoDart, useGame } from '../game/gameStore.ts';
-import { dartLabel, DARTS_PER_VISIT, ENDLESS, isEndless, makeDart, threeDartAverage } from '../game/x01.ts';
+import { decideBullOffWinner, endGame, enterDart, nextPlayer, rematch, startGame, undoDart, useGame } from '../game/gameStore.ts';
+import { dartLabel, DARTS_PER_VISIT, ENDLESS, isEndless, makeDart, NO_ROUND_LIMIT, threeDartAverage } from '../game/x01.ts';
 import type { Dart, NextLegOrder, X01Settings, X01State } from '../game/x01.ts';
-import { loadLastSetup, saveLastSetup } from '../game/lastSetup.ts';
+import { loadLastSetup, ROUND_LIMITS, saveLastSetup } from '../game/lastSetup.ts';
 import { shuffle } from '../game/order.ts';
 import type { Player } from '../players/playerList.ts';
 import { usePlayers } from '../players/players.ts';
@@ -39,16 +39,21 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
   const [doubleOut, setDoubleOut] = useState(last.doubleOut);
   const [randomOrder, setRandomOrder] = useState(last.randomOrder);
   const [legOrder, setLegOrder] = useState<NextLegOrder>(last.nextLegOrder);
+  const [maxRounds, setMaxRounds] = useState(last.maxRounds);
+  const [minFinishers, setMinFinishers] = useState(last.minFinishers);
   useEffect(() => setScore(initialScore), [initialScore]);
   const toggle = (id: string) => setSelected(list => list.includes(id) ? list.filter(other => other !== id)
     : list.length < MAX_GAME_PLAYERS ? [...list, id] : list);
   // Vybraní hráči nahoře v pořadí hry, ostatní pod nimi abecedně.
   const chosen = selected.flatMap(id => players.filter(player => player.id === id));
   const others = players.filter(player => !selected.includes(player.id)).sort((a, b) => a.name.localeCompare(b.name, 'cs'));
+  // Zavřít musí 1 až (počet hráčů − 1); zapamatovaná hodnota se omezí podle aktuálního výběru.
+  const maxFinishers = Math.max(1, chosen.length - 1);
+  const finishers = Math.min(minFinishers, maxFinishers);
   function start() {
-    saveLastSetup({ playerIds: chosen.map(player => player.id), randomOrder, legsToWin, doubleOut, nextLegOrder: legOrder });
+    saveLastSetup({ playerIds: chosen.map(player => player.id), randomOrder, legsToWin, doubleOut, nextLegOrder: legOrder, maxRounds, minFinishers });
     const order = randomOrder ? shuffle(chosen) : chosen;
-    if (order.length) startGame({ startScore: score, doubleOut, legsToWin, nextLegOrder: legOrder } satisfies X01Settings,
+    if (order.length) startGame({ startScore: score, doubleOut, legsToWin, nextLegOrder: legOrder, maxRounds, minFinishers: finishers } satisfies X01Settings,
       order.map(({ id, name, color }) => ({ id, name, color })));
   }
   return <div className="page">
@@ -84,6 +89,14 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
           <div className="segmented">{LEG_OPTIONS.map(n => <button key={n} className={legsToWin === n ? 'selected' : ''} onClick={() => setLegsToWin(n)}
             title={n === ENDLESS ? 'Hraje se dokola, legy se počítají, zápas nekončí' : `Vyhrává, kdo první vyhraje ${legCount(n)}`}>{n === ENDLESS ? '∞ Dokola' : n}</button>)}</div>
           <span className="small">{legsToWin === ENDLESS ? 'Legy se počítají, zápas ukončíte tlačítkem Konec hry.' : `Vyhrává, kdo první vyhraje ${legCount(legsToWin)}.`}</span></label>
+        <label>Max. kol na leg
+          <div className="segmented">{ROUND_LIMITS.map(n => <button key={n} className={maxRounds === n ? 'selected' : ''} onClick={() => setMaxRounds(n)}>
+            {n === NO_ROUND_LIMIT ? 'Bez limitu' : n}</button>)}</div>
+          <span className="small">{maxRounds === NO_ROUND_LIMIT ? 'Hraje se, dokud někdo nezavře.' : `Když po ${maxRounds}. kole nikdo nezavře, rozhodne rozhoz na střed.`}</span></label>
+        {chosen.length >= 3 && <label>Zavřít musí
+          <div className="segmented">{Array.from({ length: maxFinishers }, (_, i) => i + 1).map(n =>
+            <button key={n} className={finishers === n ? 'selected' : ''} onClick={() => setMinFinishers(n)}>{n === 1 ? '1 hráč' : `${n} hráči`}</button>)}</div>
+          <span className="small">{finishers === 1 ? 'Leg končí prvním zavřením.' : `Leg končí, až zavřou ${finishers} hráči; leg vyhrává první.`}</span></label>}
         <label>Další leg začíná
           <div className="segmented">
             <button className={legOrder === 'loserFirst' ? 'selected' : ''} onClick={() => setLegOrder('loserFirst')}>Od posledního</button>
@@ -120,6 +133,8 @@ function GameBoard({ state }: { state: X01State }) {
     <div className="game-head">
       <div><h1>{settings.startScore} {settings.doubleOut ? 'Double Out' : 'Straight Out'}</h1>
         <p>{legsText(settings.legsToWin)} · {players.length} {players.length === 1 ? 'hráč' : players.length < 5 ? 'hráči' : 'hráčů'} · leg {state.leg}
+          {' · '}kolo {state.round}{settings.maxRounds ? ` z ${settings.maxRounds}` : ''}
+          {state.finishersNeeded > 1 && ` · zavřít musí ${state.finishersNeeded}`}
           {' · '}<span className={connection.state === 'connected' ? 'online-text' : ''}>{connection.state === 'connected' ? 'šipky z terče' : 'terč nepřipojen'}</span></p></div>
       <div className="game-head-actions">
         {confirmEnd ? <><span className="muted small">Ukončit hru?</span><button className="danger" onClick={() => { setConfirmEnd(false); endGame(); }}>Ukončit</button>
@@ -129,47 +144,87 @@ function GameBoard({ state }: { state: X01State }) {
     </div>
     {banner && <div className="leg-banner" role="status">{banner}</div>}
     {finished && <WinnerPanel state={state} />}
+    {state.bullOff && !finished && <BullOffPanel state={state} />}
     {/* Karty v pořadí házení v aktuálním legu. */}
     <div className="game-players">{state.order.map(i => <PlayerScore key={players[i].id} state={state} index={i} />)}</div>
     {!finished && <div className="game-actions">
-      <button onClick={undoDart} disabled={!state.history.length && !state.visit.length}>↶ Zpět</button>
-      <button className={state.visitResult.closed ? 'primary' : ''} onClick={nextPlayer}>Další hráč ›</button>
+      <button onClick={undoDart} disabled={!state.history.length && !state.visit.length && state.leg === 1 && !state.bullOff}>↶ Zpět</button>
+      {!state.bullOff && <button className={state.visitResult.closed ? 'primary' : ''} onClick={nextPlayer}>Další hráč ›</button>}
       <span className="spacer"></span>
-      <button aria-pressed={keypad} onClick={() => setKeypad(!keypad)}>{keypad ? 'Skrýt ruční zadání' : 'Ruční zadání'}</button>
+      {!state.bullOff && <button aria-pressed={keypad} onClick={() => setKeypad(!keypad)}>{keypad ? 'Skrýt ruční zadání' : 'Ruční zadání'}</button>}
     </div>}
-    {!finished && keypad && <Keypad disabled={state.visitResult.closed} />}
+    {!finished && keypad && !state.bullOff && <Keypad disabled={state.visitResult.closed} />}
     <History state={state} />
   </div>;
 }
 
-// Krátké oznámení „Leg pro …“ po zavřeném legu (ne po konci zápasu, ten má vlastní panel).
+// Krátké oznámení po zavření: „Jarda zavřel jako 1.“ během legu, po konci legu pořadí nebo vítěz
+// (konec zápasu má vlastní panel). Jména v 1. pádě, ať jsou věty správně pro jakékoli jméno.
 function useLegBanner(state: X01State): string | undefined {
   const legs = state.legsWon.reduce((a, b) => a + b, 0);
-  const previous = useRef(legs);
+  const key = `${legs}/${state.finished.length}`;
+  const previous = useRef({ legs, finished: state.finished.length });
   const [banner, setBanner] = useState<string>();
   useEffect(() => {
-    if (legs > previous.current && state.winner === undefined && state.lastLegWinner !== undefined) {
-      // Jméno v 1. pádě, ať je věta správně pro jakékoli jméno.
-      setBanner(`Leg vyhrává ${state.players[state.lastLegWinner].name}!`);
-      const timer = window.setTimeout(() => setBanner(undefined), 3500);
-      previous.current = legs;
-      return () => window.clearTimeout(timer);
+    const before = previous.current;
+    previous.current = { legs, finished: state.finished.length };
+    let text: string | undefined;
+    if (legs > before.legs && state.winner === undefined && state.lastLegWinner !== undefined) {
+      const places = state.lastLegPlaces ?? [state.lastLegWinner];
+      text = places.length > 1 ? `Konec legu: ${places.map((p, i) => `${i + 1}. ${state.players[p].name}`).join(', ')}`
+        : `Leg vyhrává ${state.players[state.lastLegWinner].name}!`;
+      if (state.lastLegByBullOff) text += ' (rozhoz na střed)';
+    } else if (legs === before.legs && state.finished.length > before.finished) {
+      text = `${state.players[state.finished.at(-1)!].name} zavřel jako ${state.finished.length}.`;
     }
-    previous.current = legs;
-  }, [legs, state.winner, state.lastLegWinner, state.players]);
+    if (!text) return;
+    setBanner(text);
+    const timer = window.setTimeout(() => setBanner(undefined), 3500);
+    return () => window.clearTimeout(timer);
+  }, [key]);
   return banner;
+}
+
+// Rozhoz na střed: kdo hází, co kdo hodil (i v předchozích kolech při shodě), zadání a ruční rozhodnutí.
+function BullOffPanel({ state }: { state: X01State }) {
+  const bullOff = state.bullOff!;
+  const name = (p: number) => state.players[p].name;
+  const place = state.finished.length + 1;
+  return <section className="bulloff card" aria-labelledby="bulloff-title">
+    <div className="bulloff-head">
+      <div><span className="eyebrow orange">ROZHOZ NA STŘED{bullOff.round > 1 ? ` · ${bullOff.round}. KOLO (SHODA)` : ''}</span>
+        <h2 id="bulloff-title">Hází {name(state.current)}</h2>
+        <p className="muted small">Jedna šipka na střed. Bull je víc než 25, při shodě se hází znovu.{state.finishersNeeded > 1 ? ` Rozhoduje se o ${place}. místo.` : ''}</p></div>
+    </div>
+    <div className="bulloff-throws">{bullOff.contenders.map(p => {
+      const thrown = bullOff.throws.find(t => t.player === p);
+      return <div key={p} className={`bulloff-player ${p === state.current ? 'current' : ''}`}>
+        <PlayerAvatar player={state.players[p]} size={36} /><strong>{name(p)}</strong>
+        <span className="bulloff-dart">{thrown ? dartLabel(thrown.dart) : p === state.current ? 'hází…' : '–'}</span>
+        <button className="text-button" onClick={() => decideBullOffWinner(p)} title="Určit vítěze rozhozu ručně">Vyhrál</button>
+      </div>;
+    })}</div>
+    {bullOff.previous.length > 0 && <p className="muted small">Předchozí: {bullOff.previous.map(round => round.map(t => `${name(t.player)} ${dartLabel(t.dart)}`).join(', ')).join(' · ')}</p>}
+    <div className="bulloff-keys">
+      <button onClick={() => enterDart(makeDart(25, 2))}>Bull</button>
+      <button onClick={() => enterDart(makeDart(25, 1))}>25</button>
+      <button className="miss" onClick={() => enterDart(makeDart(0, 0))}>Mimo střed</button>
+    </div>
+  </section>;
 }
 
 function PlayerScore({ state, index }: { state: X01State; index: number }) {
   const player = state.players[index];
-  const active = index === state.current && state.winner === undefined;
+  const active = index === state.current && state.winner === undefined && !state.bullOff;
+  const place = state.finished.indexOf(index);
   const lastVisit = [...state.history].reverse().find(visit => visit.player === index && visit.leg === state.leg);
   const darts: Dart[] = active ? state.visit : lastVisit?.darts ?? [];
   const result = active ? state.visitResult : lastVisit;
   const remaining = active ? state.visitResult.remaining : state.remaining[index];
   const dartsLeft = active ? DARTS_PER_VISIT - state.visit.length : DARTS_PER_VISIT;
   const checkout = state.settings.doubleOut && !(active && state.visitResult.closed) ? suggestCheckout(remaining, dartsLeft) : undefined;
-  return <section className={`score-card card ${active ? 'active' : ''} ${state.winner === index ? 'winner' : ''}`} aria-label={player.name}>
+  return <section className={`score-card card ${active ? 'active' : ''} ${state.winner === index ? 'winner' : ''} ${place >= 0 ? 'done' : ''}`} aria-label={player.name}>
+    {place >= 0 && <span className="place-badge">{place + 1}. zavřel</span>}
     <div className="score-head">
       <PlayerAvatar player={player} size={52} />
       <div><strong>{player.name}</strong>

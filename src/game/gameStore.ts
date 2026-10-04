@@ -4,7 +4,7 @@ import { celebrate } from '../effects/confetti.ts';
 import { reactToVisit } from '../reactions.ts';
 import { isConfettiActive } from '../settings.ts';
 import { recorder } from '../recording.ts';
-import { addDart, commitVisit, createGame, deriveState, setVisit, undo } from './x01.ts';
+import { addDart, commitVisit, createGame, decideBullOff, deriveState, setVisit, undo } from './x01.ts';
 import type { Dart, GamePlayer, X01Game, X01Settings, X01State } from './x01.ts';
 
 export interface GameSnapshot { game?: X01Game; state?: X01State }
@@ -13,9 +13,17 @@ export interface GameSnapshot { game?: X01Game; state?: X01State }
 let snapshot: GameSnapshot = {};
 const listeners = new Set<() => void>();
 
+const legsPlayed = (state?: X01State) => state ? state.legsWon.reduce((a, b) => a + b, 0) : 0;
+
 function set(game: X01Game | undefined): void {
+  const before = snapshot.state;
   snapshot = game ? { game, state: deriveState(game) } : {};
   listeners.forEach(listener => listener());
+  // Konfety při skutečném konci legu (i po rozhozu), ne při každém zavření.
+  const after = snapshot.state;
+  if (before && after && before.players === after.players && legsPlayed(after) > legsPlayed(before) && isConfettiActive()) {
+    celebrate(after.winner !== undefined ? 'match' : 'leg');
+  }
 }
 
 export function isGameRunning(): boolean {
@@ -61,6 +69,8 @@ export function undoDart(): void {
 // Šipky z terče: každá šipka hned, kolo z terče (i s opravami) ho uzavře.
 export function feedGameFromBoard(event: BoardEvent): void {
   if (!snapshot.game) return;
+  // Rozhoz na střed: každá šipka z terče patří dalšímu hráči v řadě, vytažení šipek se nečeká.
+  if (snapshot.state?.bullOff) { if (event.kind === 'dart') enterDart(event.dart); return; }
   if (event.kind === 'dart') throwDart(event.dart);
   else commit(setVisit(snapshot.game, event.darts));
 }
@@ -74,7 +84,13 @@ function commit(game: X01Game): void {
   recorder.meta('game-visit', { player: snapshot.game!.players[record.player].name, darts: record.darts.map(dart => dart.name),
     scored: record.scored, bust: record.bust, checkout: record.checkout, remaining: record.remaining });
   reactToVisit({ kind: 'visit', darts: record.darts, total: record.scored });
-  if (record.checkout && isConfettiActive()) celebrate(snapshot.state?.winner !== undefined ? 'match' : 'leg');
+}
+
+// Ruční rozhodnutí rozhozu na střed (klepnutím na vítěze).
+export function decideBullOffWinner(player: number): void {
+  if (!snapshot.game) return;
+  set(decideBullOff(snapshot.game, player));
+  recorder.meta('game-bulloff-decision', { player: snapshot.game.players[player].name });
 }
 
 export function useGame(): GameSnapshot {
