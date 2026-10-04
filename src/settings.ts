@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
-const VENUE_KEY = 'darts-cz.venueName';
+const VENUE_KEY = 'sipky.venueName';
 export const DEFAULT_VENUE_NAME = 'HOLICE';
 export const MAX_VENUE_NAME = 32;
 

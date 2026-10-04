@@ -1,9 +1,9 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "HOLICE-Šipky",
-  "mainBinaryName": "holice-sipky",
+  "productName": "Šipky",
+  "mainBinaryName": "sipky",
   "version": "0.1.0",
-  "identifier": "cz.dartscz.inspector",
+  "identifier": "cz.sipky.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://127.0.0.1:1420",
@@ -11,7 +11,7 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "windows": [{ "label": "main", "title": "HOLICE-Šipky", "width": 1440, "height": 960, "minWidth": 800, "minHeight": 640 }],
+    "windows": [{ "label": "main", "title": "Šipky", "width": 1440, "height": 960, "minWidth": 800, "minHeight": 640 }],
     "security": {
       "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost ws: http:; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
     }

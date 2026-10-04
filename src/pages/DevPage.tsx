@@ -74,7 +74,7 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
       <span className={`rec-dot ${recording.enabled && !recording.error ? 'on' : ''}`} aria-hidden="true"></span>
       {!recording.enabled ? <span className="muted">Průběžný záznam na disk běží jen v desktopové aplikaci.</span> : <>
         <strong>Záznam na disk</strong>
-        <code>{recording.path ?? `…/HOLICE-Sipky/zaznamy/${recording.session}.jsonl`}</code>
+        <code>{recording.path ?? `…/Sipky/zaznamy/${recording.session}.jsonl`}</code>
         <span className="spacer"></span>
         <span className="muted">zapsáno {recording.written.toLocaleString('cs-CZ')} řádků{recording.pending ? ` · čeká ${recording.pending.toLocaleString('cs-CZ')}` : ''}</span>
       </>}

@@ -1,6 +1,6 @@
-# HOLICE-Šipky · v0.1
+# Šipky · v0.1
 
-Lokální šipkařská aplikace pro naši hospodu. Interní název projektu je `darts-cz`.
+Lokální šipkařská aplikace pro naši hospodu. Spustitelný soubor je `sipky` (Windows `sipky.exe`). Složka repozitáře se zatím jmenuje `darts-cz`.
 
 Lehký desktopový základ v Tauri 2, Reactu, TypeScriptu a Vite. Rozhraní je česky, tmavé s oranžovým akcentem. Žádná herní logika ani databáze.
 
@@ -50,7 +50,7 @@ Používejte jeden správce balíčků. Součástí dodávky je `pnpm-lock.yaml`
 - Domů ukazuje skutečný stav spojení s terčem a čas poslední události. Herní dlaždice jsou zatím neaktivní.
 - Aplikace se po spuštění sama připojí na uloženou adresu terče. Adresa se mění v Nastavení.
 - V horní liště je název podniku (výchozí „HOLICE“, mění se v Nastavení) a obrázek ležaté šipky.
-- **Průběžný bezztrátový záznam na disk** (jen desktopová aplikace): každé spuštění zapisuje do `Dokumenty/HOLICE-Sipky/zaznamy/RRRR-MM-DD_HH-MM-SS.jsonl`. Zapisuje se každá přijatá zpráva (stejný formát jako export) a události aplikace s polem `meta` (`start`, `connect`, `state`, `version`, `disconnect`). Zápis probíhá v dávkách po 250 ms. Při chybě disku řádky čekají ve frontě a zápis se opakuje. Stav záznamu je vidět v DEV.
+- **Průběžný bezztrátový záznam na disk** (jen desktopová aplikace): každé spuštění zapisuje do `Dokumenty/Sipky/zaznamy/RRRR-MM-DD_HH-MM-SS.jsonl`. Zapisuje se každá přijatá zpráva (stejný formát jako export) a události aplikace s polem `meta` (`start`, `connect`, `state`, `version`, `disconnect`). Zápis probíhá v dávkách po 250 ms. Při chybě disku řádky čekají ve frontě a zápis se opakuje. Stav záznamu je vidět v DEV.
 - DEV je inspektor událostí:
   - Připojení k Board Manageru na nastavitelné adrese (výchozí `127.0.0.1:3180`, zapamatuje se). Pouze naslouchá, nic neodesílá. Při výpadku se spojení obnovuje s rostoucím odstupem 1–30 s.
   - Čitelné rozhraní inspektoru, viditelný stav připojení, typ/kanál zprávy, detail formátovaného JSON a přepnutí na přesný raw text.

@@ -25,7 +25,7 @@ fn valid_session(name: &str) -> bool {
 fn recordings_dir(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     let base = app.path().document_dir().or_else(|_| app.path().app_data_dir())
         .map_err(|_| "Nelze najít složku pro záznamy.".to_string())?;
-    Ok(base.join("HOLICE-Sipky").join("zaznamy"))
+    Ok(base.join("Sipky").join("zaznamy"))
 }
 
 // Průběžný bezztrátový záznam: dávku řádků připojí na konec souboru relace a vrátí jeho cestu.
@@ -62,7 +62,7 @@ async fn save_session(app: tauri::AppHandle, jsonl: String) -> Result<bool, Stri
     tauri::async_runtime::spawn_blocking(move || {
         let selected = app.dialog().file()
             .set_title("Uložit záznam WebSocket zpráv")
-            .set_file_name("holice-sipky-zaznam.jsonl")
+            .set_file_name("sipky-zaznam.jsonl")
             .add_filter("Záznam JSONL", &["jsonl"])
             .blocking_save_file();
         let Some(selected) = selected else { return Ok(false); };
@@ -102,5 +102,5 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![save_session, append_recording])
         .run(tauri::generate_context!())
-        .expect("Aplikaci HOLICE-Šipky nelze spustit");
+        .expect("Aplikaci Šipky nelze spustit");
 }
