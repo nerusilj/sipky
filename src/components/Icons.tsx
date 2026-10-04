@@ -40,16 +40,7 @@ const BOARD_LAYERS = [
   { r0: 85, r1: 92, light: 0.95, dark: 0.5 },
 ].map(layer => ({ ...layer, paths: SECTORS.map(([a0, a1], i) => ({ d: wedge(layer.r0, layer.r1, a0, a1), light: i % 2 === 0 })) }));
 
-function TileDart({ x, y, angle }: { x: number; y: number; angle: number }) {
-  return <g transform={`translate(${x} ${y}) rotate(${angle})`}>
-    <path d="M0 0L7 -2L7 2Z" fill="#e8ebef" />
-    <rect x="6" y="-3" width="22" height="6" rx="2" fill="#f4f5f7" />
-    <rect x="28" y="-1.3" width="20" height="2.6" fill="#c9ced6" />
-    <path d="M40 0L52 -12L61 -12L54 0L61 12L52 12Z" fill="currentColor" stroke="#0008" strokeWidth="1" />
-  </g>;
-}
-
-// Terč v barvě dlaždice (currentColor), vyplněný a se zapíchnutými šipkami.
+// Terč v barvě dlaždice (currentColor) s vyplněnými výsečemi.
 export function TileBoard() {
   return <svg className="tile-board" viewBox="-112 -112 224 224" aria-hidden="true">
     <circle r="110" fill="#000" fillOpacity="0.45" />
@@ -61,7 +52,5 @@ export function TileBoard() {
       {[92, 85, 59, 52, 13].map(r => <circle key={r} r={r} />)}
     </g>
     <circle r="13" fill="currentColor" fillOpacity="0.7" /><circle r="5.5" fill="currentColor" />
-    <TileDart x={-26} y={-22} angle={-48} />
-    <TileDart x={10} y={-8} angle={-34} />
   </svg>;
 }
