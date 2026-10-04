@@ -92,8 +92,8 @@ function PlayerChip({ player, order, onClick }: { player: Player; order?: number
   const active = order !== undefined;
   return <button className={`setup-player ${active ? 'selected' : ''}`} onClick={onClick} aria-pressed={active}
     title={active ? 'Odebrat ze hry' : 'Přidat do hry'}>
-    {order === 'random' ? <b className="order check" aria-label="Hraje">✓</b> : active && <b className="order">{order + 1}</b>}
-    <PlayerAvatar player={player} size={40} /><span>{player.name}</span></button>;
+    <PlayerAvatar player={player} size={40} /><span>{player.name}</span>
+    {order === 'random' ? <b className="order check" aria-label="Hraje">✓</b> : active && <b className="order">{order + 1}</b>}</button>;
 }
 
 function GameBoard({ state }: { state: X01State }) {
