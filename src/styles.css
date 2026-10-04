@@ -128,6 +128,7 @@ footer{display:flex;justify-content:space-between;gap:20px;font-size:11px;color:
 .score-card.active{border:2px solid var(--orange);background:linear-gradient(160deg,#2a170b,#13161b 60%);box-shadow:0 0 24px #ff7a1f22}
 .score-card.winner{border-color:var(--green)}
 .score-head{display:flex;align-items:center;gap:12px}.score-head strong{font-size:19px;display:block}
+.legs-count{display:block;margin-top:4px;font-size:13px;color:var(--muted)}.legs-count b{color:var(--orange);font-size:16px;margin-left:3px}
 .legs{display:flex;gap:5px;margin-top:6px}.legs i{width:10px;height:10px;border-radius:50%;border:1.5px solid #5a606b}.legs i.won{background:var(--orange);border-color:var(--orange)}
 .score-remaining{font-size:clamp(64px,7vw,104px);font-weight:850;line-height:1;letter-spacing:-2px;text-align:center;font-variant-numeric:tabular-nums}
 .score-card.active .score-remaining{color:var(--orange)}

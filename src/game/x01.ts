@@ -3,7 +3,10 @@
 import type { Dart } from '../caller/visitTracker.ts';
 
 export type { Dart };
+// legsToWin: kolik vyhraných legů ukončí zápas; ENDLESS = hra dokola (legy se počítají, zápas nekončí).
 export interface X01Settings { startScore: 301 | 501; doubleOut: boolean; legsToWin: number }
+export const ENDLESS = 0;
+export const isEndless = (settings: X01Settings) => settings.legsToWin === ENDLESS;
 export interface GamePlayer { id: string; name: string; color: string }
 
 export interface VisitResult { scored: number; bust: boolean; checkout: boolean; closed: boolean; remaining: number }
@@ -70,7 +73,7 @@ function usedDarts(remaining: number, darts: readonly Dart[], doubleOut: boolean
 
 export function createGame(settings: X01Settings, players: GamePlayer[]): X01Game {
   if (!players.length) throw new Error('Hra potřebuje alespoň jednoho hráče.');
-  if (!Number.isInteger(settings.legsToWin) || settings.legsToWin < 1) throw new Error('Neplatný počet legů.');
+  if (!Number.isInteger(settings.legsToWin) || settings.legsToWin < ENDLESS) throw new Error('Neplatný počet legů.');
   return { settings, players, visits: [], current: [] };
 }
 
@@ -97,7 +100,7 @@ export function deriveState(game: X01Game): X01State {
     if (result.checkout) {
       s.legsWon[p]++;
       s.lastLegWinner = p;
-      if (s.legsWon[p] >= settings.legsToWin) { s.winner = p; break; }
+      if (!isEndless(settings) && s.legsWon[p] >= settings.legsToWin) { s.winner = p; break; }
       s.leg++;
       s.legStarter = (s.legStarter + 1) % n;
       s.current = s.legStarter;

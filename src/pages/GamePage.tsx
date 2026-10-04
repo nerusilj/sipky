@@ -3,7 +3,7 @@ import PlayerAvatar from '../components/PlayerAvatar.tsx';
 import { useConnection } from '../connection.ts';
 import { suggestCheckout } from '../game/checkout.ts';
 import { endGame, enterDart, nextPlayer, rematch, startGame, undoDart, useGame } from '../game/gameStore.ts';
-import { dartLabel, DARTS_PER_VISIT, makeDart, threeDartAverage } from '../game/x01.ts';
+import { dartLabel, DARTS_PER_VISIT, ENDLESS, isEndless, makeDart, threeDartAverage } from '../game/x01.ts';
 import type { Dart, X01Settings, X01State } from '../game/x01.ts';
 import { loadLastSetup, saveLastSetup } from '../game/lastSetup.ts';
 import { shuffle } from '../game/order.ts';
@@ -11,7 +11,8 @@ import type { Player } from '../players/playerList.ts';
 import { usePlayers } from '../players/players.ts';
 
 const MAX_GAME_PLAYERS = 8;
-const LEG_OPTIONS = [1, 2, 3, 4, 5];
+// ENDLESS = hra dokola, jinak počet vítězných legů, který ukončí zápas.
+const LEG_OPTIONS = [ENDLESS, 1, 2, 3, 4, 5];
 
 export default function GamePage({ startScore, onPlayers }: { startScore: 301 | 501; onPlayers: () => void }) {
   const { state } = useGame();
@@ -19,6 +20,7 @@ export default function GamePage({ startScore, onPlayers }: { startScore: 301 | 
 }
 
 function legsText(n: number): string {
+  if (n === ENDLESS) return 'Hra dokola';
   return n === 1 ? 'Na 1 vítězný leg' : n < 5 ? `Na ${n} vítězné legy` : `Na ${n} vítězných legů`;
 }
 
@@ -76,7 +78,10 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
     <section className="settings-card card setup-section">
       <span className="eyebrow">PRAVIDLA</span>
       <div className="setup-rules">
-        <label>Počet vítězných legů<div className="segmented">{LEG_OPTIONS.map(n => <button key={n} className={legsToWin === n ? 'selected' : ''} onClick={() => setLegsToWin(n)}>{n}</button>)}</div></label>
+        <label>Konec zápasu
+          <div className="segmented">{LEG_OPTIONS.map(n => <button key={n} className={legsToWin === n ? 'selected' : ''} onClick={() => setLegsToWin(n)}
+            title={n === ENDLESS ? 'Hraje se dokola, legy se počítají, zápas nekončí' : `Vyhrává, kdo první vyhraje ${legCount(n)}`}>{n === ENDLESS ? '∞ Dokola' : n}</button>)}</div>
+          <span className="small">{legsToWin === ENDLESS ? 'Legy se počítají, zápas ukončíte tlačítkem Konec hry.' : `Vyhrává, kdo první vyhraje ${legCount(legsToWin)}.`}</span></label>
         <label className="switch"><input type="checkbox" checked={doubleOut} onChange={event => setDoubleOut(event.target.checked)} /><span>Double Out (zavřít doublem nebo bullem)</span></label>
       </div>
     </section>
@@ -159,8 +164,10 @@ function PlayerScore({ state, index }: { state: X01State; index: number }) {
     <div className="score-head">
       <PlayerAvatar player={player} size={52} />
       <div><strong>{player.name}</strong>
-        <span className="legs" aria-label={`Legy ${state.legsWon[index]}`}>{Array.from({ length: state.settings.legsToWin }, (_, i) =>
-          <i key={i} className={i < state.legsWon[index] ? 'won' : ''} />)}</span></div>
+        {isEndless(state.settings)
+          ? <span className="legs-count">Legy <b>{state.legsWon[index]}</b></span>
+          : <span className="legs" aria-label={`Legy ${state.legsWon[index]}`}>{Array.from({ length: state.settings.legsToWin }, (_, i) =>
+            <i key={i} className={i < state.legsWon[index] ? 'won' : ''} />)}</span>}</div>
     </div>
     <div className="score-remaining">{remaining}</div>
     <div className="score-darts">{Array.from({ length: DARTS_PER_VISIT }, (_, i) =>

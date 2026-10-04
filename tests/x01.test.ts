@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addDart, commitVisit, createGame, dartLabel, deriveState, evaluateVisit, makeDart, setVisit, threeDartAverage, undo } from '../src/game/x01.ts';
+import { addDart, commitVisit, createGame, dartLabel, deriveState, ENDLESS, evaluateVisit, makeDart, setVisit, threeDartAverage, undo } from '../src/game/x01.ts';
 import type { X01Game } from '../src/game/x01.ts';
 import { suggestCheckout } from '../src/game/checkout.ts';
 import { shuffle } from '../src/game/order.ts';
@@ -84,6 +84,17 @@ test('zavření legu, střídání začínajícího hráče a konec zápasu', ()
   s = deriveState(game);
   assert.equal(s.winner, 0);
   assert.equal(s.lastLegWinner, 0);
+});
+
+test('hra dokola: legy se počítají, začínající se střídá, zápas nikdy neskončí', () => {
+  let game = createGame({ startScore: 301, doubleOut: true, legsToWin: ENDLESS }, players);
+  for (let leg = 0; leg < 6; leg++) game = play(game, ...LEG);
+  const s = deriveState(game);
+  assert.equal(s.winner, undefined);
+  assert.deepEqual(s.legsWon, [3, 3]);
+  assert.equal(s.leg, 7);
+  assert.equal(s.current, 0);
+  assert.equal(parseLastSetup('{"legsToWin":0}').legsToWin, ENDLESS);
 });
 
 test('vítěz zápasu, další vstup se ignoruje; průměr na 3 šipky', () => {
