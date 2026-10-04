@@ -5,7 +5,8 @@ import { boardConnection, useConnection } from '../connection.ts';
 import { DART_THEMES } from '../dartThemes.ts';
 import type { DartThemeId } from '../dartThemes.ts';
 import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setCallerEnabled, setCallerVoice, setConfettiEnabled, setDartTheme, setEffectEnabled, setEffectsEnabled,
-  setVenueName, useCallerEnabled, useCallerVoice, useConfettiEnabled, useDartTheme, useDisabledEffects, useEffectsEnabled, useVenueName } from '../settings.ts';
+  setShowDev, setVenueName, useCallerEnabled, useCallerVoice, useConfettiEnabled, useDartTheme, useDisabledEffects, useEffectsEnabled, useShowDev,
+  useVenueName } from '../settings.ts';
 import { caller } from '../caller/caller.ts';
 import { EFFECT_IDS, EFFECTS } from '../effects/effectRules.ts';
 import { VOICES } from '../caller/voices.ts';
@@ -24,6 +25,7 @@ export default function SettingsPage() {
   const effectsEnabled = useEffectsEnabled();
   const disabledEffects = useDisabledEffects();
   const confettiEnabled = useConfettiEnabled();
+  const showDev = useShowDev();
   const [address, setAddress] = useState(connection.address);
   const [venueDraft, setVenueDraft] = useState(venueName);
   const [notice, setNotice] = useState('');
@@ -86,6 +88,14 @@ export default function SettingsPage() {
           <span className="muted small">Po vyhraném legu, po vyhraném zápasu delší oslava</span>
         </li>
       </ul>
+    </section>
+    <section className="settings-card card" aria-labelledby="dev-title">
+      <div className="caller-head">
+        <div><span className="eyebrow">PRO VÝVOJÁŘE</span><h2 id="dev-title">Sekce DEV</h2></div>
+        <label className="switch"><input type="checkbox" checked={showDev} onChange={event => setShowDev(event.target.checked)} />
+          <span>{showDev ? 'Zobrazena v menu' : 'Skrytá'}</span></label>
+      </div>
+      <p className="small muted">Inspektor zpráv z terče, záznam na disk a kontrola hlášení a efektů.</p>
     </section>
     <ConnectionPanel address={address} state={connection.state} onAddress={setAddress} onConnect={connect} onDisconnect={() => boardConnection.disconnect()} />
     {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Zavřít oznámení">×</button></div>}
