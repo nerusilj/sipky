@@ -9,7 +9,9 @@ export function captureMessage(raw: string, direction: 'in' | 'out', id: number,
     ? payload as Record<string, unknown> : undefined;
   return {
     id, timestamp: now.toISOString(), direction, payload, raw, format,
-    channel: typeof envelope?.channel === 'string' ? envelope.channel : undefined,
+    // Board Manager posílá {type, data}; cloud {channel, topic, data}.
+    channel: typeof envelope?.channel === 'string' ? envelope.channel
+      : typeof envelope?.type === 'string' ? envelope.type : undefined,
     topic: typeof envelope?.topic === 'string' ? envelope.topic : undefined,
   };
 }

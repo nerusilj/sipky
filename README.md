@@ -2,7 +2,7 @@
 
 Lehký desktopový základ v Tauri 2, Reactu, TypeScriptu a Vite. Rozhraní je česky, tmavé s oranžovým akcentem. Žádná herní logika ani databáze.
 
-**Stav: základ inspektoru připravený, živá integrace zastavená na registraci OAuth aplikace. Milník v0.1 zatím není dokončen.** Tlačítko Připojit vysvětlí překážku; nevytváří spojení a nezobrazuje simulované události.
+**Stav: inspektor se připojuje k lokálnímu Autodarts Board Manageru (`ws://<host>:3180/api/events`) a zaznamenává jeho události beze změny.** Nepotřebuje účet Autodarts ani cloud. Milník v0.1 zatím není dokončen: chybí první skutečné události hodů a ověření nativního sestavení.
 
 ## Předpoklady
 
@@ -44,8 +44,9 @@ Používejte jeden správce balíčků. Součástí dodávky je `pnpm-lock.yaml`
 
 ## Co funguje v základu
 
-- Čitelné rozhraní inspektoru, viditelný stav připojení, kanál/téma, detail formátovaného JSON a přepnutí na přesný raw text.
-- Filtrace podle kanálu, směru a obsahu. Nejnovější zprávy první, nejvýše 100 řádků najednou.
+- Připojení k Board Manageru na nastavitelné adrese (výchozí `127.0.0.1:3180`, zapamatuje se). Pouze naslouchá, nic neodesílá. Při výpadku se spojení obnovuje s rostoucím odstupem 1–30 s.
+- Čitelné rozhraní inspektoru, viditelný stav připojení, typ/kanál zprávy, detail formátovaného JSON a přepnutí na přesný raw text.
+- Filtrace podle typu, směru a obsahu. Nejnovější zprávy první, nejvýše 100 řádků najednou.
 - Kruhový buffer nejvýše 10 000 zpráv a hrubý textový rozpočet 32 MiB. Odhad není měření skutečného heapu. Jeden raw rámec smí mít nejvýše 2 Mi znaků; větší se nezachová a započítá se jako vyřazený.
 - Pozastavení zmrazí snapshot UI; přidávání do úložiště pokračuje nezávisle. Vymazat odstraní buffer i snapshot a vynuluje počítadla.
 - Export JSONL přes nativní Tauri dialog; ukládá celý aktuální buffer, nikoli jen filtr nebo zmrazený pohled. Žádné indexy vyhledávání v exportu. Časy ISO 8601 UTC s milisekundami (`Z`); seznam používá místní čas.
@@ -55,18 +56,16 @@ Používejte jeden správce balíčků. Součástí dodávky je `pnpm-lock.yaml`
 
 Runtime JS: pouze React, React DOM a `@tauri-apps/api` pro IPC. Vývoj: TypeScript, Vite, typy Reactu, Tauri CLI. Rust: Tauri, build helper, `tauri-plugin-dialog` pro nativní dialog a `serde_json` pro kontrolu exportu. Žádná UI knihovna ani testovací framework; čistá logika používá vestavěný Node test runner.
 
-`src/autodarts/` obsahuje hranici klienta, autentizaci a parser obálky. `src/inspector/` spravuje obecné zachycené zprávy. React komponenty neinterpretují Autodarts payloady. Rust zatím jen spouští Tauri a ukládá uživatelem vybraný soubor.
+`src/autodarts/` obsahuje klienta lokálního Board Manageru (`LocalBoardClient`), sestavení adresy (`boardAddress`) a parser obálky. `src/inspector/` spravuje obecné zachycené zprávy. React komponenty neinterpretují Autodarts payloady. Rust zatím jen spouští Tauri a ukládá uživatelem vybraný soubor. WebSocket běží přímo ve WebView; CSP proto povoluje `ws:`.
 
 ## Omezení a další krok
 
-Registrace vlastního veřejného OAuth klienta není doložená. Nepoužíváme ID oficiálního Play, sdílené cookies, hesla ani ručně zkopírované tokeny. Autentizační abstrakce úmyslně vrací vysvětlení překážky. Síťový transport, discovery terčů a reconnect ještě nejsou implementované; neexistují žádné mutující herní endpointy.
+- Inspektor otevírá jen `/api/events`. Nevolá `/api/config` ani `/api/system`, které obsahují klíče terče, ani žádné ovládací endpointy (start, stop, kalibrace…).
+- Bez kamer Board Manager žádné události hodů neposílá. Oficiální simulátor neexistuje.
+- Formát událostí zatím známe jen z komunitních zdrojů. Po první skutečné zprávě je potřeba ho ověřit.
+- Cloud Autodarts se v0.1 nepoužívá. Důvody a archivovaný výzkum jsou v [docs/autodarts-protocol.md](docs/autodarts-protocol.md).
 
-1. U Autodarts zaregistrovat veřejný klient **Darts CZ** s PKCE a loopback redirect URI; alternativně požádat o povolení device grant.
-2. Ověřit přihlášení na aktuální `.com` doméně; tokeny držet v paměti, automaticky obnovovat a nikdy nevkládat do logu.
-3. Ověřit čtení seznamu terčů, získání WS ticketu a vlastní spojení. Po první skutečné zprávě se zastavit a prohlédnout ji, jak požaduje zadání.
-4. Teprve potom potvrdit odběry, chování při již běžícím zápase a reconnect (např. 3–60 s s exponenciálním backoffem).
-
-Podrobné ověřené nálezy a otevřené otázky: [docs/autodarts-protocol.md](docs/autodarts-protocol.md). Výsledky provedených kontrol: [docs/validation.md](docs/validation.md).
+Lokální API a pravidla: [docs/board-manager-local.md](docs/board-manager-local.md). Výsledky provedených kontrol: [docs/validation.md](docs/validation.md).
 
 ## Automatická příprava Windows
 

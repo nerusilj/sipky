@@ -1,5 +1,7 @@
 # Autodarts: ověřené nálezy pro Darts CZ
 
+> **Archiv.** Od 4. 10. 2026 v0.1 cloud nepoužívá; zdrojem je lokální Board Manager, viz [board-manager-local.md](board-manager-local.md). Doplňky ze 4. 10.: API povoluje CORS jen pro `https://play.autodarts.com`. `client_id` `autodarts-play` a `autodarts-desktop` existují, ale nemají registrovanou loopback `redirect_uri`. Vlastní ID zatím nedostala ani integrace HACSAutodarts.
+
 Výzkum proveden **3. října 2026**. Žádný účet nebyl přihlášen a nebyla přijata skutečná zpráva. „Ověřeno ve zdroji“ znamená nalezeno v aktuálním veřejném klientu; neznamená otestováno s účtem ani smluvní záruku služby.
 
 ## Primární ověření

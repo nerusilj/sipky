@@ -14,7 +14,7 @@ export default function EventLog({ messages, hasCaptured, page, selectedId, onPa
     <div className="event-list">
       {visible.length ? visible.map(message => <EventRow key={message.id} message={message} selected={selectedId === message.id} onSelect={onSelect} />) :
         <div className="empty-state"><div className="empty-symbol" aria-hidden="true">⌁</div><h3>{hasCaptured ? 'Žádná shoda' : 'Zatím žádné zprávy'}</h3>
-          <p>{hasCaptured ? 'Upravte filtr kanálu, směru nebo hledaný text.' : 'Zde se zobrazí nezměněné zprávy z vlastního připojení Autodarts. Živý záznam čeká na ověření přihlášení.'}</p>{!hasCaptured && <span className="badge">ŽÁDNÁ SIMULOVANÁ DATA</span>}</div>}
+          <p>{hasCaptured ? 'Upravte filtr kanálu, směru nebo hledaný text.' : 'Zde se zobrazí nezměněné zprávy z Board Manageru. Po připojení přicházejí jen při změně stavu terče.'}</p>{!hasCaptured && <span className="badge">ŽÁDNÁ SIMULOVANÁ DATA</span>}</div>}
     </div>
     <div className="pagination"><button disabled={safePage === 0} onClick={() => onPage(safePage - 1)}>← Novější</button><span>{safePage + 1} / {pages}</span><button disabled={safePage + 1 >= pages} onClick={() => onPage(safePage + 1)}>Starší →</button></div>
   </section>;

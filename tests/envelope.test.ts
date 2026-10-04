@@ -30,3 +30,9 @@ test('nepředpokládá objekt ani typ kanálu, neodhazuje chyby odběru', () => 
   assert.deepEqual(message.payload, { type: 'error', message: 'denied' });
   assert.equal(message.format, 'json');
 });
+
+test('obálka Board Manageru použije type jako kanál, channel má přednost', () => {
+  assert.equal(captureMessage('{"type":"state","data":{}}', 'in', 1).channel, 'state');
+  assert.equal(captureMessage('{"type":"x","channel":"autodarts.boards"}', 'in', 1).channel, 'autodarts.boards');
+  assert.equal(captureMessage('{"type":7}', 'in', 1).channel, undefined);
+});

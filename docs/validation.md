@@ -26,4 +26,16 @@ Implementace exportu vybírá cílový soubor v Rustu pomocí nativního Tauri d
 
 Příští validace: nainstalovat Windows build prerequisites, `pnpm tauri:dev`, zaregistrovat Darts CZ u Autodarts, ověřit auth tok, získat první zprávu a zastavit se k její inspekci. Teprve následně implementovat a otestovat zbytek živého propojení.
 
+## 4. října 2026: přechod na lokální Board Manager
+
+| Kontrola | Výsledek |
+|---|---|
+| Testy (`node --test`) | 12/12 prošlo: obálka, buffer, adresa jen na `/api/events`, klient nic neodesílá, obnova spojení a odpojení |
+| `tsc --noEmit` | Bez chyb |
+| `pnpm dev` + prohlížeč | Připojení ke skutečnému Board Manageru 2.0.2 na `127.0.0.1:3180`: stav „Připojeno“, odpojení „Nepřipojeno“, konzole bez chyb |
+| Skutečné události hodů | Neověřené, k dispozici nejsou kamery |
+| Tauri / Rust | Stále neověřené, Rust toolchain není nainstalovaný |
+
+## 3. října 2026: poznámky z Codexu
+
 Dodatečná autorizace instalace: uživatel povolil instalaci potřebných nástrojů. Systémový přístup byl schválen, ale terminálové exec/apply_patch následně selhaly při obnově prostředí. Alternativní JavaScriptový runtime umožnil práci se soubory a syntaktickou kontrolu PowerShellu, ale připojení k vendor download serverům bylo odmítnuté (EACCES). Instalační skript je připravený, nebyl však proveden a nativní stav se nezměnil.

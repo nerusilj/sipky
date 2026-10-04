@@ -4,8 +4,8 @@ interface Props {
 }
 export default function Filters(props: Props) {
   return <div className="filters">
-    <label>Kanál<select value={props.channel} onChange={e => props.onChannel(e.target.value)}>
-      <option value="">Všechny kanály</option>
+    <label>Typ / kanál<select value={props.channel} onChange={e => props.onChannel(e.target.value)}>
+      <option value="">Všechny typy</option>
       {props.channels.map(channel => <option key={channel}>{channel}</option>)}
     </select></label>
     <label>Směr<select value={props.direction} onChange={e => props.onDirection(e.target.value)}>
