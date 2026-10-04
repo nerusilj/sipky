@@ -140,6 +140,8 @@ footer{display:flex;justify-content:space-between;gap:20px;font-size:11px;color:
 .winner-panel{display:flex;align-items:center;gap:20px;padding:20px 24px;margin-bottom:16px;border:2px solid var(--green);background:linear-gradient(120deg,#0f2a1d,#13161b 60%);flex-wrap:wrap}
 .winner-panel h2{font-size:30px;margin:4px 0}
 
+.confetti-canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:950}
+
 /* Zábavné efekty přes celou obrazovku */
 .effect-overlay{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;overflow:hidden;cursor:pointer;
   background:radial-gradient(circle at center,#3fcfbf38 0%,#06090cdd 62%,#06090cf2 100%);animation:effect-fade 3.2s ease forwards}

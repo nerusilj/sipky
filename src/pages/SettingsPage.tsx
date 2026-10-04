@@ -4,8 +4,8 @@ import DartMark from '../components/DartMark.tsx';
 import { boardConnection, useConnection } from '../connection.ts';
 import { DART_THEMES } from '../dartThemes.ts';
 import type { DartThemeId } from '../dartThemes.ts';
-import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setCallerEnabled, setCallerVoice, setDartTheme, setEffectEnabled, setEffectsEnabled, setVenueName,
-  useCallerEnabled, useCallerVoice, useDartTheme, useDisabledEffects, useEffectsEnabled, useVenueName } from '../settings.ts';
+import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setCallerEnabled, setCallerVoice, setConfettiEnabled, setDartTheme, setEffectEnabled, setEffectsEnabled,
+  setVenueName, useCallerEnabled, useCallerVoice, useConfettiEnabled, useDartTheme, useDisabledEffects, useEffectsEnabled, useVenueName } from '../settings.ts';
 import { caller } from '../caller/caller.ts';
 import { EFFECT_IDS, EFFECTS } from '../effects/effectRules.ts';
 import { VOICES } from '../caller/voices.ts';
@@ -23,6 +23,7 @@ export default function SettingsPage() {
   const callerVoice = useCallerVoice();
   const effectsEnabled = useEffectsEnabled();
   const disabledEffects = useDisabledEffects();
+  const confettiEnabled = useConfettiEnabled();
   const [address, setAddress] = useState(connection.address);
   const [venueDraft, setVenueDraft] = useState(venueName);
   const [notice, setNotice] = useState('');
@@ -79,6 +80,11 @@ export default function SettingsPage() {
             onChange={event => setEffectEnabled(id, event.target.checked)} /><strong>{EFFECTS[id].name}</strong></label>
           <span className="muted small">{EFFECTS[id].trigger}{EFFECTS[id].replacesScore ? ' · nahradí hlášení součtu' : ''}</span>
         </li>)}
+        <li className={effectsEnabled ? '' : 'muted-row'}>
+          <label className="switch"><input type="checkbox" checked={confettiEnabled} disabled={!effectsEnabled}
+            onChange={event => setConfettiEnabled(event.target.checked)} /><strong>Konfety</strong></label>
+          <span className="muted small">Po vyhraném legu, po vyhraném zápasu delší oslava</span>
+        </li>
       </ul>
     </section>
     <ConnectionPanel address={address} state={connection.state} onAddress={setAddress} onConnect={connect} onDisconnect={() => boardConnection.disconnect()} />

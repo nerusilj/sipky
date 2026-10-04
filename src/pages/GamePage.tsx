@@ -106,7 +106,8 @@ function useLegBanner(state: X01State): string | undefined {
   const [banner, setBanner] = useState<string>();
   useEffect(() => {
     if (legs > previous.current && state.winner === undefined && state.lastLegWinner !== undefined) {
-      setBanner(`Leg pro ${state.players[state.lastLegWinner].name}!`);
+      // Jméno v 1. pádě, ať je věta správně pro jakékoli jméno.
+      setBanner(`Leg vyhrává ${state.players[state.lastLegWinner].name}!`);
       const timer = window.setTimeout(() => setBanner(undefined), 3500);
       previous.current = legs;
       return () => window.clearTimeout(timer);

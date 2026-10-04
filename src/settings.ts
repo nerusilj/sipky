@@ -12,6 +12,7 @@ const CALLER_KEY = 'sipky.callerEnabled';
 const VOICE_KEY = 'sipky.callerVoice';
 const EFFECTS_KEY = 'sipky.effectsEnabled';
 const DISABLED_EFFECTS_KEY = 'sipky.disabledEffects';
+const CONFETTI_KEY = 'sipky.confettiEnabled';
 export const DEFAULT_VENUE_NAME = 'HOLICE';
 export const MAX_VENUE_NAME = 32;
 
@@ -24,6 +25,7 @@ let callerVoice: VoiceId = normalizeVoice(read(VOICE_KEY));
 // Zábavné efekty: celkový vypínač a seznam jednotlivě vypnutých efektů.
 let effectsEnabled = read(EFFECTS_KEY) !== 'false';
 let disabledEffects: readonly EffectId[] = parseDisabledEffects(read(DISABLED_EFFECTS_KEY));
+let confettiEnabled = read(CONFETTI_KEY) !== 'false';
 const listeners = new Set<() => void>();
 
 function read(key: string): string | null {
@@ -84,6 +86,13 @@ export function setEffectEnabled(id: EffectId, value: boolean): void {
 }
 // Spustí se efekt automaticky z terče? (ruční vyzkoušení v Nastavení/DEV funguje vždy)
 export function isEffectActive(id: EffectId): boolean { return effectsEnabled && !disabledEffects.includes(id); }
+// Konfety po vyhraném legu a zápasu; patří mezi zábavné efekty, takže je vypíná i hlavní vypínač.
+export function setConfettiEnabled(value: boolean): void {
+  confettiEnabled = value;
+  write(CONFETTI_KEY, String(value));
+}
+export function isConfettiActive(): boolean { return effectsEnabled && confettiEnabled; }
+export function useConfettiEnabled(): boolean { return useSyncExternalStore(subscribe, () => confettiEnabled); }
 export function useEffectsEnabled(): boolean { return useSyncExternalStore(subscribe, () => effectsEnabled); }
 export function useDisabledEffects(): readonly EffectId[] { return useSyncExternalStore(subscribe, () => disabledEffects); }
 

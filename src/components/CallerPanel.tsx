@@ -4,6 +4,7 @@ import { MAX_VISIT_SCORE, scoreAnnouncement } from '../caller/czechNumbers.ts';
 import { VOICES } from '../caller/voices.ts';
 import { EFFECT_IDS, EFFECTS } from '../effects/effectRules.ts';
 import { triggerEffect } from '../effects/effects.ts';
+import { celebrate } from '../effects/confetti.ts';
 import { useCallerEnabled, useCallerVoice } from '../settings.ts';
 
 const QUICK = [180, 140, 100, 60, 45, 26, 0];
@@ -37,6 +38,8 @@ export default function CallerPanel() {
         <button onClick={() => triggerEffect(id)}>▶ Efekt s hláškou</button>
         <button onClick={() => void caller.playPhrase(EFFECTS[id].phrase)}>Jen hláška</button>
       </span>)}
+      <span className="caller-effect"><strong>Konfety</strong><span className="muted small">Vyhraný leg / zápas</span>
+        <button onClick={() => celebrate('leg')}>▶ Leg</button><button onClick={() => celebrate('match')}>▶ Zápas</button></span>
     </div>
     {state.playing !== undefined && <p className="small muted">Hraje: {state.playing}</p>}
     {state.error && <div className="notice" role="status"><span>{state.error}</span></div>}

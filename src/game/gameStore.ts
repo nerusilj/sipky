@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from 'react';
 import type { BoardEvent } from '../caller/visitTracker.ts';
+import { celebrate } from '../effects/confetti.ts';
 import { reactToVisit } from '../reactions.ts';
+import { isConfettiActive } from '../settings.ts';
 import { recorder } from '../recording.ts';
 import { addDart, commitVisit, createGame, deriveState, setVisit, undo } from './x01.ts';
 import type { Dart, GamePlayer, X01Game, X01Settings, X01State } from './x01.ts';
@@ -72,6 +74,7 @@ function commit(game: X01Game): void {
   recorder.meta('game-visit', { player: snapshot.game!.players[record.player].name, darts: record.darts.map(dart => dart.name),
     scored: record.scored, bust: record.bust, checkout: record.checkout, remaining: record.remaining });
   reactToVisit({ kind: 'visit', darts: record.darts, total: record.scored });
+  if (record.checkout && isConfettiActive()) celebrate(snapshot.state?.winner !== undefined ? 'match' : 'leg');
 }
 
 export function useGame(): GameSnapshot {
