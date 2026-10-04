@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import AutodartsLogo from '../components/AutodartsLogo.tsx';
 import { STATE_LABELS } from '../components/ConnectionPanel.tsx';
-import { ChevronIcon, TargetArt } from '../components/Icons.tsx';
+import { ChevronIcon, TileBoard } from '../components/Icons.tsx';
 import { useConnection } from '../connection.ts';
 
 const MODES = [
@@ -27,7 +27,7 @@ export default function HomePage() {
     <div className="page-heading"><div><h1>Vítejte u šipek</h1><p>Vyberte herní mód a začněte hrát.</p></div></div>
     <div className="modes">
       {MODES.map(mode => <button key={mode.id} className={`mode-tile ${mode.id}`} disabled title="Herní režimy přijdou v další verzi">
-        <TargetArt /><strong>{mode.title}</strong><span>{mode.subtitle}</span>
+        <TileBoard /><strong>{mode.title}</strong><span>{mode.subtitle}</span>
         <span className="mode-soon">PŘIPRAVUJEME</span><span className="mode-chevron"><ChevronIcon size={18} /></span>
       </button>)}
     </div>

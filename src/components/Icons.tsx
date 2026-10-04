@@ -23,10 +23,45 @@ export function BoardLogo({ size = 34 }: IconProps) {
   </svg>;
 }
 
-export function TargetArt() {
-  const rings = [56, 50, 34, 28, 10, 4];
-  return <svg className="target-art" viewBox="0 0 120 120" aria-hidden="true">
-    {Array.from({ length: 20 }, (_, i) => <path key={i} d="M60 60 L60 4" stroke="currentColor" strokeWidth="0.8" transform={`rotate(${i * 18 + 9} 60 60)`} />)}
-    {rings.map(r => <circle key={r} cx="60" cy="60" r={r} fill="none" stroke="currentColor" strokeWidth={r === 56 ? 1.6 : 0.9} />)}
+// Výseč mezikruží terče se středem v 0,0; úhel 0° míří nahoru k dvacítce.
+function wedge(r0: number, r1: number, a0: number, a1: number): string {
+  const point = (r: number, deg: number) => {
+    const a = (deg - 90) * Math.PI / 180;
+    return `${(r * Math.cos(a)).toFixed(2)} ${(r * Math.sin(a)).toFixed(2)}`;
+  };
+  return r0 === 0 ? `M0 0L${point(r1, a0)}A${r1} ${r1} 0 0 1 ${point(r1, a1)}Z`
+    : `M${point(r1, a0)}A${r1} ${r1} 0 0 1 ${point(r1, a1)}L${point(r0, a1)}A${r0} ${r0} 0 0 0 ${point(r0, a0)}Z`;
+}
+const SECTORS = Array.from({ length: 20 }, (_, i) => [i * 18 - 9, i * 18 + 9] as const);
+// Plochy terče: výseče, trojitý a dvojitý kruh, každý střídavě světlý a tmavý.
+const BOARD_LAYERS = [
+  { r0: 0, r1: 92, light: 0.42, dark: 0.16 },
+  { r0: 52, r1: 59, light: 0.95, dark: 0.5 },
+  { r0: 85, r1: 92, light: 0.95, dark: 0.5 },
+].map(layer => ({ ...layer, paths: SECTORS.map(([a0, a1], i) => ({ d: wedge(layer.r0, layer.r1, a0, a1), light: i % 2 === 0 })) }));
+
+function TileDart({ x, y, angle }: { x: number; y: number; angle: number }) {
+  return <g transform={`translate(${x} ${y}) rotate(${angle})`}>
+    <path d="M0 0L7 -2L7 2Z" fill="#e8ebef" />
+    <rect x="6" y="-3" width="22" height="6" rx="2" fill="#f4f5f7" />
+    <rect x="28" y="-1.3" width="20" height="2.6" fill="#c9ced6" />
+    <path d="M40 0L52 -12L61 -12L54 0L61 12L52 12Z" fill="currentColor" stroke="#0008" strokeWidth="1" />
+  </g>;
+}
+
+// Terč v barvě dlaždice (currentColor), vyplněný a se zapíchnutými šipkami.
+export function TileBoard() {
+  return <svg className="tile-board" viewBox="-112 -112 224 224" aria-hidden="true">
+    <circle r="110" fill="#000" fillOpacity="0.45" />
+    <circle r="110" fill="none" stroke="currentColor" strokeOpacity="0.35" strokeWidth="2" />
+    {BOARD_LAYERS.map((layer, index) => <g key={index}>{layer.paths.map((path, i) =>
+      <path key={i} d={path.d} fill="currentColor" fillOpacity={path.light ? layer.light : layer.dark} />)}</g>)}
+    <g stroke="#fff" strokeOpacity="0.14" strokeWidth="0.6" fill="none">
+      {SECTORS.map(([a0], i) => <path key={i} d={`M0 0L0 -92`} transform={`rotate(${a0})`} />)}
+      {[92, 85, 59, 52, 13].map(r => <circle key={r} r={r} />)}
+    </g>
+    <circle r="13" fill="currentColor" fillOpacity="0.7" /><circle r="5.5" fill="currentColor" />
+    <TileDart x={-26} y={-22} angle={-48} />
+    <TileDart x={10} y={-8} angle={-34} />
   </svg>;
 }
