@@ -5,6 +5,7 @@ import { suggestCheckout } from '../game/checkout.ts';
 import { endGame, enterDart, nextPlayer, rematch, startGame, undoDart, useGame } from '../game/gameStore.ts';
 import { dartLabel, DARTS_PER_VISIT, makeDart, threeDartAverage } from '../game/x01.ts';
 import type { Dart, X01Settings, X01State } from '../game/x01.ts';
+import { loadLastSetup, saveLastSetup } from '../game/lastSetup.ts';
 import { shuffle } from '../game/order.ts';
 import type { Player } from '../players/playerList.ts';
 import { usePlayers } from '../players/players.ts';
@@ -29,11 +30,12 @@ function legCount(n: number): string {
 function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPlayers: () => void }) {
   const { players, loaded } = usePlayers();
   const [score, setScore] = useState<301 | 501>(initialScore);
-  const [selected, setSelected] = useState<string[]>([]);
-  const [legsToWin, setLegsToWin] = useState(1);
-  const [doubleOut, setDoubleOut] = useState(true);
-  // Výchozí je náhodné pořadí (vylosuje se při startu).
-  const [randomOrder, setRandomOrder] = useState(true);
+  // Předvyplnění podle poslední hry; výchozí je náhodné pořadí (vylosuje se při startu).
+  const [last] = useState(loadLastSetup);
+  const [selected, setSelected] = useState<string[]>(last.playerIds);
+  const [legsToWin, setLegsToWin] = useState(last.legsToWin);
+  const [doubleOut, setDoubleOut] = useState(last.doubleOut);
+  const [randomOrder, setRandomOrder] = useState(last.randomOrder);
   useEffect(() => setScore(initialScore), [initialScore]);
   const toggle = (id: string) => setSelected(list => list.includes(id) ? list.filter(other => other !== id)
     : list.length < MAX_GAME_PLAYERS ? [...list, id] : list);
@@ -41,6 +43,7 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
   const chosen = selected.flatMap(id => players.filter(player => player.id === id));
   const others = players.filter(player => !selected.includes(player.id)).sort((a, b) => a.name.localeCompare(b.name, 'cs'));
   function start() {
+    saveLastSetup({ playerIds: chosen.map(player => player.id), randomOrder, legsToWin, doubleOut });
     const order = randomOrder ? shuffle(chosen) : chosen;
     if (order.length) startGame({ startScore: score, doubleOut, legsToWin } satisfies X01Settings, order.map(({ id, name, color }) => ({ id, name, color })));
   }
@@ -78,8 +81,8 @@ function GameSetup({ initialScore, onPlayers }: { initialScore: 301 | 501; onPla
       </div>
     </section>
     <div className="setup-start">
-      <span className="muted">{selected.length ? `${score} · ${legsText(legsToWin)} · ${selected.length} ${selected.length === 1 ? 'hráč' : selected.length < 5 ? 'hráči' : 'hráčů'}${randomOrder && selected.length > 1 ? ' · pořadí se vylosuje' : ''}` : 'Vyberte alespoň jednoho hráče.'}</span>
-      <button className="primary big" disabled={!selected.length} onClick={start}>Začít hru</button>
+      <span className="muted">{chosen.length ? `${score} · ${legsText(legsToWin)} · ${chosen.length} ${chosen.length === 1 ? 'hráč' : chosen.length < 5 ? 'hráči' : 'hráčů'}${randomOrder && chosen.length > 1 ? ' · pořadí se vylosuje' : ''}` : 'Vyberte alespoň jednoho hráče.'}</span>
+      <button className="primary big" disabled={!chosen.length} onClick={start}>Začít hru</button>
     </div>
   </div>;
 }

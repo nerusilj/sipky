@@ -4,6 +4,16 @@ import { addDart, commitVisit, createGame, dartLabel, deriveState, evaluateVisit
 import type { X01Game } from '../src/game/x01.ts';
 import { suggestCheckout } from '../src/game/checkout.ts';
 import { shuffle } from '../src/game/order.ts';
+import { DEFAULT_SETUP, parseLastSetup } from '../src/game/lastSetup.ts';
+
+test('sestava poslední hry: platné hodnoty se převezmou, neplatné nahradí výchozími', () => {
+  assert.deepEqual(parseLastSetup('{"playerIds":["a","b","a",3],"randomOrder":false,"legsToWin":3,"doubleOut":false}'),
+    { playerIds: ['a', 'b'], randomOrder: false, legsToWin: 3, doubleOut: false });
+  assert.deepEqual(parseLastSetup('{"legsToWin":9,"randomOrder":"ano"}'), DEFAULT_SETUP);
+  assert.deepEqual(parseLastSetup(null), DEFAULT_SETUP);
+  assert.deepEqual(parseLastSetup('nejson'), DEFAULT_SETUP);
+  assert.equal(DEFAULT_SETUP.randomOrder, true);
+});
 
 test('náhodné pořadí zachová všechny hráče a nemění původní seznam', () => {
   const list = ['a', 'b', 'c', 'd'];
