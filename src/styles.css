@@ -36,10 +36,10 @@
 .mode-tile.cricket{--hue:#2fcf8a;--deep:#07191a;--mid:#0d4a36}
 .mode-tile .mode-soon{position:absolute;top:14px;left:26px;font-size:9px;letter-spacing:1px;padding:4px 7px;border-radius:4px;background:#0009;color:#d8dce3}
 .mode-tile .mode-chevron{position:absolute;right:20px;bottom:18px;color:#fff}
-.status-card{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:24px 28px}.status-card>div:first-child{min-width:0}.status-card dd{overflow-wrap:anywhere}
+.status-card{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;padding:24px 28px}.status-card>div:first-child{min-width:0}.status-card dd{overflow-wrap:anywhere}
 .status-line{display:flex;align-items:center;gap:9px;margin-top:8px;color:#ffc285;font-weight:650;font-size:14px}.status-line.online{color:var(--green)}
 .status-card dl{display:grid;grid-template-columns:150px 1fr;gap:12px 20px;margin:22px 0 0;font-size:14px}.status-card dt{color:var(--muted)}.status-card dd{margin:0}.status-card code{font-size:13px}
-.status-logo{width:80px;height:auto;flex-shrink:0;margin-right:24px;opacity:.35;filter:grayscale(1);transition:opacity .3s,filter .3s}.status-logo.online{opacity:1;filter:none}
+.status-logo{width:44px;height:auto;flex-shrink:0;margin-top:2px;opacity:.35;filter:grayscale(1);transition:opacity .3s,filter .3s}.status-logo.online{opacity:1;filter:none}
 .coming-soon{padding:30px 28px;display:flex;flex-direction:column;align-items:flex-start;gap:14px}.coming-soon p{font-size:14px;max-width:620px}
 
 /* Nastavení */
