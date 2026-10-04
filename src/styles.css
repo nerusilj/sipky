@@ -8,7 +8,7 @@
 /* Rámec aplikace */
 .shell{display:grid;grid-template-columns:96px 1fr;grid-template-rows:72px 1fr;height:100vh}
 .topbar{grid-column:1/-1;display:flex;align-items:center;gap:40px;padding:0 22px;border-bottom:1px solid var(--line);background:var(--sidebar)}
-.brand{display:flex;align-items:center;gap:14px;font-weight:800;font-size:22px;letter-spacing:1.5px;white-space:nowrap}.dart-mark{flex-shrink:0;filter:drop-shadow(0 2px 3px #0008)}
+.brand{display:flex;align-items:center;gap:14px;font-weight:800;font-size:22px;letter-spacing:1.5px;white-space:nowrap}.dart-mark{flex-shrink:0}
 .topbar-status{display:flex;align-items:center;gap:10px;font-size:13px;margin-left:auto;margin-right:-22px}.topbar-status strong{color:#ffc285;font-weight:650}.topbar-status strong.online{color:var(--green)}
 .icon-button{background:transparent;border:0;padding:8px;color:#b9bfc9;display:grid;place-items:center;border-radius:8px}.icon-button:hover:not(:disabled){background:#1d2027;color:#fff}
 .sidebar{background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;padding-top:8px;overflow-y:auto}
