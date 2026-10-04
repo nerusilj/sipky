@@ -9,6 +9,8 @@ export interface EffectRule {
   subtitle: string;
   phrase: PhraseId;
   replacesScore: boolean;
+  // Pole terče, která se v efektu rozsvítí (místo podtitulku).
+  highlight?: { number: number; multiplier: number }[];
   match(event: BoardEvent): boolean;
 }
 
@@ -22,6 +24,7 @@ export const EFFECTS = {
     subtitle: '1 · 20 · 5',
     phrase: 'ambrozovina',
     replacesScore: true,
+    highlight: [{ number: 5, multiplier: 1 }, { number: 20, multiplier: 1 }, { number: 1, multiplier: 1 }],
     match: event => event.kind === 'visit' && event.darts.length === 3 && [1, 20, 5].every(n => single(event.darts, n)),
   },
 } satisfies Record<string, EffectRule>;

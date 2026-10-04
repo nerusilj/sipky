@@ -14,7 +14,7 @@ export const DevIcon = (p: IconProps) => <Svg {...p}><path d="m8 7-5 5 5 5" /><p
 export const ChevronIcon = (p: IconProps) => <Svg {...p}><path d="m9 5 7 7-7 7" /></Svg>;
 
 // Výseč mezikruží terče se středem v 0,0; úhel 0° míří nahoru k dvacítce.
-function wedge(r0: number, r1: number, a0: number, a1: number): string {
+export function wedge(r0: number, r1: number, a0: number, a1: number): string {
   const point = (r: number, deg: number) => {
     const a = (deg - 90) * Math.PI / 180;
     return `${(r * Math.cos(a)).toFixed(2)} ${(r * Math.sin(a)).toFixed(2)}`;

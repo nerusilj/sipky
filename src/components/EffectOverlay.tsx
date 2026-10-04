@@ -1,5 +1,7 @@
 import type { CSSProperties } from 'react';
 import { EFFECTS } from '../effects/effectRules.ts';
+import type { EffectRule } from '../effects/effectRules.ts';
+import BoardSectors from './BoardSectors.tsx';
 import { dismissEffect, useActiveEffect } from '../effects/effects.ts';
 
 const COLORS = ['#ff7a1f', '#ffd29a', '#3fcfbf', '#b6f5ea', '#ffffff', '#ff6a50', '#a68cf0'];
@@ -17,10 +19,11 @@ const CONFETTI = Array.from({ length: 56 }, (_, i) => {
 export default function EffectOverlay() {
   const active = useActiveEffect();
   if (!active) return null;
-  const effect = EFFECTS[active.id];
+  const effect: EffectRule = EFFECTS[active.id];
   return <div key={active.key} className="effect-overlay" role="alert" onClick={dismissEffect}>
     <div className="effect-rings" aria-hidden="true"><span /><span /><span /></div>
     <div className="effect-confetti" aria-hidden="true">{CONFETTI.map((style, i) => <i key={i} style={style} />)}</div>
-    <div className="effect-text"><strong>{effect.title}</strong><span>{effect.subtitle}</span></div>
+    <div className="effect-text" aria-label={`${effect.title} ${effect.subtitle}`}><strong>{effect.title}</strong>
+      {effect.highlight ? <BoardSectors highlight={effect.highlight} /> : <span>{effect.subtitle}</span>}</div>
   </div>;
 }
