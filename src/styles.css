@@ -40,6 +40,20 @@
 .status-line{display:flex;align-items:center;gap:9px;margin-top:8px;color:#ffc285;font-weight:650;font-size:14px}.status-line.online{color:var(--green)}
 .status-card dl{display:grid;grid-template-columns:150px 1fr;gap:12px 20px;margin:22px 0 0;font-size:14px}.status-card dt{color:var(--muted)}.status-card dd{margin:0}.status-card code{font-size:13px}
 .status-logo{width:44px;height:auto;flex-shrink:0;margin-top:2px;opacity:.35;filter:grayscale(1);transition:opacity .3s,filter .3s}.status-logo.online{opacity:1;filter:none}
+.recent-players{margin-top:26px}.recent-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.recent-head .text-button{font-size:13px}
+.recent-list{display:flex;gap:14px;flex-wrap:wrap}
+.recent-player{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:132px;height:132px;padding:12px;font-weight:600}
+.recent-player strong{font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recent-player.add{border-style:dashed;color:var(--muted)}.add-icon{width:58px;height:58px;border-radius:50%;border:2px dashed #4a505a;display:grid;place-items:center;font-size:30px;font-weight:300}
+.player-avatar{display:inline-grid;place-items:center;flex-shrink:0;border-radius:50%;font-weight:800;letter-spacing:.5px;color:#0b0d10;
+  background:radial-gradient(circle at 30% 25%,color-mix(in srgb,var(--avatar) 55%,#fff),var(--avatar) 60%,color-mix(in srgb,var(--avatar) 70%,#000));box-shadow:0 0 0 3px #0b0d10,0 0 0 4px color-mix(in srgb,var(--avatar) 60%,transparent)}
+.add-player{margin-bottom:22px}.field-error{color:#ff9d84;font-size:13px;margin:0}
+.player-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.player-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:22px 16px 14px;text-align:center}
+.player-card.deleting{border-color:#8a3a2a}.player-name{font-size:17px;overflow-wrap:anywhere}
+.player-actions{display:flex;gap:8px;justify-content:center;margin-top:4px}.player-actions .text-button{font-size:12px}
+.player-edit{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}.player-edit input{width:100%;background:#1b1f27;border:1px solid #343a45;color:#e8ebf0;padding:9px 11px;border-radius:6px;font-size:15px;text-align:center}
+button.danger{background:#7a2416;border-color:#a8361f;color:#ffe2da}
 .coming-soon{padding:30px 28px;display:flex;flex-direction:column;align-items:flex-start;gap:14px}.coming-soon p{font-size:14px;max-width:620px}
 
 /* Nastavení */

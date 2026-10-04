@@ -3,6 +3,10 @@ import AutodartsLogo from '../components/AutodartsLogo.tsx';
 import { STATE_LABELS } from '../components/ConnectionPanel.tsx';
 import { ChevronIcon, TileBoard } from '../components/Icons.tsx';
 import { useConnection } from '../connection.ts';
+import PlayerAvatar from '../components/PlayerAvatar.tsx';
+import { usePlayers } from '../players/players.ts';
+
+const RECENT_PLAYERS = 5;
 
 const MODES = [
   { id: 'x301', title: '301', subtitle: 'Classic' },
@@ -18,8 +22,11 @@ export function sinceText(at: number | undefined, now: number): string {
   return minutes < 60 ? `před ${minutes} min` : `před ${Math.round(minutes / 60)} h`;
 }
 
-export default function HomePage() {
+export default function HomePage({ onPlayers }: { onPlayers: () => void }) {
   const connection = useConnection();
+  const { players } = usePlayers();
+  // Zatím bez her: „poslední“ = naposledy přidaní.
+  const recent = [...players].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, RECENT_PLAYERS);
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
   const online = connection.state === 'connected';
@@ -43,6 +50,15 @@ export default function HomePage() {
         </dl>
       </div>
       <AutodartsLogo className={`status-logo ${online ? 'online' : ''}`} />
+    </section>
+    <section className="recent-players" aria-labelledby="recent-title">
+      <div className="recent-head"><h2 id="recent-title">Poslední hráči</h2>
+        {players.length > 0 && <button className="text-button" onClick={onPlayers}>Všichni hráči ›</button>}</div>
+      <div className="recent-list">
+        {recent.map(player => <button key={player.id} className="recent-player card" onClick={onPlayers}>
+          <PlayerAvatar player={player} size={58} /><strong>{player.name}</strong></button>)}
+        <button className="recent-player add card" onClick={onPlayers}><span className="add-icon" aria-hidden="true">+</span><strong>Přidat hráče</strong></button>
+      </div>
     </section>
   </div>;
 }

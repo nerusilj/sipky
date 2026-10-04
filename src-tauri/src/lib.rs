@@ -22,10 +22,62 @@ fn valid_session(name: &str) -> bool {
     })
 }
 
-fn recordings_dir(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+// Data aplikace jsou v Dokumenty/Sipky, aby šla snadno zálohovat a přenést.
+fn data_dir(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     let base = app.path().document_dir().or_else(|_| app.path().app_data_dir())
-        .map_err(|_| "Nelze najít složku pro záznamy.".to_string())?;
-    Ok(base.join("Sipky").join("zaznamy"))
+        .map_err(|_| "Nelze najít složku pro data aplikace.".to_string())?;
+    Ok(base.join("Sipky"))
+}
+
+fn recordings_dir(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+    Ok(data_dir(app)?.join("zaznamy"))
+}
+
+const PLAYERS_FILE: &str = "hraci.json";
+const MAX_PLAYERS_FILE: usize = 1024 * 1024;
+
+// Seznam hráčů musí být pole JSON; obsah položek hlídá webové rozhraní.
+fn check_players(json: &str) -> Result<(), String> {
+    if json.len() > MAX_PLAYERS_FILE {
+        return Err("Seznam hráčů je příliš velký.".into());
+    }
+    match serde_json::from_str::<serde_json::Value>(json) {
+        Ok(serde_json::Value::Array(_)) => Ok(()),
+        _ => Err("Seznam hráčů není platný.".into()),
+    }
+}
+
+// Zapíše celý soubor bezpečně: nejdřív dočasný soubor, potom přejmenování (výpadek nenechá půlku souboru).
+fn write_atomic(path: &std::path::Path, content: &str) -> std::io::Result<()> {
+    if let Some(dir) = path.parent() {
+        std::fs::create_dir_all(dir)?;
+    }
+    let tmp = path.with_extension("json.tmp");
+    let mut file = std::fs::File::create(&tmp)?;
+    file.write_all(content.as_bytes())?;
+    file.sync_all()?;
+    drop(file);
+    std::fs::rename(&tmp, path)
+}
+
+// Vrátí obsah Dokumenty/Sipky/hraci.json, nebo "[]", pokud soubor ještě neexistuje.
+#[tauri::command]
+async fn load_players(app: tauri::AppHandle) -> Result<String, String> {
+    let path = data_dir(&app)?.join(PLAYERS_FILE);
+    tauri::async_runtime::spawn_blocking(move || match std::fs::read_to_string(&path) {
+        Ok(json) => { check_players(&json)?; Ok(json) }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok("[]".into()),
+        Err(_) => Err("Seznam hráčů nelze přečíst. Ověřte oprávnění.".into()),
+    }).await.map_err(|_| "Načtení hráčů selhalo.".to_string())?
+}
+
+#[tauri::command]
+async fn save_players(app: tauri::AppHandle, json: String) -> Result<(), String> {
+    check_players(&json)?;
+    let path = data_dir(&app)?.join(PLAYERS_FILE);
+    tauri::async_runtime::spawn_blocking(move || write_atomic(&path, &json)
+        .map_err(|_| "Seznam hráčů se nepodařilo uložit. Ověřte oprávnění a volné místo.".to_string()))
+        .await.map_err(|_| "Uložení hráčů selhalo.".to_string())?
 }
 
 // Průběžný bezztrátový záznam: dávku řádků připojí na konec souboru relace a vrátí jeho cestu.
@@ -89,6 +141,26 @@ mod tests {
     }
 
     #[test]
+    fn players_file_must_be_json_array() {
+        assert!(check_players("[]").is_ok());
+        assert!(check_players("[{\"id\":\"a\",\"name\":\"Jarda\"}]").is_ok());
+        for bad in ["", "{}", "null", "\"x\"", "[", "42"] {
+            assert!(check_players(bad).is_err(), "{bad}");
+        }
+    }
+
+    #[test]
+    fn atomic_write_replaces_file_and_leaves_no_tmp() {
+        let dir = std::env::temp_dir().join(format!("sipky-test-{}", std::process::id()));
+        let path = dir.join("hraci.json");
+        write_atomic(&path, "[1]").unwrap();
+        write_atomic(&path, "[2]").unwrap();
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "[2]");
+        assert!(!path.with_extension("json.tmp").exists());
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
     fn jsonl_lines_must_be_json() {
         assert!(check_jsonl("{\"a\":1}\n{\"b\":2}\n").is_ok());
         assert!(check_jsonl("").is_ok());
@@ -100,7 +172,7 @@ mod tests {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![save_session, append_recording])
+        .invoke_handler(tauri::generate_handler![save_session, append_recording, load_players, save_players])
         .run(tauri::generate_context!())
         .expect("Aplikaci Šipky nelze spustit");
 }

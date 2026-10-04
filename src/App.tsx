@@ -8,6 +8,7 @@ import { useDartTheme, useVenueName } from './settings.ts';
 import ComingSoonPage from './pages/ComingSoonPage.tsx';
 import DevPage from './pages/DevPage.tsx';
 import HomePage from './pages/HomePage.tsx';
+import PlayersPage from './pages/PlayersPage.tsx';
 import SettingsPage from './pages/SettingsPage.tsx';
 
 type Section = 'home' | 'game' | 'players' | 'settings' | 'dev';
@@ -43,9 +44,9 @@ export default function App() {
         aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon /><span>{label}</span></button>)}
     </nav>
     <main className="content">
-      {section === 'home' && <HomePage />}
+      {section === 'home' && <HomePage onPlayers={() => setSection('players')} />}
       {section === 'game' && <ComingSoonPage title="Hra" text="301, 501 a Cricket s automatickým počítáním z terče." />}
-      {section === 'players' && <ComingSoonPage title="Hráči" text="Profily hráčů a jejich historie." />}
+      {section === 'players' && <PlayersPage />}
       {section === 'settings' && <SettingsPage />}
       {section === 'dev' && <DevPage onSettings={() => setSection('settings')} />}
     </main>
