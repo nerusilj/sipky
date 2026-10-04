@@ -51,6 +51,10 @@ Používejte jeden správce balíčků. Součástí dodávky je `pnpm-lock.yaml`
 - Aplikace se po spuštění sama připojí na uloženou adresu terče. Adresa se mění v Nastavení.
 - V horní liště je název podniku (výchozí „HOLICE“, mění se v Nastavení) a obrázek ležaté šipky.
 - **Průběžný bezztrátový záznam na disk** (jen desktopová aplikace): každé spuštění zapisuje do `Dokumenty/Sipky/zaznamy/RRRR-MM-DD_HH-MM-SS.jsonl`. Zapisuje se každá přijatá zpráva (stejný formát jako export) a události aplikace s polem `meta` (`start`, `connect`, `state`, `version`, `disconnect`). Zápis probíhá v dávkách po 250 ms. Při chybě disku řádky čekají ve frontě a zápis se opakuje. Stav záznamu je vidět v DEV.
+- **Hlasatel v češtině:** ze zpráv terče (`state`) sečte šipky kola a po třetí šipce, nebo při vytažení šipek, nahlas ohlásí součet. Hlášení lze vypnout v DEV, kde jde také přehrát kterékoli číslo 0–180 nebo všechna postupně. V DEV je i seznam ohlášených kol. Ohlášená kola se zapisují do záznamu jako `meta: "visit"`. Události hodů jdou přes `onBoardEvent` v `src/connection.ts`, kam se později připojí efekty. Formát zpráv je zatím komunitní a musí se ověřit na skutečném terči.
+- **Nahrávky hlášení** jsou v `public/sounds/cs/score/0.wav` až `180.wav` (asi 11 MB). Vygenerované jsou offline hlasem [Piper](https://github.com/rhasspy/piper) (MIT) s českým hlasem `cs_CZ-jirka-medium` (data CC0):
+  `node scripts/generate-voice.mjs --piper <cesta k piper.exe> --model <cesta k cs_CZ-jirka-medium.onnx>`.
+  Lze je nahradit vlastními nahrávkami se stejnými názvy. Aby hlasatel mluvil i bez kliknutí do aplikace, okno má ve WebView2 povolené automatické přehrávání.
 - DEV je inspektor událostí:
   - Připojení k Board Manageru na nastavitelné adrese (výchozí `127.0.0.1:3180`, zapamatuje se). Pouze naslouchá, nic neodesílá. Při výpadku se spojení obnovuje s rostoucím odstupem 1–30 s.
   - Čitelné rozhraní inspektoru, viditelný stav připojení, typ/kanál zprávy, detail formátovaného JSON a přepnutí na přesný raw text.

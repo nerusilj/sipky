@@ -1,6 +1,7 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import EventLog from '../components/EventLog.tsx';
 import EventDetails from '../components/EventDetails.tsx';
+import CallerPanel from '../components/CallerPanel.tsx';
 import Filters from '../components/Filters.tsx';
 import { STATE_LABELS } from '../components/ConnectionPanel.tsx';
 import { boardConnection, useConnection, useRecorder } from '../connection.ts';
@@ -82,6 +83,7 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
       {recording.lost > 0 && <span className="rec-error">Fronta byla plná, {recording.lost.toLocaleString('cs-CZ')} řádků se nezapsalo.</span>}
     </div>
     {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Zavřít oznámení">×</button></div>}
+    <CallerPanel />
     <div className="metrics"><div><span className="field-label">ZPRÁVY V BUFFERU</span><strong>{stats.count.toLocaleString('cs-CZ')}<small> / {MAX_MESSAGES.toLocaleString('cs-CZ')}</small></strong></div>
       <div><span className="field-label">PŘIJATO OD VYMAZÁNÍ</span><strong>{stats.received.toLocaleString('cs-CZ')}</strong></div>
       <div><span className="field-label">VYŘAZENO Z BUFFERU</span><strong>{stats.dropped.toLocaleString('cs-CZ')}</strong></div>

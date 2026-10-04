@@ -4,12 +4,15 @@ import type { DartThemeId } from './dartThemes.ts';
 
 const VENUE_KEY = 'sipky.venueName';
 const DART_KEY = 'sipky.dartTheme';
+const CALLER_KEY = 'sipky.callerEnabled';
 export const DEFAULT_VENUE_NAME = 'HOLICE';
 export const MAX_VENUE_NAME = 32;
 
 // Vzhled horní lišty; mění se v Nastavení a pamatuje si ho localStorage.
 let venueName = normalizeVenueName(read(VENUE_KEY) ?? '');
 let dartTheme: DartThemeId = normalizeDartTheme(read(DART_KEY));
+// Hlasatel je ve výchozím stavu zapnutý.
+let callerEnabled = read(CALLER_KEY) !== 'false';
 const listeners = new Set<() => void>();
 
 function read(key: string): string | null {
@@ -38,5 +41,12 @@ export function setDartTheme(value: DartThemeId): void {
   write(DART_KEY, dartTheme);
 }
 
+export function setCallerEnabled(value: boolean): void {
+  callerEnabled = value;
+  write(CALLER_KEY, String(value));
+}
+export function isCallerEnabled(): boolean { return callerEnabled; }
+
 export function useVenueName(): string { return useSyncExternalStore(subscribe, () => venueName); }
+export function useCallerEnabled(): boolean { return useSyncExternalStore(subscribe, () => callerEnabled); }
 export function useDartTheme(): DartThemeId { return useSyncExternalStore(subscribe, () => dartTheme); }

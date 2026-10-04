@@ -7,11 +7,26 @@ import type { ConnectionState } from './autodarts/types.ts';
 import { messageStore } from './inspector/messageStore.ts';
 import { FLUSH_INTERVAL_MS, Recorder } from './inspector/recorder.ts';
 import type { RecorderSnapshot } from './inspector/recorder.ts';
+import { caller } from './caller/caller.ts';
+import { VisitTracker } from './caller/visitTracker.ts';
+import type { BoardEvent } from './caller/visitTracker.ts';
+import { isCallerEnabled } from './settings.ts';
 
 // Průběžný záznam na disk běží jen v desktopové aplikaci; jeden soubor na spuštění.
 export const recorder = new Recorder(isTauri() ? (session, lines) => invoke<string>('append_recording', { session, lines }) : undefined);
 if (isTauri()) window.setInterval(() => { void recorder.flush(); }, FLUSH_INTERVAL_MS);
 recorder.meta('start', { app: 'Šipky' });
+
+// Události hodů (šipka, kolo) pro hlasatele a později efekty.
+const visitTracker = new VisitTracker();
+const boardEventListeners = new Set<(event: BoardEvent) => void>();
+export function onBoardEvent(listener: (event: BoardEvent) => void): () => void {
+  boardEventListeners.add(listener);
+  return () => { boardEventListeners.delete(listener); };
+}
+onBoardEvent(event => caller.handle(event, isCallerEnabled()));
+// Ohlášená kola jdou i do záznamu, aby šla po testu porovnat se surovými zprávami.
+onBoardEvent(event => { if (event.kind === 'visit') recorder.meta('visit', { total: event.total, darts: event.darts.map(dart => dart.name) }); });
 export function useRecorder(): RecorderSnapshot {
   return useSyncExternalStore(recorder.subscribe, recorder.get);
 }
@@ -47,7 +62,11 @@ class BoardConnection {
         this.update({ version }); recorder.meta('version', { boardManager: version ?? null });
       });
     });
-    next.onMessage(message => { messageStore.append(message); recorder.message(message); this.update({ lastMessageAt: Date.now() }); });
+    visitTracker.reset();
+    next.onMessage(message => {
+      messageStore.append(message); recorder.message(message); this.update({ lastMessageAt: Date.now() });
+      for (const event of visitTracker.handle(message.payload)) boardEventListeners.forEach(listener => listener(event));
+    });
     next.connect();
   }
 

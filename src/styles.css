@@ -56,6 +56,12 @@
 
 /* DEV */
 .readonly{display:flex;align-items:center;gap:14px}.readonly>span{font-size:27px;color:var(--orange)}.readonly div{display:flex;flex-direction:column;gap:5px}.readonly strong{font-size:15px}.readonly div span{font-size:12px;color:var(--muted)}
+.caller{margin-top:16px;padding:22px 24px;display:flex;flex-direction:column;gap:14px}.caller-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.caller-head h2{margin-top:6px}
+.switch{display:flex;align-items:center;gap:9px;font-size:14px;cursor:pointer}.switch input{width:18px;height:18px;accent-color:var(--orange)}
+.caller-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.caller-controls input{width:92px;background:#1b1f27;border:1px solid #343a45;color:#e8ebf0;padding:9px 11px;border-radius:6px;font-size:15px}
+.caller-quick{display:flex;gap:6px;flex-wrap:wrap}.caller-quick button{padding:7px 12px;font-size:13px;min-width:52px}.caller-quick button.playing{border-color:var(--orange);color:var(--orange)}
+.caller-log{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}.caller-log ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;max-height:220px;overflow:auto}
+.caller-log li{display:flex;align-items:center;gap:14px;font-size:13px;padding:5px 0;border-bottom:1px solid #1d2026}.caller-log time{color:var(--muted);font-variant-numeric:tabular-nums}.caller-darts{flex:1;color:#c9ced6;font-family:ui-monospace,Consolas,monospace}.caller-log strong{font-size:16px;min-width:36px;text-align:right}
 .recording{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px 16px 12px 20px;font-size:14px;margin-top:10px}.recording code{color:var(--muted);font-size:12px;overflow-wrap:anywhere}.recording .muted{font-size:13px}.recording.failing{border-color:#745033}
 .rec-dot{width:10px;height:10px;border-radius:50%;background:#4a505a;flex-shrink:0}.rec-dot.on{background:#ff4d4d;box-shadow:0 0 0 3px #ff4d4d33}.rec-error{flex-basis:100%;color:#ffc79f;font-size:13px}
 .dev-connection{display:flex;align-items:center;gap:12px;padding:12px 16px 12px 20px;font-size:14px}.dev-connection code{color:var(--muted);font-size:13px;overflow-wrap:anywhere}.dev-connection button{padding:8px 14px;font-size:13px}

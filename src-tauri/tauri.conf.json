@@ -11,7 +11,8 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "windows": [{ "label": "main", "title": "Šipky", "width": 1440, "height": 960, "minWidth": 800, "minHeight": 640 }],
+    "windows": [{ "label": "main", "title": "Šipky", "width": 1440, "height": 960, "minWidth": 800, "minHeight": 640,
+      "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required" }],
     "security": {
       "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost ws: http:; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
     }
