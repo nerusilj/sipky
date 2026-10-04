@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PencilIcon, TrashIcon } from '../components/Icons.tsx';
 import PlayerAvatar from '../components/PlayerAvatar.tsx';
 import { MAX_NAME_LENGTH, nameError } from '../players/playerList.ts';
 import type { Player } from '../players/playerList.ts';
@@ -56,10 +57,12 @@ function PlayerCard({ player, players, readOnly }: { player: Player; players: re
     </div> : <>
       <strong className="player-name">{player.name}</strong>
       <span className="muted small">Přidán {new Date(player.createdAt).toLocaleDateString('cs-CZ')}</span>
-      <div className="player-actions">
-        <button className="text-button" disabled={readOnly} onClick={() => { setDraft(player.name); setMode('rename'); }}>Přejmenovat</button>
-        <button className="text-button" disabled={readOnly} onClick={() => setMode('delete')}>Smazat</button>
-      </div>
+      {!readOnly && <div className="player-icons">
+        <button className="icon-action" title="Přejmenovat" aria-label={`Přejmenovat hráče ${player.name}`}
+          onClick={() => { setDraft(player.name); setMode('rename'); }}><PencilIcon size={16} /></button>
+        <button className="icon-action delete" title="Smazat" aria-label={`Smazat hráče ${player.name}`}
+          onClick={() => setMode('delete')}><TrashIcon size={16} /></button>
+      </div>}
     </>}
   </li>;
 }
