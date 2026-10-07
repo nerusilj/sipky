@@ -68,6 +68,7 @@ Používejte jeden správce balíčků. Součástí dodávky je `pnpm-lock.yaml`
 
   Příkaz: `node scripts/generate-voice.mjs --voice <jirka|kasandra> --piper <cesta k piper.exe> --model <cesta k .onnx> [--only score|fun]`. Hlášky efektů jsou v `public/sounds/cs/<hlas>/fun/`. Piper je mírně náhodný, každý běh soubory přepíše jinými daty, proto přes `--only` generujte jen to, co se změnilo.
   Lze je nahradit vlastními nahrávkami se stejnými názvy. Aby hlasatel mluvil i bez kliknutí do aplikace, okno má ve WebView2 povolené automatické přehrávání.
+- **Samostatný záznamník** `tools/zaznamnik.html`: jeden HTML soubor bez závislostí pro sběr událostí u terče bez této aplikace. Otevírá se jako soubor v Chrome/Edge na počítači nebo v mobilu, připojí se na `ws://<adresa>:3180/api/events` a zapisuje stejný JSONL jako aplikace. Na počítači umí průběžně zapisovat do souboru, všude umí kopírovat do schránky a stahovat (volitelně automaticky každé 2 minuty).
 - DEV je inspektor událostí:
   - Připojení k Board Manageru na nastavitelné adrese (výchozí `127.0.0.1:3180`, zapamatuje se). Pouze naslouchá, nic neodesílá. Při výpadku se spojení obnovuje s rostoucím odstupem 1–30 s.
   - Čitelné rozhraní inspektoru, viditelný stav připojení, typ/kanál zprávy, detail formátovaného JSON a přepnutí na přesný raw text.

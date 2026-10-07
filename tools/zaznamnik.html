@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Záznamník terče</title>
+<!-- Samostatný záznamník událostí Autodarts Board Manageru (ws://<adresa>/api/events).
+     Bez závislostí, funguje otevřený jako soubor na počítači i v mobilu. Pouze čte, nic neodesílá.
+     Formát záznamu je stejný JSONL jako průběžný záznam aplikace Šipky. -->
+<style>
+  :root{color-scheme:dark;--bg:#0b0d10;--card:#13161b;--line:#262a31;--muted:#a5abb6;--accent:#ff7a1f;--ok:#3fd17f;--warn:#ffc285}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:#f3f4f5;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;max-width:900px;margin-inline:auto}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  h1{font-size:22px;margin:0}h2{font-size:16px;margin:0 0 10px}
+  .pill{padding:4px 12px;border-radius:999px;font-size:13px;font-weight:700;background:#2d2016;color:var(--warn)}
+  .pill.on{background:#0f2a1d;color:var(--ok)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+  label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+  input[type=text]{background:#1b1f27;border:1px solid #343a45;color:#e8ebf0;padding:11px 12px;border-radius:8px;font:15px ui-monospace,Consolas,monospace}
+  .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  button{background:#191c23;color:#e9ebef;border:1px solid #393e48;border-radius:8px;padding:11px 16px;font:600 15px system-ui,sans-serif;cursor:pointer}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#17100b}
+  .hint{color:var(--muted);font-size:13px;margin:8px 0 0}
+  .error{color:#ff9d84}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .stats div{display:flex;flex-direction:column}.stats span{font-size:12px;color:var(--muted)}.stats strong{font-size:20px}
+  .check{flex-direction:row;align-items:center;gap:8px;margin-top:10px;font-size:14px;color:#e9ebef}
+  .check input{width:20px;height:20px;accent-color:var(--accent)}
+  textarea{width:100%;height:160px;margin-top:10px;background:#0b0e13;color:#cfd3da;border:1px solid var(--line);border-radius:8px;font:12px ui-monospace,Consolas,monospace}
+  ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  li{background:#0d1014;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;overflow-wrap:anywhere}
+  li time{color:var(--muted);margin-right:8px;font-variant-numeric:tabular-nums}li b{color:var(--accent);margin-right:6px}
+  @media(max-width:520px){.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><h1>Záznamník terče</h1><span id="status" class="pill">Nepřipojeno</span></header>
+
+<section class="card">
+  <label>Adresa Board Manageru<input id="address" type="text" value="127.0.0.1:3180" autocomplete="off" spellcheck="false" inputmode="url"></label>
+  <div class="row"><button id="connect" class="primary">Připojit</button><button id="disconnect" disabled>Odpojit</button></div>
+  <p class="hint">Na počítači s terčem <code>127.0.0.1:3180</code>, z mobilu IP počítače s terčem, např. <code>192.168.0.88:3180</code>.</p>
+  <p id="connInfo" class="hint"></p>
+</section>
+
+<section class="card stats">
+  <div><span>Zpráv z terče</span><strong id="count">0</strong></div>
+  <div><span>Poslední zpráva</span><strong id="last">–</strong></div>
+  <div><span>Uloženo do souboru</span><strong id="saved">–</strong></div>
+</section>
+
+<section class="card">
+  <h2>Ukládání záznamu</h2>
+  <div class="row">
+    <button id="copy">Kopírovat záznam</button>
+    <button id="download">Stáhnout záznam</button>
+    <button id="toFile">Zapisovat do souboru</button>
+  </div>
+  <label class="check"><input id="auto" type="checkbox">Automaticky stahovat každé 2 minuty (pro mobil)</label>
+  <p id="saveInfo" class="hint"></p>
+  <textarea id="copyArea" readonly hidden></textarea>
+  <p class="hint">Na mobilu nechte displej rozsvícený a stránku v popředí – při zhasnutí se spojení přeruší (po rozsvícení se samo obnoví).</p>
+</section>
+
+<section class="card"><h2>Poslední zprávy</h2><ol id="log"></ol></section>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const now = new Date();
+const session = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`;
+const fileName = `zaznam-${session}.jsonl`;
+
+// Všechny řádky záznamu (JSONL) – zprávy z terče i události záznamníku (pole "meta").
+const lines = [];
+let messageCount = 0, nextId = 1;
+function push(line) { lines.push(line); }
+function meta(event, details = {}) { push(JSON.stringify({ timestamp: new Date().toISOString(), meta: event, ...details })); }
+meta('start', { app: 'Záznamník terče', userAgent: navigator.userAgent });
+
+// Zpráva z terče: celá a beze změny (raw), JSON navíc rozparsovaný; stejné klíče jako v aplikaci Šipky.
+function handleMessage(raw) {
+  let payload = raw, format = 'text';
+  try { payload = JSON.parse(raw); format = 'json'; } catch { /* Zachovat i neplatný JSON. */ }
+  const env = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : {};
+  const channel = typeof env.channel === 'string' ? env.channel : typeof env.type === 'string' ? env.type : undefined;
+  const topic = typeof env.topic === 'string' ? env.topic : undefined;
+  const timestamp = new Date().toISOString();
+  push(JSON.stringify({ id: nextId++, timestamp, direction: 'in', channel, topic, payload, raw, format }));
+  messageCount++;
+  $('count').textContent = messageCount;
+  $('last').textContent = new Date().toLocaleTimeString('cs-CZ');
+  addToLog(channel, env, raw);
+}
+
+function addToLog(channel, env, raw) {
+  const li = document.createElement('li');
+  const data = env.data && typeof env.data === 'object' ? env.data : {};
+  const throws = Array.isArray(data.throws) ? data.throws.map(t => t?.segment?.name ?? '?').join(' ') : '';
+  const summary = [data.event, data.status, throws].filter(Boolean).join(' · ') || raw.slice(0, 160);
+  li.innerHTML = '<time></time><b></b><span></span>';
+  li.querySelector('time').textContent = new Date().toLocaleTimeString('cs-CZ');
+  li.querySelector('b').textContent = channel ?? 'zpráva';
+  li.querySelector('span').textContent = summary;
+  $('log').prepend(li);
+  while ($('log').children.length > 30) $('log').lastChild.remove();
+}
+
+// Spojení: pouze naslouchá, nic neodesílá; při výpadku se obnovuje (1–30 s).
+let ws, wanted = false, attempt = 0, retryTimer;
+function setStatus(text, on) { $('status').textContent = text; $('status').classList.toggle('on', !!on); }
+function address() {
+  const value = $('address').value.trim();
+  if (!/^[^\s/:]+(:\d{1,5})?$/.test(value)) throw new Error('Zadejte adresu ve tvaru host nebo host:port, např. 192.168.0.88:3180.');
+  return value.includes(':') ? value : `${value}:3180`;
+}
+function open() {
+  clearTimeout(retryTimer);
+  const url = `ws://${address()}/api/events`;
+  setStatus(attempt ? 'Obnovuji spojení…' : 'Připojuji…', false);
+  try { ws = new WebSocket(url); } catch (error) { $('connInfo').textContent = String(error); scheduleRetry(); return; }
+  ws.binaryType = 'arraybuffer';
+  const socket = ws;
+  socket.onopen = () => { attempt = 0; setStatus('Připojeno', true); $('connInfo').textContent = `Poslouchám ${url}`; meta('state', { state: 'connected', url }); requestWakeLock(); };
+  socket.onmessage = event => handleMessage(typeof event.data === 'string' ? event.data : new TextDecoder().decode(event.data));
+  socket.onclose = () => {
+    if (ws !== socket) return;
+    meta('state', { state: 'disconnected' });
+    if (wanted) scheduleRetry(); else setStatus('Nepřipojeno', false);
+  };
+}
+function scheduleRetry() {
+  const ceiling = Math.min(30000, 1000 * 2 ** attempt++);
+  const delay = ceiling / 2 + Math.random() * ceiling / 2;
+  setStatus('Obnovuji spojení…', false);
+  $('connInfo').textContent = `Terč neodpovídá, další pokus za ${Math.round(delay / 1000)} s.`;
+  retryTimer = setTimeout(() => { if (wanted) open(); }, delay);
+}
+$('connect').onclick = () => {
+  try { address(); } catch (error) { $('connInfo').textContent = error.message; $('connInfo').className = 'hint error'; return; }
+  $('connInfo').className = 'hint';
+  try { localStorage.setItem('zaznamnik.address', $('address').value.trim()); } catch { /* Adresa se jen nezapamatuje. */ }
+  wanted = true; attempt = 0;
+  meta('connect', { address: address() });
+  $('connect').disabled = true; $('disconnect').disabled = false; $('address').disabled = true;
+  open();
+};
+$('disconnect').onclick = () => {
+  wanted = false; clearTimeout(retryTimer);
+  meta('disconnect');
+  const socket = ws; ws = undefined; socket?.close();
+  setStatus('Nepřipojeno', false);
+  $('connect').disabled = false; $('disconnect').disabled = true; $('address').disabled = false;
+};
+try { const saved = localStorage.getItem('zaznamnik.address'); if (saved) $('address').value = saved; } catch { /* bez paměti */ }
+
+// Mobil: udržet displej rozsvícený, pokud to prohlížeč dovolí (jen na zabezpečených stránkách).
+let wakeLock;
+async function requestWakeLock() { try { wakeLock = await navigator.wakeLock?.request('screen'); } catch { /* nepodporováno */ } }
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  requestWakeLock();
+  // Po probuzení telefonu hned obnovit spojení, pokud spadlo.
+  if (wanted && (!ws || ws.readyState === WebSocket.CLOSED)) { attempt = 0; open(); }
+});
+
+const allText = () => lines.join('\n') + '\n';
+function info(text, error) { $('saveInfo').textContent = text; $('saveInfo').className = error ? 'hint error' : 'hint'; }
+
+// Kopírovat: schránka, a když ji prohlížeč nepovolí, text k ručnímu označení.
+$('copy').onclick = async () => {
+  const text = allText();
+  const area = $('copyArea');
+  area.value = text; area.hidden = false;
+  try { await navigator.clipboard.writeText(text); info(`Zkopírováno ${lines.length} řádků. Vložte je třeba do e-mailu nebo zprávy.`); return; } catch { /* zkusit náhradní cestu */ }
+  area.focus(); area.select();
+  try { if (document.execCommand('copy')) { info(`Zkopírováno ${lines.length} řádků.`); return; } } catch { /* ruční kopie */ }
+  info('Schránka není dostupná – text níže je označený, zkopírujte ho ručně (podržet → Kopírovat).', true);
+};
+
+// Stáhnout: celý dosavadní záznam jako soubor.
+let lastAutoLines = 0;
+function download() {
+  const url = URL.createObjectURL(new Blob([allText()], { type: 'application/x-ndjson' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = fileName;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  lastAutoLines = lines.length;
+  info(`Staženo ${lines.length} řádků do ${fileName}.`);
+}
+$('download').onclick = download;
+setInterval(() => { if ($('auto').checked && lines.length > lastAutoLines) download(); }, 120000);
+
+// Průběžný zápis do souboru (Chrome/Edge na počítači): každé 3 s se připíšou nové řádky a soubor se uzavře.
+let fileHandle, fileSize = 0, written = 0, writing = false;
+if (!('showSaveFilePicker' in window)) {
+  $('toFile').disabled = true;
+  $('toFile').title = 'Tento prohlížeč průběžný zápis neumí (např. mobil) – použijte Kopírovat nebo Stáhnout.';
+}
+$('toFile').onclick = async () => {
+  try {
+    fileHandle = await window.showSaveFilePicker({ suggestedName: fileName, types: [{ description: 'Záznam JSONL', accept: { 'application/x-ndjson': ['.jsonl'] } }] });
+    fileSize = 0; written = 0;
+    await flushToFile();
+    $('toFile').disabled = true;
+  } catch (error) { if (error?.name !== 'AbortError') info(`Soubor nelze otevřít: ${error.message}`, true); }
+};
+async function flushToFile() {
+  if (!fileHandle || writing || written >= lines.length) return;
+  writing = true;
+  const count = lines.length;
+  const chunk = lines.slice(written, count).join('\n') + '\n';
+  try {
+    const stream = await fileHandle.createWritable({ keepExistingData: true });
+    await stream.write({ type: 'write', position: fileSize, data: chunk });
+    await stream.close();
+    fileSize += new Blob([chunk]).size; written = count;
+    $('saved').textContent = written;
+    info(`Zapisuji do ${fileHandle.name} – uloženo ${written} řádků.`);
+  } catch (error) {
+    info(`Zápis selhal (${error.message}), zkusím znovu.`, true);
+  } finally { writing = false; }
+}
+setInterval(flushToFile, 3000);
+
+window.addEventListener('beforeunload', event => {
+  if (lines.length > Math.max(written, lastAutoLines) + 1) { event.preventDefault(); event.returnValue = ''; }
+});
+</script>
+</body>
+</html>
