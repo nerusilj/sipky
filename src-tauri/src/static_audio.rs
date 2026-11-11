@@ -1,5 +1,4 @@
 use std::path::{Path, PathBuf};
-use tauri::Manager;
 
 fn sound_path(url: &str) -> Result<PathBuf, String> {
     let parts: Vec<_> = url.split('/').collect();
@@ -36,7 +35,7 @@ fn read_sound(base: &Path, url: &str) -> Result<Vec<u8>, String> {
 #[tauri::command]
 pub async fn static_audio(app: tauri::AppHandle, url: String) -> Result<tauri::ipc::Response, String> {
     sound_path(&url)?;
-    let base = app.path().resource_dir().map_err(|_| "Složku zvuků nelze najít.")?;
+    let base = super::resource_base(&app)?;
     tauri::async_runtime::spawn_blocking(move || read_sound(&base, &url).map(tauri::ipc::Response::new))
         .await.map_err(|_| "Načtení nahrávky selhalo.".to_string())?
 }

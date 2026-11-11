@@ -11,7 +11,9 @@ Aktualizováno 11. 11. 2026. Před zahájením práce si projdi také `AGENTS.md
 
 ## Bezprostřední stav a další práce
 
-Zdrojová verze je **0.1.7**. Linuxové balíčky z 5. 11. 2026 obsahují změny uvedené v sekcích vydání 0.1.7. Níže jsou novější změny ve zdrojích.
+Zdrojová verze je **0.1.8**. Automatické vydání Linux DEB spouští tag `v0.1.8` přes `.github/workflows/release-linux.yml`. Aplikace, statické zvuky a offline hlasatel mají samostatné balíčky. Verze a původ doplňků jsou v `scripts/linux-components.json`, postup v `docs/linux.md`. Úspěch vydání ověř v GitHub Actions a v seznamu souborů vydání.
+
+Linuxové balíčky z 5. 11. 2026 obsahují změny uvedené v sekcích vydání 0.1.7. Níže jsou změny ve zdrojích po 0.1.7.
 
 Před předáním do Gitu prošla kontrola TypeScriptu a všech 204 Node testů. Přípravu Windows, Linuxu a hlasatele popisují `README.md`, `docs/linux.md` a `docs/hlasatel.md`. Testovací vstupy jsou v `tests/fixtures/`.
 

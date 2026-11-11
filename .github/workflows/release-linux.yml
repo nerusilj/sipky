@@ -1,0 +1,51 @@
+name: Linux release
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: linux-release-${{ github.ref }}
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config file libwebkit2gtk-4.1-dev libssl-dev librsvg2-dev libayatana-appindicator3-dev
+          npm install --global pnpm@11.25.0
+          python3 -m venv "$RUNNER_TEMP/sipky-build-tools"
+          "$RUNNER_TEMP/sipky-build-tools/bin/pip" install uv
+          echo "$RUNNER_TEMP/sipky-build-tools/bin" >> "$GITHUB_PATH"
+          rustup update stable
+          rustup default stable
+          pnpm install --frozen-lockfile
+      - name: Build and verify DEBs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CARGO_BUILD_JOBS: '2'
+        run: bash scripts/release-linux.sh
+      - name: Publish to GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          out="outputs/linux/${GITHUB_REF_NAME#v}"
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            echo "Vydání $GITHUB_REF_NAME již existuje."
+            exit 1
+          fi
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "Šipky ${GITHUB_REF_NAME#v}" \
+            --notes-file "$out/INSTALACE.md" "$out"/*.deb "$out/SHA256SUMS.txt"

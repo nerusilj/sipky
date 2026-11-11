@@ -1,5 +1,24 @@
 # Sestavení pro Xubuntu x86_64
 
+## Vydávání od 0.1.8
+
+Na GitHubu vyvolá tag `vX.Y.Z` sestavení a publikaci linuxových DEB. Číslo tagu musí odpovídat `package.json`, konfiguraci Tauri a balíčku `sipky` v souborech Cargo. Vydání obsahuje nový DEB aplikace, kontrolní součty a odkazy na odpovídající zvuky a offline hlasatel. Nové verze doplňkových balíčků jsou přiložené jen při jejich vydání.
+
+Pro běžnou opravu ponechte `scripts/linux-components.json` beze změny. Při změně WAV upravte verzi a tag položky `zvuky`. Při změně hlasového workeru, modelu nebo jeho závislostí upravte `hlasatel`. Tag u položky určuje vydání, ke kterému se daný DEB přiloží. Workflow ověřuje, že u převzatého balíčku existuje soubor v odkazovaném vydání a jeho zdrojové vstupy se nezměnily. Hlavní verze doplňku vymezuje kompatibilitu.
+
+Po odeslání commitu na GitHub označte stejný commit tagem a odešlete tag. Pro první vydání je postup následující.
+
+```sh
+git tag -a v0.1.8 -m 'Šipky 0.1.8'
+git push origin v0.1.8
+```
+
+Na Xubuntu stáhněte při přechodu z 0.1.7 aplikaci i oba doplňky do stejné složky a spusťte `sudo apt install ./sipky_0.1.8_amd64.deb ./sipky-zvuky_1.0.0_all.deb ./sipky-hlasatel_1.0.0_amd64.deb`. Při běžné další aktualizaci nainstalujte nový DEB aplikace. Systémové závislosti řeší `apt`. Po instalaci funguje hlasatel offline.
+
+Místní sestavení stejných DEB spustí `pnpm install --frozen-lockfile` a `bash scripts/release-linux.sh` na Linuxu s nástroji uvedenými níže, Node.js 24, pnpm, Cargo a `uv`. Výstup je v `outputs/linux/<verze>/`. Pro přenosnou kompletní AppImage použijte postup níže.
+
+## Kompletní přenosný balíček a historie sestavení
+
 Cíle: instalační `.deb` a přenositelný `.AppImage`, včetně lokálního hlasatele (celý linuxový Python, ONNX knihovny, společný model a profily F1/M1). Windows Python se do linuxového balíčku nepoužívá. Hotové nahrávky a zvuky jsou přibalené ve frontendu.
 
 ## Stav

@@ -5,6 +5,14 @@ use tauri_plugin_dialog::DialogExt;
 mod player_speech;
 mod static_audio;
 
+fn resource_base(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+    #[cfg(target_os = "linux")]
+    if option_env!("SIPKY_SPLIT_PACKAGE") == Some("1") {
+        return Ok(PathBuf::from("/usr/lib/sipky-assets"));
+    }
+    app.path().resource_dir().map_err(|_| "Složku prostředků aplikace nelze najít.".to_string())
+}
+
 const MAX_RECORDING_BATCH: usize = 16 * 1024 * 1024;
 
 fn check_jsonl(jsonl: &str) -> Result<(), String> {

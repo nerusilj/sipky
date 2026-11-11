@@ -69,7 +69,7 @@ fn request(worker: &mut Worker, name: &str, voice: &str, cache: &std::path::Path
 pub async fn player_speech(app: tauri::AppHandle, state: tauri::State<'_, PlayerSpeech>, name: String, voice: String) -> Result<tauri::ipc::Response, String> {
     let name = normalized_name(&name)?;
     if !matches!(voice.as_str(), "eliska" | "martin") { return Err("Neznámý hlas.".into()); }
-    let runtime = app.path().resource_dir().map_err(|_| "Složku hlasatele nelze najít.")?.join("tts");
+    let runtime = super::resource_base(&app)?.join("tts");
     let cache = super::data_dir(&app)?.join("hlaseni-hracu");
     let worker = state.0.clone();
     tauri::async_runtime::spawn_blocking(move || {
