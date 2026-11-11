@@ -8,7 +8,7 @@ import { normalizeVoice, parseDisabledEffects } from '../src/settings.ts';
 import { phraseSoundUrl } from '../src/caller/phrases.ts';
 import { matchEffects } from '../src/effects/effectRules.ts';
 
-test('Ambrožovina: kolo S1, S20, S5 v libovolném pořadí, jen když je efekt zapnutý', () => {
+test('Ambrožovka: kolo S1, S20, S5 v libovolném pořadí, jen když je efekt zapnutý', () => {
   const dart = (number: number, multiplier = 1) => ({ name: `${'SDT'[multiplier - 1] ?? 'M'}${number}`, number, multiplier, score: number * multiplier });
   const visit = (...darts: ReturnType<typeof dart>[]): BoardEvent => ({ kind: 'visit', darts, total: darts.reduce((s, d) => s + d.score, 0) });
   const on = () => true;
@@ -19,18 +19,18 @@ test('Ambrožovina: kolo S1, S20, S5 v libovolném pořadí, jen když je efekt 
   }
   assert.deepEqual(matchEffects({ kind: 'dart', index: 0, dart: dart(1) }, on), []);
   assert.deepEqual(matchEffects(visit(dart(1), dart(20), dart(5)), () => false), []);
-  assert.equal(phraseSoundUrl('ambrozovina', 'kasandra'), '/sounds/cs/kasandra/fun/ambrozovina.wav');
+  assert.equal(phraseSoundUrl('ambrozovina', 'martin'), '/sounds/cs/martin/fun/ambrozovina.wav');
   assert.deepEqual(parseDisabledEffects('["ambrozovina","neznamy",1,"ambrozovina"]'), ['ambrozovina']);
   assert.deepEqual(parseDisabledEffects('nejson'), []);
 });
 
-test('nahrávka hlášení podle hlasu; neznámý hlas se vrátí na Jirku', () => {
-  assert.equal(scoreSoundUrl(180, 'kasandra'), '/sounds/cs/kasandra/score/180.wav');
-  assert.equal(scoreSoundUrl(0, 'jirka'), '/sounds/cs/jirka/score/0.wav');
-  assert.throws(() => scoreSoundUrl(181, 'jirka'));
+test('nahrávka hlášení podle hlasu; neznámý hlas se vrátí na Elišku', () => {
+  assert.equal(scoreSoundUrl(180, 'martin'), '/sounds/cs/martin/score/180.wav');
+  assert.equal(scoreSoundUrl(0, 'eliska'), '/sounds/cs/eliska/score/0.wav');
+  assert.throws(() => scoreSoundUrl(181, 'eliska'));
   assert.throws(() => scoreSoundUrl(60, '../x' as never));
-  assert.equal(normalizeVoice('kasandra'), 'kasandra');
-  for (const bad of [null, '', 'hasOwnProperty', 'pepa']) assert.equal(normalizeVoice(bad), 'jirka');
+  assert.equal(normalizeVoice('martin'), 'martin');
+  for (const bad of [null, '', 'hasOwnProperty', 'pepa']) assert.equal(normalizeVoice(bad), 'eliska');
 });
 
 test('čísla se vysloví česky', () => {

@@ -1,7 +1,9 @@
 import { useSyncExternalStore } from 'react';
 import { invoke, isTauri } from '@tauri-apps/api/core';
-import { addPlayer, parsePlayers, removePlayer, renamePlayer } from './playerList.ts';
+import { addPlayer, parsePlayers, removePlayer, renamePlayer, updatePlayer } from './playerList.ts';
+import type { AvatarId } from './avatars.ts';
 import type { Player } from './playerList.ts';
+import { preparePlayerNames } from '../caller/playerSpeech.ts';
 
 export interface PlayersSnapshot { loaded: boolean; readOnly: boolean; players: readonly Player[]; error?: string }
 
@@ -22,6 +24,7 @@ let saving: Promise<void> = Promise.resolve();
 function update(patch: Partial<PlayersSnapshot>): void {
   snapshot = { ...snapshot, ...patch };
   listeners.forEach(listener => listener());
+  if (patch.players) preparePlayerNames(patch.players);
 }
 
 // Když se soubor nenačte, úpravy jsou zablokované, aby se původní seznam nepřepsal prázdným.
@@ -39,11 +42,16 @@ function commit(players: Player[]): void {
 }
 
 // Vyhodí chybu s českou hláškou, když jméno nejde použít.
-export function createPlayer(name: string): void {
-  commit(addPlayer(snapshot.players, name, crypto.randomUUID()));
+export function createPlayer(name: string, avatarId: AvatarId = 'neutral'): Player {
+  const players = addPlayer(snapshot.players, name, crypto.randomUUID(), new Date(), avatarId);
+  commit(players);
+  return players[players.length - 1];
 }
 export function changePlayerName(id: string, name: string): void {
   commit(renamePlayer(snapshot.players, id, name));
+}
+export function changePlayerProfile(id: string, name: string, avatarId?: AvatarId): void {
+  commit(updatePlayer(snapshot.players, id, name, avatarId));
 }
 export function deletePlayer(id: string): void {
   commit(removePlayer(snapshot.players, id));

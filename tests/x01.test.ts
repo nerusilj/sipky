@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addDart, commitVisit, compareBullThrows, createGame, dartLabel, decideBullOff, deriveState, ENDLESS, evaluateVisit, makeDart, nextLegOrder, setVisit,
+import { addDart, commitVisit, compareBullThrows, createGame, dartLabel, decideBullOff, deriveState, ENDLESS, evaluateVisit, makeDart, nextLegOrder, playerDisplayedLegsWon, setVisit,
   threeDartAverage, undo } from '../src/game/x01.ts';
 import type { X01Game } from '../src/game/x01.ts';
 import { suggestCheckout } from '../src/game/checkout.ts';
@@ -9,7 +9,7 @@ import { DEFAULT_SETUP, parseLastSetup } from '../src/game/lastSetup.ts';
 
 test('sestava poslední hry: platné hodnoty se převezmou, neplatné nahradí výchozími', () => {
   assert.deepEqual(parseLastSetup('{"playerIds":["a","b","a",3],"randomOrder":false,"legsToWin":3,"doubleOut":false,"nextLegOrder":"rotate","maxRounds":15,"minFinishers":2}'),
-    { playerIds: ['a', 'b'], randomOrder: false, legsToWin: 3, doubleOut: false, nextLegOrder: 'rotate', maxRounds: 15, minFinishers: 2 });
+    { startScore: 501, playerIds: ['a', 'b'], randomOrder: false, legsToWin: 3, doubleOut: false, nextLegOrder: 'rotate', maxRounds: 15, minFinishers: 2 });
   assert.equal(parseLastSetup('{"maxRounds":13}').maxRounds, 0);
   assert.equal(parseLastSetup('{"nextLegOrder":"nahodne"}').nextLegOrder, 'loserFirst');
   assert.deepEqual(parseLastSetup('{"legsToWin":9,"randomOrder":"ano"}'), DEFAULT_SETUP);
@@ -123,6 +123,7 @@ test('zavřít musí 2 ze 3: leg pokračuje, kdo zavřel, nehází; vítěz je p
   s = deriveState(game);
   assert.deepEqual(s.lastLegPlaces, [0, 1]);
   assert.deepEqual(s.legsWon, [1, 0, 0]);
+  assert.equal(playerDisplayedLegsWon(s, 0), 1);
   assert.deepEqual(s.order, [2, 1, 0]);
   assert.equal(s.leg, 2);
   // Nastavení víc, než dává smysl, se omezí na počet hráčů − 1.
@@ -223,7 +224,7 @@ test('doporučený checkout', () => {
   assert.equal(names(32), 'D16');
   assert.equal(names(50), 'Bull');
   assert.equal(names(60), 'S20 D20');
-  assert.equal(names(61), '25 D18');
+  assert.equal(names(61), 'T15 D8');
   assert.equal(names(100), 'T20 D20');
   assert.equal(names(141), 'T20 T19 D12');
   assert.equal(names(121, 3)?.split(' ').length, 3);

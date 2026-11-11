@@ -1,0 +1,3 @@
+{
+  "bundle": { "resources": { "tts-runtime/": "tts/", "../public/sounds/": "sounds/" } }
+}

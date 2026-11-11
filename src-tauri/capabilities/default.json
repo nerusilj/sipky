@@ -3,5 +3,5 @@
   "identifier": "main",
   "description": "Pouze hlavní lokální okno inspektoru.",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "permissions": ["core:default", "core:window:allow-destroy"]
 }

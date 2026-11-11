@@ -1,19 +1,17 @@
-// Oslava konfetami po vyhraném legu nebo zápasu; kreslí ji komponenta Confetti.
-export type Celebration = 'leg' | 'match';
+import { playApplause } from '../caller/caller.ts';
 
-const listeners = new Set<(kind: Celebration) => void>();
+// Stejná oslava při každém platném zavření; konfety kreslí komponenta Confetti.
+const listeners = new Set<() => void>();
 
-export function celebrate(kind: Celebration): void {
-  listeners.forEach(listener => listener(kind));
+export function celebrate(): void {
+  playApplause();
+  listeners.forEach(listener => listener());
 }
 
-export function onCelebrate(listener: (kind: Celebration) => void): () => void {
+export function onCelebrate(listener: () => void): () => void {
   listeners.add(listener);
   return () => { listeners.delete(listener); };
 }
 
-// Salvy z obou spodních rohů: [zpoždění ms, počet konfet na stranu]. Zápas má delší oslavu.
-export const BURSTS: Record<Celebration, [number, number][]> = {
-  leg: [[0, 70], [250, 40]],
-  match: [[0, 90], [300, 60], [700, 70], [1200, 60], [1800, 80]],
-};
+// Salvy z obou spodních rohů: [zpoždění ms, počet konfet na stranu].
+export const BURSTS: readonly [number, number][] = [[0, 70], [250, 40]];

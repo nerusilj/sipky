@@ -4,6 +4,7 @@ const DEFAULT_PORT = 3180;
 // Jediné adresy, které aplikace otevírá. Žádné ovládací endpointy ani /api/config či /api/system s klíči terče.
 export const EVENTS_PATH = '/api/events';
 export const VERSION_PATH = '/api/version';
+export const STATE_PATH = '/api/state';
 
 const HOST = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$/i;
 
@@ -23,4 +24,8 @@ export function eventsUrl(address: string): string {
 // Pouze GET; odpověď je prostý text s verzí Board Manageru.
 export function versionUrl(address: string): string {
   return `http://${hostAndPort(address)}${VERSION_PATH}`;
+}
+
+export function stateUrl(address: string): string {
+  return `http://${hostAndPort(address)}${STATE_PATH}`;
 }

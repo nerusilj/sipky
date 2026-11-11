@@ -1,5 +1,7 @@
-// Seznam hráčů: jen jméno a přidělená barva avataru. Čisté funkce bez ukládání.
-export interface Player { id: string; name: string; color: string; createdAt: string }
+import { isAvatarId, readAvatarId } from './avatars.ts';
+import type { AvatarId } from './avatars.ts';
+// Profily hráčů. Čisté funkce bez ukládání, starší soubory zůstávají kompatibilní.
+export interface Player { id: string; name: string; color: string; createdAt: string; avatarId?: AvatarId }
 
 export const MAX_NAME_LENGTH = 24;
 export const PLAYER_COLORS = ['#ff7a1f', '#3fcfbf', '#5fb4ff', '#a68cf0', '#5fd497', '#ff6a50', '#ffd25a', '#ff8fb8', '#8fd3ff', '#c9a27a'];
@@ -32,16 +34,22 @@ export function initials(name: string): string {
   return letters.toLocaleUpperCase('cs');
 }
 
-export function addPlayer(players: readonly Player[], name: string, id: string, now = new Date()): Player[] {
+export function addPlayer(players: readonly Player[], name: string, id: string, now = new Date(), avatarId?: AvatarId): Player[] {
   const error = nameError(players, name);
   if (error) throw new Error(error);
-  return [...players, { id, name: normalizeName(name), color: nextColor(players), createdAt: now.toISOString() }];
+  if (avatarId !== undefined && !isAvatarId(avatarId)) throw new Error('Neplatný avatar.');
+  return [...players, { ...(avatarId ? { avatarId } : {}), id, name: normalizeName(name), color: nextColor(players), createdAt: now.toISOString() }];
 }
 
 export function renamePlayer(players: readonly Player[], id: string, name: string): Player[] {
   const error = nameError(players, name, id);
   if (error) throw new Error(error);
   return players.map(player => player.id === id ? { ...player, name: normalizeName(name) } : player);
+}
+
+export function updatePlayer(players: readonly Player[], id: string, name: string, avatarId?: AvatarId): Player[] {
+  if (avatarId !== undefined && !isAvatarId(avatarId)) throw new Error('Neplatný avatar.');
+  return renamePlayer(players, id, name).map(player => player.id === id && avatarId !== undefined ? { ...player, avatarId } : player);
 }
 
 export function removePlayer(players: readonly Player[], id: string): Player[] {
@@ -59,6 +67,7 @@ export function parsePlayers(json: string): Player[] {
     if (!p || typeof p.id !== 'string' || !p.id || seen.has(p.id) || typeof p.name !== 'string' || !normalizeName(p.name)) return [];
     seen.add(p.id);
     return [{
+      ...(readAvatarId(p.avatarId) ? { avatarId: readAvatarId(p.avatarId) } : {}),
       id: p.id, name: normalizeName(p.name).slice(0, MAX_NAME_LENGTH),
       color: typeof p.color === 'string' && /^#[0-9a-f]{6}$/i.test(p.color) ? p.color : PLAYER_COLORS[0],
       createdAt: typeof p.createdAt === 'string' ? p.createdAt : new Date(0).toISOString(),

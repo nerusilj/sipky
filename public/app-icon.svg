@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <title>Šipky</title>
+  <!-- Symbol BoardConnectionIcon a barevnost loga v hlavičce aplikace. -->
+  <rect x="8" y="8" width="496" height="496" rx="160" fill="#1c2a33" stroke="#3b5261" stroke-width="10"/>
+  <g transform="translate(76 76) scale(15)" stroke="#c3deed" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9"/>
+    <circle cx="12" cy="12" r="5"/>
+    <circle cx="12" cy="12" r="1"/>
+    <path d="M12 3v4M12 17v4M3 12h4M17 12h4"/>
+  </g>
+</svg>

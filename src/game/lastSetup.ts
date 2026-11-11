@@ -1,8 +1,11 @@
 import { DEFAULT_NEXT_LEG_ORDER, NO_ROUND_LIMIT } from './x01.ts';
 import type { NextLegOrder } from './x01.ts';
+import { isStartScore } from './startScores.ts';
+import type { StartScore } from './startScores.ts';
 
 // Sestava poslední hry (hráči a pravidla), aby se nová hra předvyplnila.
 export interface LastSetup {
+  startScore: StartScore;
   playerIds: string[]; randomOrder: boolean; legsToWin: number; doubleOut: boolean; nextLegOrder: NextLegOrder;
   maxRounds: number; minFinishers: number;
 }
@@ -10,6 +13,7 @@ export interface LastSetup {
 const KEY = 'sipky.lastGameSetup';
 export const ROUND_LIMITS = [NO_ROUND_LIMIT, 10, 15, 20, 30];
 export const DEFAULT_SETUP: LastSetup = {
+  startScore: 501,
   playerIds: [], randomOrder: true, legsToWin: 1, doubleOut: true, nextLegOrder: DEFAULT_NEXT_LEG_ORDER, maxRounds: NO_ROUND_LIMIT, minFinishers: 1,
 };
 
@@ -18,6 +22,7 @@ export function parseLastSetup(json: string | null): LastSetup {
     const value = JSON.parse(json ?? 'null') as Partial<LastSetup> | null;
     if (!value || typeof value !== 'object') return DEFAULT_SETUP;
     return {
+      startScore: isStartScore(value.startScore) ? value.startScore : DEFAULT_SETUP.startScore,
       playerIds: Array.isArray(value.playerIds) ? [...new Set(value.playerIds.filter((id): id is string => typeof id === 'string'))] : [],
       randomOrder: typeof value.randomOrder === 'boolean' ? value.randomOrder : DEFAULT_SETUP.randomOrder,
       // 0 = hra dokola, 1–5 = zápas na tolik vítězných legů.

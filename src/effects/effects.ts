@@ -19,11 +19,12 @@ function set(value: ActiveEffect | undefined): void {
 }
 
 // Spustí efekt: zařadí jeho hlášku k hlasateli a zobrazí animaci.
-export function triggerEffect(id: EffectId, withSound = true): void {
-  if (withSound) caller.enqueuePhrase(EFFECTS[id].phrase);
+export function triggerEffect(id: EffectId, withSound = true): Promise<void> {
+  const sound = withSound ? caller.enqueuePhrase(EFFECTS[id].phrase) : Promise.resolve();
   clearTimeout(timer);
   set({ id, key: nextKey++ });
   timer = setTimeout(() => set(undefined), EFFECT_DURATION_MS);
+  return sound;
 }
 
 export function dismissEffect(): void {

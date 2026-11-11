@@ -1,5 +1,6 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import EventLog from '../components/EventLog.tsx';
+import Toggle from '../components/Toggle.tsx';
 import EventDetails from '../components/EventDetails.tsx';
 import CallerPanel from '../components/CallerPanel.tsx';
 import Filters from '../components/Filters.tsx';
@@ -99,7 +100,7 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
     </div>
     <section className="inspector card" aria-labelledby="inspector-title">
       <div className="inspector-toolbar"><div><span className="eyebrow">ZÁZNAM</span><h2 id="inspector-title">Provoz pod lupou</h2></div><div className="toolbar-actions">
-        <button aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? '▶ Obnovit pohled' : 'Ⅱ Pozastavit pohled'}</button>
+        <Toggle checked={paused} onChange={setPaused}>Pozastavit pohled</Toggle>
         <button onClick={clear}>Vymazat</button><button className="save" onClick={() => { void save(); }} disabled={saving}>{saving ? 'Ukládání…' : '↓ Uložit relaci'}</button>
       </div></div>
       {paused && <div className="pause-note">Pohled je zmrazený. Příjem pokračuje, pokud je terč připojen. Export zahrnuje aktuální buffer.</div>}

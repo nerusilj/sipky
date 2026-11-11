@@ -2,6 +2,8 @@ use std::io::Write;
 use std::path::PathBuf;
 use tauri::Manager;
 use tauri_plugin_dialog::DialogExt;
+mod player_speech;
+mod static_audio;
 
 const MAX_RECORDING_BATCH: usize = 16 * 1024 * 1024;
 
@@ -171,8 +173,9 @@ mod tests {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .manage(player_speech::PlayerSpeech::default())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![save_session, append_recording, load_players, save_players])
+        .invoke_handler(tauri::generate_handler![save_session, append_recording, load_players, save_players, player_speech::player_speech, static_audio::static_audio])
         .run(tauri::generate_context!())
         .expect("Aplikaci Šipky nelze spustit");
 }

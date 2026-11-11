@@ -1,17 +1,14 @@
+import type { GameMode } from '../game/activeGame.ts';
 import { useEffect, useState } from 'react';
 import AutodartsLogo from '../components/AutodartsLogo.tsx';
 import { STATE_LABELS } from '../components/ConnectionPanel.tsx';
 import { ChevronIcon, TileBoard } from '../components/Icons.tsx';
 import { useConnection } from '../connection.ts';
-import PlayerAvatar from '../components/PlayerAvatar.tsx';
-import { usePlayers } from '../players/players.ts';
-
-const RECENT_PLAYERS = 5;
+import { isVerifiedBoardVersion, VERIFIED_BOARD_VERSIONS } from '../autodarts/boardVersion.ts';
 
 const MODES = [
-  { id: 'x301', title: '301', subtitle: 'Classic', score: 301 },
-  { id: 'x501', title: '501', subtitle: 'Classic', score: 501 },
-  { id: 'cricket', title: 'Cricket', subtitle: 'Zavírání čísel', score: undefined },
+  { id: 'x01', title: 'X01', subtitle: 'Odpočítávání do nuly', available: true },
+  { id: 'cricket', title: 'Cricket', subtitle: 'Zavírání čísel a bodování', available: true },
 ] as const;
 
 export function sinceText(at: number | undefined, now: number): string {
@@ -22,44 +19,47 @@ export function sinceText(at: number | undefined, now: number): string {
   return minutes < 60 ? `před ${minutes} min` : `před ${Math.round(minutes / 60)} h`;
 }
 
-export default function HomePage({ onPlayers, onPlay }: { onPlayers: () => void; onPlay: (score: 301 | 501) => void }) {
+export default function HomePage({ onPlay }: { onPlay: (mode: GameMode) => void }) {
   const connection = useConnection();
-  const { players } = usePlayers();
-  // Zatím bez her: „poslední“ = naposledy přidaní.
-  const recent = [...players].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, RECENT_PLAYERS);
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
   const online = connection.state === 'connected';
+  const version = connection.version;
+  const supported = version !== undefined && isVerifiedBoardVersion(version);
+  const versionStatus = connection.versionLoading ? 'Zjišťuji verzi…' : 'Verzi nelze zjistit';
   return <div className="page">
     <div className="page-heading"><div><h1>Vítejte u šipek</h1><p>Vyberte herní mód a začněte hrát.</p></div></div>
     <div className="modes">
-      {MODES.map(mode => { const score = mode.score; return <button key={mode.id} className={`mode-tile ${mode.id}`} disabled={!score}
-        title={score ? `Nová hra ${mode.title}` : 'Připravujeme'} onClick={() => { if (score) onPlay(score); }}>
+      {MODES.map(mode => <button key={mode.id} className={`mode-tile ${mode.id}`} disabled={!mode.available}
+        title={mode.available ? `Nová hra ${mode.title}` : 'Připravujeme'} onClick={() => { if (mode.available) onPlay(mode.id); }}>
         <TileBoard /><strong>{mode.title}</strong><span>{mode.subtitle}</span>
-        {!score && <span className="mode-soon">PŘIPRAVUJEME</span>}<span className="mode-chevron"><ChevronIcon size={18} /></span>
-      </button>; })}
+        {!mode.available && <span className="mode-soon">PŘIPRAVUJEME</span>}<span className="mode-chevron"><ChevronIcon size={18} /></span>
+      </button>)}
     </div>
-    <section className="status-card card" aria-labelledby="status-title">
+    <details className="home-connection card">
+      <summary>
+        <span><strong>Autodarts</strong><span className={`status-line ${online ? 'online' : ''}`}><span className={`dot ${online ? '' : 'amber-dot'}`} />{STATE_LABELS[connection.state]}</span>
+          {online && <span className="home-board-version">
+            {version ? <><span title="Verze Board Manageru">{version}</span>
+              <span className={`badge ${supported ? 'board-version-supported' : 'amber'}`}>{supported ? 'Podporovaná verze' : 'Podpora neověřena'}</span></>
+              : <span className={connection.versionLoading ? 'muted' : 'badge amber'}>{versionStatus}</span>}
+          </span>}
+        </span>
+        <span className="connection-expand">Podrobnosti <ChevronIcon size={18} /></span>
+      </summary>
+    <section className="status-card" aria-labelledby="status-title">
       <div>
-        <h2 id="status-title">Autodarts</h2>
-        <span className={`status-line ${online ? 'online' : ''}`}><span className={`dot ${online ? '' : 'amber-dot'}`}></span>{STATE_LABELS[connection.state]}</span>
+        <h2 id="status-title" className="sr-only">Podrobnosti připojení Autodarts</h2>
         <dl>
           <dt>Board</dt><dd><code>{connection.address}</code></dd>
-          <dt>Verze Board Manageru</dt><dd>{connection.version ?? (online ? 'zjišťuji…' : '—')}</dd>
+          <dt>Verze Board Manageru</dt><dd>{version ?? (online ? versionStatus : '—')}</dd>
+          <dt>Ověřené verze</dt><dd>{VERIFIED_BOARD_VERSIONS.join(' · ')}</dd>
           <dt>Stav</dt><dd>{online ? 'Online' : 'Offline'}</dd>
           <dt>Poslední událost</dt><dd>{sinceText(connection.lastMessageAt, now)}</dd>
         </dl>
       </div>
       <AutodartsLogo className={`status-logo ${online ? 'online' : ''}`} />
     </section>
-    <section className="recent-players" aria-labelledby="recent-title">
-      <div className="recent-head"><h2 id="recent-title">Poslední hráči</h2>
-        {players.length > 0 && <button className="text-button" onClick={onPlayers}>Všichni hráči ›</button>}</div>
-      <div className="recent-list">
-        {recent.map(player => <button key={player.id} className="recent-player card" onClick={onPlayers}>
-          <PlayerAvatar player={player} size={58} /><strong>{player.name}</strong></button>)}
-        <button className="recent-player add card" onClick={onPlayers}><span className="add-icon" aria-hidden="true">+</span><strong>Přidat hráče</strong></button>
-      </div>
-    </section>
+    </details>
   </div>;
 }

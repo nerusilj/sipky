@@ -54,12 +54,12 @@ export default function Confetti() {
       ctx.globalAlpha = 1;
       frame = pieces.length ? requestAnimationFrame(draw) : 0;
     };
-    const unsubscribe = onCelebrate(kind => {
+    const unsubscribe = onCelebrate(() => {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const el = canvas.current;
       if (!el) return;
       el.width = window.innerWidth; el.height = window.innerHeight;
-      for (const [delay, count] of BURSTS[kind]) timers.push(window.setTimeout(() => {
+      for (const [delay, count] of BURSTS) timers.push(window.setTimeout(() => {
         pieces.push(...cannon('left', count, el.width, el.height), ...cannon('right', count, el.width, el.height));
         if (!frame) frame = requestAnimationFrame(draw);
       }, delay));

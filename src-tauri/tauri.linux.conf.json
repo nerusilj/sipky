@@ -1,0 +1,6 @@
+{
+  "bundle": {
+    "targets": ["deb", "appimage"],
+    "resources": { "tts-runtime-linux/": "tts/", "../public/sounds/": "sounds/" }
+  }
+}

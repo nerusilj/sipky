@@ -1,38 +1,42 @@
-// Vygeneruje hlášení součtů kol 0–180 offline hlasem Piper do public/sounds/cs/<hlas>/score/<n>.wav
-// a zábavné hlášky efektů do public/sounds/cs/<hlas>/fun/<id>.wav.
-// Použití: node scripts/generate-voice.mjs --voice <jirka|kasandra> --piper <cesta k piper(.exe)> --model <cesta k .onnx> [--only score|fun]
-// Piper je mírně náhodný: každý běh přepíše soubory jinými daty, proto přes --only generujte jen to, co se změnilo.
-// Piper: https://github.com/rhasspy/piper (MIT). České hlasy: https://huggingface.co/rhasspy/piper-voices/tree/main/cs/cs_CZ
-//   jirka    – cs_CZ-jirka-medium, data CC0
-//   kasandra – cs_CZ-kasandra-medium, autor Ondřej Šimek, CC BY 4.0
-// Nahrávky lze kdykoli nahradit vlastními se stejnými názvy souborů.
+// Generování čísel a efektů stejným Supertonic enginem jako dynamická jména.
+// node scripts/generate-voice.mjs [--voice eliska|martin] [--only score|fun] [--force]
+// Volitelné cesty: --python <python.exe> --assets <supertonic-3/assets>
 import { spawn } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MAX_VISIT_SCORE, scoreAnnouncement } from '../src/caller/czechNumbers.ts';
 import { PHRASES } from '../src/caller/phrases.ts';
-import { isVoiceId } from '../src/caller/voices.ts';
+import { VOICES, isVoiceId } from '../src/caller/voices.ts';
 
-const args = Object.fromEntries(process.argv.slice(2).reduce((pairs, arg, i, all) =>
-  arg.startsWith('--') ? [...pairs, [arg.slice(2), all[i + 1]]] : pairs, []));
-if (!isVoiceId(args.voice) || !args.piper || !args.model || (args.only && !['score', 'fun'].includes(args.only))) {
-  console.error('Použití: node scripts/generate-voice.mjs --voice <jirka|kasandra> --piper <piper> --model <model.onnx> [--only score|fun]');
-  process.exit(2);
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const args = {};
+for (let i = 2; i < process.argv.length; i++) {
+  const arg = process.argv[i];
+  if (arg === '--force') { args.force = true; continue; }
+  if (!['--voice', '--only', '--python', '--assets'].includes(arg) || !process.argv[i + 1]) throw Error(`Neznámý argument: ${arg}`);
+  args[arg.slice(2)] = process.argv[++i];
 }
-
-const voiceDir = resolve(dirname(fileURLToPath(import.meta.url)), `../public/sounds/cs/${args.voice}`);
-const scoreDir = join(voiceDir, 'score'), funDir = join(voiceDir, 'fun');
-mkdirSync(scoreDir, { recursive: true }); mkdirSync(funDir, { recursive: true });
-
-// Jeden běh Piperu pro všechno: řádky JSON {text, output_file}, text v UTF-8.
-const items = [
-  ...(args.only === 'fun' ? [] : Array.from({ length: MAX_VISIT_SCORE + 1 }, (_, n) => ({ text: scoreAnnouncement(n), output_file: join(scoreDir, `${n}.wav`) }))),
-  ...(args.only === 'score' ? [] : Object.entries(PHRASES).map(([id, text]) => ({ text, output_file: join(funDir, `${id}.wav`) }))),
-];
-const piper = spawn(args.piper, ['--model', args.model, '--json-input', '--sentence_silence', '0', '--quiet'], { stdio: ['pipe', 'ignore', 'inherit'] });
-piper.stdin.end(Buffer.from(items.map(item => JSON.stringify(item)).join('\n') + '\n', 'utf8'));
-piper.on('close', code => {
-  if (code) { console.error(`Piper skončil s kódem ${code}.`); process.exit(code); }
-  console.log(`Hotovo: ${items.length} nahrávek v ${voiceDir}`);
+if (args.voice && !isVoiceId(args.voice)) throw Error('Hlas musí být eliska nebo martin.');
+if (args.only && !['score', 'fun'].includes(args.only)) throw Error('Použijte --only score nebo fun.');
+let workspace = root;
+while (!existsSync(join(workspace, '.tools', 'supertonic-3', 'assets')) && dirname(workspace) !== workspace) workspace = dirname(workspace);
+const python = args.python || join(workspace, '.tools', 'supertonic-runtime', 'Scripts', 'python.exe');
+const assets = args.assets || join(workspace, '.tools', 'supertonic-3', 'assets');
+if (!existsSync(python) || !existsSync(assets)) throw Error('Chybí místní prostředí/model. Zadejte --python a --assets nebo spusťte přípravu dle docs/hlasatel.md.');
+const items = (args.voice ? [args.voice] : Object.keys(VOICES)).flatMap(voice => [
+  ...(args.only === 'fun' ? [] : Array.from({ length: MAX_VISIT_SCORE + 1 }, (_, n) => ({
+    text: scoreAnnouncement(n), voice, seed: n + 501, output: `public/sounds/cs/${voice}/score/${n}.wav`,
+  }))),
+  ...(args.only === 'score' ? [] : Object.entries(PHRASES).map(([id, text]) => ({
+    text, voice, seed: 501, output: `public/sounds/cs/${voice}/fun/${id}.wav`,
+  }))),
+]);
+mkdirSync(join(root, '.test-tmp'), { recursive: true });
+const manifest = join(root, '.test-tmp', 'voice-generation.json');
+writeFileSync(manifest, JSON.stringify(items, null, 2));
+const child = spawn(python, [join(root, 'scripts', 'generate-voice.py'), '--assets', assets, '--manifest', manifest, ...(args.force ? ['--force'] : [])], {
+  stdio: 'inherit', windowsHide: true,
 });
+child.on('error', error => { console.error(error.message); process.exitCode = 1; });
+child.on('exit', code => { process.exitCode = code ?? 1; });

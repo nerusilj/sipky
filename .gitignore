@@ -1,7 +1,16 @@
 node_modules/
 dist/
 src-tauri/target/
+src-tauri/tts-runtime/
+src-tauri/tts-runtime.next/
+src-tauri/tts-runtime-linux/
+.test-tmp/
+**/__pycache__/
 src-tauri/gen/
+/outputs/
+/.claude/
+/.tools/
+/scripts/audio/error-source.mp3
 .env
 .env.*
 *.jsonl

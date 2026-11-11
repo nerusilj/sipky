@@ -1,0 +1,2205 @@
+{
+  "engine": {
+    "revision": "aafc6e32416a594460b32413efc49d7fe4ce6d46",
+    "steps": 16,
+    "speed": 1.05
+  },
+  "files": {
+    "public/sounds/cs/eliska/score/0.wav": {
+      "text": "Nula.",
+      "voice": "eliska",
+      "seed": 501,
+      "output": "public/sounds/cs/eliska/score/0.wav"
+    },
+    "public/sounds/cs/eliska/score/1.wav": {
+      "text": "Jedna.",
+      "voice": "eliska",
+      "seed": 502,
+      "output": "public/sounds/cs/eliska/score/1.wav"
+    },
+    "public/sounds/cs/eliska/score/2.wav": {
+      "text": "Dva.",
+      "voice": "eliska",
+      "seed": 503,
+      "output": "public/sounds/cs/eliska/score/2.wav"
+    },
+    "public/sounds/cs/eliska/score/3.wav": {
+      "text": "Tři.",
+      "voice": "eliska",
+      "seed": 504,
+      "output": "public/sounds/cs/eliska/score/3.wav"
+    },
+    "public/sounds/cs/eliska/score/4.wav": {
+      "text": "Čtyři.",
+      "voice": "eliska",
+      "seed": 505,
+      "output": "public/sounds/cs/eliska/score/4.wav"
+    },
+    "public/sounds/cs/eliska/score/5.wav": {
+      "text": "Pět.",
+      "voice": "eliska",
+      "seed": 506,
+      "output": "public/sounds/cs/eliska/score/5.wav"
+    },
+    "public/sounds/cs/eliska/score/6.wav": {
+      "text": "Šest.",
+      "voice": "eliska",
+      "seed": 507,
+      "output": "public/sounds/cs/eliska/score/6.wav"
+    },
+    "public/sounds/cs/eliska/score/7.wav": {
+      "text": "Sedm.",
+      "voice": "eliska",
+      "seed": 508,
+      "output": "public/sounds/cs/eliska/score/7.wav"
+    },
+    "public/sounds/cs/eliska/score/8.wav": {
+      "text": "Osm.",
+      "voice": "eliska",
+      "seed": 509,
+      "output": "public/sounds/cs/eliska/score/8.wav"
+    },
+    "public/sounds/cs/eliska/score/9.wav": {
+      "text": "Devět.",
+      "voice": "eliska",
+      "seed": 510,
+      "output": "public/sounds/cs/eliska/score/9.wav"
+    },
+    "public/sounds/cs/eliska/score/10.wav": {
+      "text": "Deset.",
+      "voice": "eliska",
+      "seed": 511,
+      "output": "public/sounds/cs/eliska/score/10.wav"
+    },
+    "public/sounds/cs/eliska/score/11.wav": {
+      "text": "Jedenáct.",
+      "voice": "eliska",
+      "seed": 512,
+      "output": "public/sounds/cs/eliska/score/11.wav"
+    },
+    "public/sounds/cs/eliska/score/12.wav": {
+      "text": "Dvanáct.",
+      "voice": "eliska",
+      "seed": 513,
+      "output": "public/sounds/cs/eliska/score/12.wav"
+    },
+    "public/sounds/cs/eliska/score/13.wav": {
+      "text": "Třináct.",
+      "voice": "eliska",
+      "seed": 514,
+      "output": "public/sounds/cs/eliska/score/13.wav"
+    },
+    "public/sounds/cs/eliska/score/14.wav": {
+      "text": "Čtrnáct.",
+      "voice": "eliska",
+      "seed": 515,
+      "output": "public/sounds/cs/eliska/score/14.wav"
+    },
+    "public/sounds/cs/eliska/score/15.wav": {
+      "text": "Patnáct.",
+      "voice": "eliska",
+      "seed": 516,
+      "output": "public/sounds/cs/eliska/score/15.wav"
+    },
+    "public/sounds/cs/eliska/score/16.wav": {
+      "text": "Šestnáct.",
+      "voice": "eliska",
+      "seed": 517,
+      "output": "public/sounds/cs/eliska/score/16.wav"
+    },
+    "public/sounds/cs/eliska/score/17.wav": {
+      "text": "Sedmnáct.",
+      "voice": "eliska",
+      "seed": 518,
+      "output": "public/sounds/cs/eliska/score/17.wav"
+    },
+    "public/sounds/cs/eliska/score/18.wav": {
+      "text": "Osmnáct.",
+      "voice": "eliska",
+      "seed": 519,
+      "output": "public/sounds/cs/eliska/score/18.wav"
+    },
+    "public/sounds/cs/eliska/score/19.wav": {
+      "text": "Devatenáct.",
+      "voice": "eliska",
+      "seed": 520,
+      "output": "public/sounds/cs/eliska/score/19.wav"
+    },
+    "public/sounds/cs/eliska/score/20.wav": {
+      "text": "Dvacet.",
+      "voice": "eliska",
+      "seed": 521,
+      "output": "public/sounds/cs/eliska/score/20.wav"
+    },
+    "public/sounds/cs/eliska/score/21.wav": {
+      "text": "Dvacet jedna.",
+      "voice": "eliska",
+      "seed": 522,
+      "output": "public/sounds/cs/eliska/score/21.wav"
+    },
+    "public/sounds/cs/eliska/score/22.wav": {
+      "text": "Dvacet dva.",
+      "voice": "eliska",
+      "seed": 523,
+      "output": "public/sounds/cs/eliska/score/22.wav"
+    },
+    "public/sounds/cs/eliska/score/23.wav": {
+      "text": "Dvacet tři.",
+      "voice": "eliska",
+      "seed": 524,
+      "output": "public/sounds/cs/eliska/score/23.wav"
+    },
+    "public/sounds/cs/eliska/score/24.wav": {
+      "text": "Dvacet čtyři.",
+      "voice": "eliska",
+      "seed": 525,
+      "output": "public/sounds/cs/eliska/score/24.wav"
+    },
+    "public/sounds/cs/eliska/score/25.wav": {
+      "text": "Dvacet pět.",
+      "voice": "eliska",
+      "seed": 526,
+      "output": "public/sounds/cs/eliska/score/25.wav"
+    },
+    "public/sounds/cs/eliska/score/26.wav": {
+      "text": "Dvacet šest.",
+      "voice": "eliska",
+      "seed": 527,
+      "output": "public/sounds/cs/eliska/score/26.wav"
+    },
+    "public/sounds/cs/eliska/score/27.wav": {
+      "text": "Dvacet sedm.",
+      "voice": "eliska",
+      "seed": 528,
+      "output": "public/sounds/cs/eliska/score/27.wav"
+    },
+    "public/sounds/cs/eliska/score/28.wav": {
+      "text": "Dvacet osm.",
+      "voice": "eliska",
+      "seed": 529,
+      "output": "public/sounds/cs/eliska/score/28.wav"
+    },
+    "public/sounds/cs/eliska/score/29.wav": {
+      "text": "Dvacet devět.",
+      "voice": "eliska",
+      "seed": 530,
+      "output": "public/sounds/cs/eliska/score/29.wav"
+    },
+    "public/sounds/cs/eliska/score/30.wav": {
+      "text": "Třicet.",
+      "voice": "eliska",
+      "seed": 531,
+      "output": "public/sounds/cs/eliska/score/30.wav"
+    },
+    "public/sounds/cs/eliska/score/31.wav": {
+      "text": "Třicet jedna.",
+      "voice": "eliska",
+      "seed": 532,
+      "output": "public/sounds/cs/eliska/score/31.wav"
+    },
+    "public/sounds/cs/eliska/score/32.wav": {
+      "text": "Třicet dva.",
+      "voice": "eliska",
+      "seed": 533,
+      "output": "public/sounds/cs/eliska/score/32.wav"
+    },
+    "public/sounds/cs/eliska/score/33.wav": {
+      "text": "Třicet tři.",
+      "voice": "eliska",
+      "seed": 534,
+      "output": "public/sounds/cs/eliska/score/33.wav"
+    },
+    "public/sounds/cs/eliska/score/34.wav": {
+      "text": "Třicet čtyři.",
+      "voice": "eliska",
+      "seed": 535,
+      "output": "public/sounds/cs/eliska/score/34.wav"
+    },
+    "public/sounds/cs/eliska/score/35.wav": {
+      "text": "Třicet pět.",
+      "voice": "eliska",
+      "seed": 536,
+      "output": "public/sounds/cs/eliska/score/35.wav"
+    },
+    "public/sounds/cs/eliska/score/36.wav": {
+      "text": "Třicet šest.",
+      "voice": "eliska",
+      "seed": 537,
+      "output": "public/sounds/cs/eliska/score/36.wav"
+    },
+    "public/sounds/cs/eliska/score/37.wav": {
+      "text": "Třicet sedm.",
+      "voice": "eliska",
+      "seed": 538,
+      "output": "public/sounds/cs/eliska/score/37.wav"
+    },
+    "public/sounds/cs/eliska/score/38.wav": {
+      "text": "Třicet osm.",
+      "voice": "eliska",
+      "seed": 539,
+      "output": "public/sounds/cs/eliska/score/38.wav"
+    },
+    "public/sounds/cs/eliska/score/39.wav": {
+      "text": "Třicet devět.",
+      "voice": "eliska",
+      "seed": 540,
+      "output": "public/sounds/cs/eliska/score/39.wav"
+    },
+    "public/sounds/cs/eliska/score/40.wav": {
+      "text": "Čtyřicet.",
+      "voice": "eliska",
+      "seed": 541,
+      "output": "public/sounds/cs/eliska/score/40.wav"
+    },
+    "public/sounds/cs/eliska/score/41.wav": {
+      "text": "Čtyřicet jedna.",
+      "voice": "eliska",
+      "seed": 542,
+      "output": "public/sounds/cs/eliska/score/41.wav"
+    },
+    "public/sounds/cs/eliska/score/42.wav": {
+      "text": "Čtyřicet dva.",
+      "voice": "eliska",
+      "seed": 543,
+      "output": "public/sounds/cs/eliska/score/42.wav"
+    },
+    "public/sounds/cs/eliska/score/43.wav": {
+      "text": "Čtyřicet tři.",
+      "voice": "eliska",
+      "seed": 544,
+      "output": "public/sounds/cs/eliska/score/43.wav"
+    },
+    "public/sounds/cs/eliska/score/44.wav": {
+      "text": "Čtyřicet čtyři.",
+      "voice": "eliska",
+      "seed": 545,
+      "output": "public/sounds/cs/eliska/score/44.wav"
+    },
+    "public/sounds/cs/eliska/score/45.wav": {
+      "text": "Čtyřicet pět.",
+      "voice": "eliska",
+      "seed": 546,
+      "output": "public/sounds/cs/eliska/score/45.wav"
+    },
+    "public/sounds/cs/eliska/score/46.wav": {
+      "text": "Čtyřicet šest.",
+      "voice": "eliska",
+      "seed": 547,
+      "output": "public/sounds/cs/eliska/score/46.wav"
+    },
+    "public/sounds/cs/eliska/score/47.wav": {
+      "text": "Čtyřicet sedm.",
+      "voice": "eliska",
+      "seed": 548,
+      "output": "public/sounds/cs/eliska/score/47.wav"
+    },
+    "public/sounds/cs/eliska/score/48.wav": {
+      "text": "Čtyřicet osm.",
+      "voice": "eliska",
+      "seed": 549,
+      "output": "public/sounds/cs/eliska/score/48.wav"
+    },
+    "public/sounds/cs/eliska/score/49.wav": {
+      "text": "Čtyřicet devět.",
+      "voice": "eliska",
+      "seed": 550,
+      "output": "public/sounds/cs/eliska/score/49.wav"
+    },
+    "public/sounds/cs/eliska/score/50.wav": {
+      "text": "Padesát.",
+      "voice": "eliska",
+      "seed": 551,
+      "output": "public/sounds/cs/eliska/score/50.wav"
+    },
+    "public/sounds/cs/eliska/score/51.wav": {
+      "text": "Padesát jedna.",
+      "voice": "eliska",
+      "seed": 552,
+      "output": "public/sounds/cs/eliska/score/51.wav"
+    },
+    "public/sounds/cs/eliska/score/52.wav": {
+      "text": "Padesát dva.",
+      "voice": "eliska",
+      "seed": 553,
+      "output": "public/sounds/cs/eliska/score/52.wav"
+    },
+    "public/sounds/cs/eliska/score/53.wav": {
+      "text": "Padesát tři.",
+      "voice": "eliska",
+      "seed": 554,
+      "output": "public/sounds/cs/eliska/score/53.wav"
+    },
+    "public/sounds/cs/eliska/score/54.wav": {
+      "text": "Padesát čtyři.",
+      "voice": "eliska",
+      "seed": 555,
+      "output": "public/sounds/cs/eliska/score/54.wav"
+    },
+    "public/sounds/cs/eliska/score/55.wav": {
+      "text": "Padesát pět.",
+      "voice": "eliska",
+      "seed": 556,
+      "output": "public/sounds/cs/eliska/score/55.wav"
+    },
+    "public/sounds/cs/eliska/score/56.wav": {
+      "text": "Padesát šest.",
+      "voice": "eliska",
+      "seed": 557,
+      "output": "public/sounds/cs/eliska/score/56.wav"
+    },
+    "public/sounds/cs/eliska/score/57.wav": {
+      "text": "Padesát sedm.",
+      "voice": "eliska",
+      "seed": 558,
+      "output": "public/sounds/cs/eliska/score/57.wav"
+    },
+    "public/sounds/cs/eliska/score/58.wav": {
+      "text": "Padesát osm.",
+      "voice": "eliska",
+      "seed": 559,
+      "output": "public/sounds/cs/eliska/score/58.wav"
+    },
+    "public/sounds/cs/eliska/score/59.wav": {
+      "text": "Padesát devět.",
+      "voice": "eliska",
+      "seed": 560,
+      "output": "public/sounds/cs/eliska/score/59.wav"
+    },
+    "public/sounds/cs/eliska/score/60.wav": {
+      "text": "Šedesát.",
+      "voice": "eliska",
+      "seed": 561,
+      "output": "public/sounds/cs/eliska/score/60.wav"
+    },
+    "public/sounds/cs/eliska/score/61.wav": {
+      "text": "Šedesát jedna.",
+      "voice": "eliska",
+      "seed": 562,
+      "output": "public/sounds/cs/eliska/score/61.wav"
+    },
+    "public/sounds/cs/eliska/score/62.wav": {
+      "text": "Šedesát dva.",
+      "voice": "eliska",
+      "seed": 563,
+      "output": "public/sounds/cs/eliska/score/62.wav"
+    },
+    "public/sounds/cs/eliska/score/63.wav": {
+      "text": "Šedesát tři.",
+      "voice": "eliska",
+      "seed": 564,
+      "output": "public/sounds/cs/eliska/score/63.wav"
+    },
+    "public/sounds/cs/eliska/score/64.wav": {
+      "text": "Šedesát čtyři.",
+      "voice": "eliska",
+      "seed": 565,
+      "output": "public/sounds/cs/eliska/score/64.wav"
+    },
+    "public/sounds/cs/eliska/score/65.wav": {
+      "text": "Šedesát pět.",
+      "voice": "eliska",
+      "seed": 566,
+      "output": "public/sounds/cs/eliska/score/65.wav"
+    },
+    "public/sounds/cs/eliska/score/66.wav": {
+      "text": "Šedesát šest.",
+      "voice": "eliska",
+      "seed": 567,
+      "output": "public/sounds/cs/eliska/score/66.wav"
+    },
+    "public/sounds/cs/eliska/score/67.wav": {
+      "text": "Šedesát sedm.",
+      "voice": "eliska",
+      "seed": 568,
+      "output": "public/sounds/cs/eliska/score/67.wav"
+    },
+    "public/sounds/cs/eliska/score/68.wav": {
+      "text": "Šedesát osm.",
+      "voice": "eliska",
+      "seed": 569,
+      "output": "public/sounds/cs/eliska/score/68.wav"
+    },
+    "public/sounds/cs/eliska/score/69.wav": {
+      "text": "Šedesát devět.",
+      "voice": "eliska",
+      "seed": 570,
+      "output": "public/sounds/cs/eliska/score/69.wav"
+    },
+    "public/sounds/cs/eliska/score/70.wav": {
+      "text": "Sedmdesát.",
+      "voice": "eliska",
+      "seed": 571,
+      "output": "public/sounds/cs/eliska/score/70.wav"
+    },
+    "public/sounds/cs/eliska/score/71.wav": {
+      "text": "Sedmdesát jedna.",
+      "voice": "eliska",
+      "seed": 572,
+      "output": "public/sounds/cs/eliska/score/71.wav"
+    },
+    "public/sounds/cs/eliska/score/72.wav": {
+      "text": "Sedmdesát dva.",
+      "voice": "eliska",
+      "seed": 573,
+      "output": "public/sounds/cs/eliska/score/72.wav"
+    },
+    "public/sounds/cs/eliska/score/73.wav": {
+      "text": "Sedmdesát tři.",
+      "voice": "eliska",
+      "seed": 574,
+      "output": "public/sounds/cs/eliska/score/73.wav"
+    },
+    "public/sounds/cs/eliska/score/74.wav": {
+      "text": "Sedmdesát čtyři.",
+      "voice": "eliska",
+      "seed": 575,
+      "output": "public/sounds/cs/eliska/score/74.wav"
+    },
+    "public/sounds/cs/eliska/score/75.wav": {
+      "text": "Sedmdesát pět.",
+      "voice": "eliska",
+      "seed": 576,
+      "output": "public/sounds/cs/eliska/score/75.wav"
+    },
+    "public/sounds/cs/eliska/score/76.wav": {
+      "text": "Sedmdesát šest.",
+      "voice": "eliska",
+      "seed": 577,
+      "output": "public/sounds/cs/eliska/score/76.wav"
+    },
+    "public/sounds/cs/eliska/score/77.wav": {
+      "text": "Sedmdesát sedm.",
+      "voice": "eliska",
+      "seed": 578,
+      "output": "public/sounds/cs/eliska/score/77.wav"
+    },
+    "public/sounds/cs/eliska/score/78.wav": {
+      "text": "Sedmdesát osm.",
+      "voice": "eliska",
+      "seed": 579,
+      "output": "public/sounds/cs/eliska/score/78.wav"
+    },
+    "public/sounds/cs/eliska/score/79.wav": {
+      "text": "Sedmdesát devět.",
+      "voice": "eliska",
+      "seed": 580,
+      "output": "public/sounds/cs/eliska/score/79.wav"
+    },
+    "public/sounds/cs/eliska/score/80.wav": {
+      "text": "Osmdesát.",
+      "voice": "eliska",
+      "seed": 581,
+      "output": "public/sounds/cs/eliska/score/80.wav"
+    },
+    "public/sounds/cs/eliska/score/81.wav": {
+      "text": "Osmdesát jedna.",
+      "voice": "eliska",
+      "seed": 582,
+      "output": "public/sounds/cs/eliska/score/81.wav"
+    },
+    "public/sounds/cs/eliska/score/82.wav": {
+      "text": "Osmdesát dva.",
+      "voice": "eliska",
+      "seed": 583,
+      "output": "public/sounds/cs/eliska/score/82.wav"
+    },
+    "public/sounds/cs/eliska/score/83.wav": {
+      "text": "Osmdesát tři.",
+      "voice": "eliska",
+      "seed": 584,
+      "output": "public/sounds/cs/eliska/score/83.wav"
+    },
+    "public/sounds/cs/eliska/score/84.wav": {
+      "text": "Osmdesát čtyři.",
+      "voice": "eliska",
+      "seed": 585,
+      "output": "public/sounds/cs/eliska/score/84.wav"
+    },
+    "public/sounds/cs/eliska/score/85.wav": {
+      "text": "Osmdesát pět.",
+      "voice": "eliska",
+      "seed": 586,
+      "output": "public/sounds/cs/eliska/score/85.wav"
+    },
+    "public/sounds/cs/eliska/score/86.wav": {
+      "text": "Osmdesát šest.",
+      "voice": "eliska",
+      "seed": 587,
+      "output": "public/sounds/cs/eliska/score/86.wav"
+    },
+    "public/sounds/cs/eliska/score/87.wav": {
+      "text": "Osmdesát sedm.",
+      "voice": "eliska",
+      "seed": 588,
+      "output": "public/sounds/cs/eliska/score/87.wav"
+    },
+    "public/sounds/cs/eliska/score/88.wav": {
+      "text": "Osmdesát osm.",
+      "voice": "eliska",
+      "seed": 589,
+      "output": "public/sounds/cs/eliska/score/88.wav"
+    },
+    "public/sounds/cs/eliska/score/89.wav": {
+      "text": "Osmdesát devět.",
+      "voice": "eliska",
+      "seed": 590,
+      "output": "public/sounds/cs/eliska/score/89.wav"
+    },
+    "public/sounds/cs/eliska/score/90.wav": {
+      "text": "Devadesát.",
+      "voice": "eliska",
+      "seed": 591,
+      "output": "public/sounds/cs/eliska/score/90.wav"
+    },
+    "public/sounds/cs/eliska/score/91.wav": {
+      "text": "Devadesát jedna.",
+      "voice": "eliska",
+      "seed": 592,
+      "output": "public/sounds/cs/eliska/score/91.wav"
+    },
+    "public/sounds/cs/eliska/score/92.wav": {
+      "text": "Devadesát dva.",
+      "voice": "eliska",
+      "seed": 593,
+      "output": "public/sounds/cs/eliska/score/92.wav"
+    },
+    "public/sounds/cs/eliska/score/93.wav": {
+      "text": "Devadesát tři.",
+      "voice": "eliska",
+      "seed": 594,
+      "output": "public/sounds/cs/eliska/score/93.wav"
+    },
+    "public/sounds/cs/eliska/score/94.wav": {
+      "text": "Devadesát čtyři.",
+      "voice": "eliska",
+      "seed": 595,
+      "output": "public/sounds/cs/eliska/score/94.wav"
+    },
+    "public/sounds/cs/eliska/score/95.wav": {
+      "text": "Devadesát pět.",
+      "voice": "eliska",
+      "seed": 596,
+      "output": "public/sounds/cs/eliska/score/95.wav"
+    },
+    "public/sounds/cs/eliska/score/96.wav": {
+      "text": "Devadesát šest.",
+      "voice": "eliska",
+      "seed": 597,
+      "output": "public/sounds/cs/eliska/score/96.wav"
+    },
+    "public/sounds/cs/eliska/score/97.wav": {
+      "text": "Devadesát sedm.",
+      "voice": "eliska",
+      "seed": 598,
+      "output": "public/sounds/cs/eliska/score/97.wav"
+    },
+    "public/sounds/cs/eliska/score/98.wav": {
+      "text": "Devadesát osm.",
+      "voice": "eliska",
+      "seed": 599,
+      "output": "public/sounds/cs/eliska/score/98.wav"
+    },
+    "public/sounds/cs/eliska/score/99.wav": {
+      "text": "Devadesát devět.",
+      "voice": "eliska",
+      "seed": 600,
+      "output": "public/sounds/cs/eliska/score/99.wav"
+    },
+    "public/sounds/cs/eliska/score/100.wav": {
+      "text": "Sto!",
+      "voice": "eliska",
+      "seed": 601,
+      "output": "public/sounds/cs/eliska/score/100.wav"
+    },
+    "public/sounds/cs/eliska/score/101.wav": {
+      "text": "Sto jedna!",
+      "voice": "eliska",
+      "seed": 602,
+      "output": "public/sounds/cs/eliska/score/101.wav"
+    },
+    "public/sounds/cs/eliska/score/102.wav": {
+      "text": "Sto dva!",
+      "voice": "eliska",
+      "seed": 603,
+      "output": "public/sounds/cs/eliska/score/102.wav"
+    },
+    "public/sounds/cs/eliska/score/103.wav": {
+      "text": "Sto tři!",
+      "voice": "eliska",
+      "seed": 604,
+      "output": "public/sounds/cs/eliska/score/103.wav"
+    },
+    "public/sounds/cs/eliska/score/104.wav": {
+      "text": "Sto čtyři!",
+      "voice": "eliska",
+      "seed": 605,
+      "output": "public/sounds/cs/eliska/score/104.wav"
+    },
+    "public/sounds/cs/eliska/score/105.wav": {
+      "text": "Sto pět!",
+      "voice": "eliska",
+      "seed": 606,
+      "output": "public/sounds/cs/eliska/score/105.wav"
+    },
+    "public/sounds/cs/eliska/score/106.wav": {
+      "text": "Sto šest!",
+      "voice": "eliska",
+      "seed": 607,
+      "output": "public/sounds/cs/eliska/score/106.wav"
+    },
+    "public/sounds/cs/eliska/score/107.wav": {
+      "text": "Sto sedm!",
+      "voice": "eliska",
+      "seed": 608,
+      "output": "public/sounds/cs/eliska/score/107.wav"
+    },
+    "public/sounds/cs/eliska/score/108.wav": {
+      "text": "Sto osm!",
+      "voice": "eliska",
+      "seed": 609,
+      "output": "public/sounds/cs/eliska/score/108.wav"
+    },
+    "public/sounds/cs/eliska/score/109.wav": {
+      "text": "Sto devět!",
+      "voice": "eliska",
+      "seed": 610,
+      "output": "public/sounds/cs/eliska/score/109.wav"
+    },
+    "public/sounds/cs/eliska/score/110.wav": {
+      "text": "Sto deset!",
+      "voice": "eliska",
+      "seed": 611,
+      "output": "public/sounds/cs/eliska/score/110.wav"
+    },
+    "public/sounds/cs/eliska/score/111.wav": {
+      "text": "Sto jedenáct!",
+      "voice": "eliska",
+      "seed": 612,
+      "output": "public/sounds/cs/eliska/score/111.wav"
+    },
+    "public/sounds/cs/eliska/score/112.wav": {
+      "text": "Sto dvanáct!",
+      "voice": "eliska",
+      "seed": 613,
+      "output": "public/sounds/cs/eliska/score/112.wav"
+    },
+    "public/sounds/cs/eliska/score/113.wav": {
+      "text": "Sto třináct!",
+      "voice": "eliska",
+      "seed": 614,
+      "output": "public/sounds/cs/eliska/score/113.wav"
+    },
+    "public/sounds/cs/eliska/score/114.wav": {
+      "text": "Sto čtrnáct!",
+      "voice": "eliska",
+      "seed": 615,
+      "output": "public/sounds/cs/eliska/score/114.wav"
+    },
+    "public/sounds/cs/eliska/score/115.wav": {
+      "text": "Sto patnáct!",
+      "voice": "eliska",
+      "seed": 616,
+      "output": "public/sounds/cs/eliska/score/115.wav"
+    },
+    "public/sounds/cs/eliska/score/116.wav": {
+      "text": "Sto šestnáct!",
+      "voice": "eliska",
+      "seed": 617,
+      "output": "public/sounds/cs/eliska/score/116.wav"
+    },
+    "public/sounds/cs/eliska/score/117.wav": {
+      "text": "Sto sedmnáct!",
+      "voice": "eliska",
+      "seed": 618,
+      "output": "public/sounds/cs/eliska/score/117.wav"
+    },
+    "public/sounds/cs/eliska/score/118.wav": {
+      "text": "Sto osmnáct!",
+      "voice": "eliska",
+      "seed": 619,
+      "output": "public/sounds/cs/eliska/score/118.wav"
+    },
+    "public/sounds/cs/eliska/score/119.wav": {
+      "text": "Sto devatenáct!",
+      "voice": "eliska",
+      "seed": 620,
+      "output": "public/sounds/cs/eliska/score/119.wav"
+    },
+    "public/sounds/cs/eliska/score/120.wav": {
+      "text": "Sto dvacet!",
+      "voice": "eliska",
+      "seed": 621,
+      "output": "public/sounds/cs/eliska/score/120.wav"
+    },
+    "public/sounds/cs/eliska/score/121.wav": {
+      "text": "Sto dvacet jedna!",
+      "voice": "eliska",
+      "seed": 622,
+      "output": "public/sounds/cs/eliska/score/121.wav"
+    },
+    "public/sounds/cs/eliska/score/122.wav": {
+      "text": "Sto dvacet dva!",
+      "voice": "eliska",
+      "seed": 623,
+      "output": "public/sounds/cs/eliska/score/122.wav"
+    },
+    "public/sounds/cs/eliska/score/123.wav": {
+      "text": "Sto dvacet tři!",
+      "voice": "eliska",
+      "seed": 624,
+      "output": "public/sounds/cs/eliska/score/123.wav"
+    },
+    "public/sounds/cs/eliska/score/124.wav": {
+      "text": "Sto dvacet čtyři!",
+      "voice": "eliska",
+      "seed": 625,
+      "output": "public/sounds/cs/eliska/score/124.wav"
+    },
+    "public/sounds/cs/eliska/score/125.wav": {
+      "text": "Sto dvacet pět!",
+      "voice": "eliska",
+      "seed": 626,
+      "output": "public/sounds/cs/eliska/score/125.wav"
+    },
+    "public/sounds/cs/eliska/score/126.wav": {
+      "text": "Sto dvacet šest!",
+      "voice": "eliska",
+      "seed": 627,
+      "output": "public/sounds/cs/eliska/score/126.wav"
+    },
+    "public/sounds/cs/eliska/score/127.wav": {
+      "text": "Sto dvacet sedm!",
+      "voice": "eliska",
+      "seed": 628,
+      "output": "public/sounds/cs/eliska/score/127.wav"
+    },
+    "public/sounds/cs/eliska/score/128.wav": {
+      "text": "Sto dvacet osm!",
+      "voice": "eliska",
+      "seed": 629,
+      "output": "public/sounds/cs/eliska/score/128.wav"
+    },
+    "public/sounds/cs/eliska/score/129.wav": {
+      "text": "Sto dvacet devět!",
+      "voice": "eliska",
+      "seed": 630,
+      "output": "public/sounds/cs/eliska/score/129.wav"
+    },
+    "public/sounds/cs/eliska/score/130.wav": {
+      "text": "Sto třicet!",
+      "voice": "eliska",
+      "seed": 631,
+      "output": "public/sounds/cs/eliska/score/130.wav"
+    },
+    "public/sounds/cs/eliska/score/131.wav": {
+      "text": "Sto třicet jedna!",
+      "voice": "eliska",
+      "seed": 632,
+      "output": "public/sounds/cs/eliska/score/131.wav"
+    },
+    "public/sounds/cs/eliska/score/132.wav": {
+      "text": "Sto třicet dva!",
+      "voice": "eliska",
+      "seed": 633,
+      "output": "public/sounds/cs/eliska/score/132.wav"
+    },
+    "public/sounds/cs/eliska/score/133.wav": {
+      "text": "Sto třicet tři!",
+      "voice": "eliska",
+      "seed": 634,
+      "output": "public/sounds/cs/eliska/score/133.wav"
+    },
+    "public/sounds/cs/eliska/score/134.wav": {
+      "text": "Sto třicet čtyři!",
+      "voice": "eliska",
+      "seed": 635,
+      "output": "public/sounds/cs/eliska/score/134.wav"
+    },
+    "public/sounds/cs/eliska/score/135.wav": {
+      "text": "Sto třicet pět!",
+      "voice": "eliska",
+      "seed": 636,
+      "output": "public/sounds/cs/eliska/score/135.wav"
+    },
+    "public/sounds/cs/eliska/score/136.wav": {
+      "text": "Sto třicet šest!",
+      "voice": "eliska",
+      "seed": 637,
+      "output": "public/sounds/cs/eliska/score/136.wav"
+    },
+    "public/sounds/cs/eliska/score/137.wav": {
+      "text": "Sto třicet sedm!",
+      "voice": "eliska",
+      "seed": 638,
+      "output": "public/sounds/cs/eliska/score/137.wav"
+    },
+    "public/sounds/cs/eliska/score/138.wav": {
+      "text": "Sto třicet osm!",
+      "voice": "eliska",
+      "seed": 639,
+      "output": "public/sounds/cs/eliska/score/138.wav"
+    },
+    "public/sounds/cs/eliska/score/139.wav": {
+      "text": "Sto třicet devět!",
+      "voice": "eliska",
+      "seed": 640,
+      "output": "public/sounds/cs/eliska/score/139.wav"
+    },
+    "public/sounds/cs/eliska/score/140.wav": {
+      "text": "Sto čtyřicet!",
+      "voice": "eliska",
+      "seed": 641,
+      "output": "public/sounds/cs/eliska/score/140.wav"
+    },
+    "public/sounds/cs/eliska/score/141.wav": {
+      "text": "Sto čtyřicet jedna!",
+      "voice": "eliska",
+      "seed": 642,
+      "output": "public/sounds/cs/eliska/score/141.wav"
+    },
+    "public/sounds/cs/eliska/score/142.wav": {
+      "text": "Sto čtyřicet dva!",
+      "voice": "eliska",
+      "seed": 643,
+      "output": "public/sounds/cs/eliska/score/142.wav"
+    },
+    "public/sounds/cs/eliska/score/143.wav": {
+      "text": "Sto čtyřicet tři!",
+      "voice": "eliska",
+      "seed": 644,
+      "output": "public/sounds/cs/eliska/score/143.wav"
+    },
+    "public/sounds/cs/eliska/score/144.wav": {
+      "text": "Sto čtyřicet čtyři!",
+      "voice": "eliska",
+      "seed": 645,
+      "output": "public/sounds/cs/eliska/score/144.wav"
+    },
+    "public/sounds/cs/eliska/score/145.wav": {
+      "text": "Sto čtyřicet pět!",
+      "voice": "eliska",
+      "seed": 646,
+      "output": "public/sounds/cs/eliska/score/145.wav"
+    },
+    "public/sounds/cs/eliska/score/146.wav": {
+      "text": "Sto čtyřicet šest!",
+      "voice": "eliska",
+      "seed": 647,
+      "output": "public/sounds/cs/eliska/score/146.wav"
+    },
+    "public/sounds/cs/eliska/score/147.wav": {
+      "text": "Sto čtyřicet sedm!",
+      "voice": "eliska",
+      "seed": 648,
+      "output": "public/sounds/cs/eliska/score/147.wav"
+    },
+    "public/sounds/cs/eliska/score/148.wav": {
+      "text": "Sto čtyřicet osm!",
+      "voice": "eliska",
+      "seed": 649,
+      "output": "public/sounds/cs/eliska/score/148.wav"
+    },
+    "public/sounds/cs/eliska/score/149.wav": {
+      "text": "Sto čtyřicet devět!",
+      "voice": "eliska",
+      "seed": 650,
+      "output": "public/sounds/cs/eliska/score/149.wav"
+    },
+    "public/sounds/cs/eliska/score/150.wav": {
+      "text": "Sto padesát!",
+      "voice": "eliska",
+      "seed": 651,
+      "output": "public/sounds/cs/eliska/score/150.wav"
+    },
+    "public/sounds/cs/eliska/score/151.wav": {
+      "text": "Sto padesát jedna!",
+      "voice": "eliska",
+      "seed": 652,
+      "output": "public/sounds/cs/eliska/score/151.wav"
+    },
+    "public/sounds/cs/eliska/score/152.wav": {
+      "text": "Sto padesát dva!",
+      "voice": "eliska",
+      "seed": 653,
+      "output": "public/sounds/cs/eliska/score/152.wav"
+    },
+    "public/sounds/cs/eliska/score/153.wav": {
+      "text": "Sto padesát tři!",
+      "voice": "eliska",
+      "seed": 654,
+      "output": "public/sounds/cs/eliska/score/153.wav"
+    },
+    "public/sounds/cs/eliska/score/154.wav": {
+      "text": "Sto padesát čtyři!",
+      "voice": "eliska",
+      "seed": 655,
+      "output": "public/sounds/cs/eliska/score/154.wav"
+    },
+    "public/sounds/cs/eliska/score/155.wav": {
+      "text": "Sto padesát pět!",
+      "voice": "eliska",
+      "seed": 656,
+      "output": "public/sounds/cs/eliska/score/155.wav"
+    },
+    "public/sounds/cs/eliska/score/156.wav": {
+      "text": "Sto padesát šest!",
+      "voice": "eliska",
+      "seed": 657,
+      "output": "public/sounds/cs/eliska/score/156.wav"
+    },
+    "public/sounds/cs/eliska/score/157.wav": {
+      "text": "Sto padesát sedm!",
+      "voice": "eliska",
+      "seed": 658,
+      "output": "public/sounds/cs/eliska/score/157.wav"
+    },
+    "public/sounds/cs/eliska/score/158.wav": {
+      "text": "Sto padesát osm!",
+      "voice": "eliska",
+      "seed": 659,
+      "output": "public/sounds/cs/eliska/score/158.wav"
+    },
+    "public/sounds/cs/eliska/score/159.wav": {
+      "text": "Sto padesát devět!",
+      "voice": "eliska",
+      "seed": 660,
+      "output": "public/sounds/cs/eliska/score/159.wav"
+    },
+    "public/sounds/cs/eliska/score/160.wav": {
+      "text": "Sto šedesát!",
+      "voice": "eliska",
+      "seed": 661,
+      "output": "public/sounds/cs/eliska/score/160.wav"
+    },
+    "public/sounds/cs/eliska/score/161.wav": {
+      "text": "Sto šedesát jedna!",
+      "voice": "eliska",
+      "seed": 662,
+      "output": "public/sounds/cs/eliska/score/161.wav"
+    },
+    "public/sounds/cs/eliska/score/162.wav": {
+      "text": "Sto šedesát dva!",
+      "voice": "eliska",
+      "seed": 663,
+      "output": "public/sounds/cs/eliska/score/162.wav"
+    },
+    "public/sounds/cs/eliska/score/163.wav": {
+      "text": "Sto šedesát tři!",
+      "voice": "eliska",
+      "seed": 664,
+      "output": "public/sounds/cs/eliska/score/163.wav"
+    },
+    "public/sounds/cs/eliska/score/164.wav": {
+      "text": "Sto šedesát čtyři!",
+      "voice": "eliska",
+      "seed": 665,
+      "output": "public/sounds/cs/eliska/score/164.wav"
+    },
+    "public/sounds/cs/eliska/score/165.wav": {
+      "text": "Sto šedesát pět!",
+      "voice": "eliska",
+      "seed": 666,
+      "output": "public/sounds/cs/eliska/score/165.wav"
+    },
+    "public/sounds/cs/eliska/score/166.wav": {
+      "text": "Sto šedesát šest!",
+      "voice": "eliska",
+      "seed": 667,
+      "output": "public/sounds/cs/eliska/score/166.wav"
+    },
+    "public/sounds/cs/eliska/score/167.wav": {
+      "text": "Sto šedesát sedm!",
+      "voice": "eliska",
+      "seed": 668,
+      "output": "public/sounds/cs/eliska/score/167.wav"
+    },
+    "public/sounds/cs/eliska/score/168.wav": {
+      "text": "Sto šedesát osm!",
+      "voice": "eliska",
+      "seed": 669,
+      "output": "public/sounds/cs/eliska/score/168.wav"
+    },
+    "public/sounds/cs/eliska/score/169.wav": {
+      "text": "Sto šedesát devět!",
+      "voice": "eliska",
+      "seed": 670,
+      "output": "public/sounds/cs/eliska/score/169.wav"
+    },
+    "public/sounds/cs/eliska/score/170.wav": {
+      "text": "Sto sedmdesát!",
+      "voice": "eliska",
+      "seed": 671,
+      "output": "public/sounds/cs/eliska/score/170.wav"
+    },
+    "public/sounds/cs/eliska/score/171.wav": {
+      "text": "Sto sedmdesát jedna!",
+      "voice": "eliska",
+      "seed": 672,
+      "output": "public/sounds/cs/eliska/score/171.wav"
+    },
+    "public/sounds/cs/eliska/score/172.wav": {
+      "text": "Sto sedmdesát dva!",
+      "voice": "eliska",
+      "seed": 673,
+      "output": "public/sounds/cs/eliska/score/172.wav"
+    },
+    "public/sounds/cs/eliska/score/173.wav": {
+      "text": "Sto sedmdesát tři!",
+      "voice": "eliska",
+      "seed": 674,
+      "output": "public/sounds/cs/eliska/score/173.wav"
+    },
+    "public/sounds/cs/eliska/score/174.wav": {
+      "text": "Sto sedmdesát čtyři!",
+      "voice": "eliska",
+      "seed": 675,
+      "output": "public/sounds/cs/eliska/score/174.wav"
+    },
+    "public/sounds/cs/eliska/score/175.wav": {
+      "text": "Sto sedmdesát pět!",
+      "voice": "eliska",
+      "seed": 676,
+      "output": "public/sounds/cs/eliska/score/175.wav"
+    },
+    "public/sounds/cs/eliska/score/176.wav": {
+      "text": "Sto sedmdesát šest!",
+      "voice": "eliska",
+      "seed": 677,
+      "output": "public/sounds/cs/eliska/score/176.wav"
+    },
+    "public/sounds/cs/eliska/score/177.wav": {
+      "text": "Sto sedmdesát sedm!",
+      "voice": "eliska",
+      "seed": 678,
+      "output": "public/sounds/cs/eliska/score/177.wav"
+    },
+    "public/sounds/cs/eliska/score/178.wav": {
+      "text": "Sto sedmdesát osm!",
+      "voice": "eliska",
+      "seed": 679,
+      "output": "public/sounds/cs/eliska/score/178.wav"
+    },
+    "public/sounds/cs/eliska/score/179.wav": {
+      "text": "Sto sedmdesát devět!",
+      "voice": "eliska",
+      "seed": 680,
+      "output": "public/sounds/cs/eliska/score/179.wav"
+    },
+    "public/sounds/cs/eliska/score/180.wav": {
+      "text": "Sto osmdesát!",
+      "voice": "eliska",
+      "seed": 681,
+      "output": "public/sounds/cs/eliska/score/180.wav"
+    },
+    "public/sounds/cs/eliska/fun/ambrozovina.wav": {
+      "text": "Ambrožovka!",
+      "voice": "eliska",
+      "seed": 501,
+      "output": "public/sounds/cs/eliska/fun/ambrozovina.wav"
+    },
+    "public/sounds/cs/martin/score/0.wav": {
+      "text": "Nula.",
+      "voice": "martin",
+      "seed": 501,
+      "output": "public/sounds/cs/martin/score/0.wav"
+    },
+    "public/sounds/cs/martin/score/1.wav": {
+      "text": "Jedna.",
+      "voice": "martin",
+      "seed": 502,
+      "output": "public/sounds/cs/martin/score/1.wav"
+    },
+    "public/sounds/cs/martin/score/2.wav": {
+      "text": "Dva.",
+      "voice": "martin",
+      "seed": 503,
+      "output": "public/sounds/cs/martin/score/2.wav"
+    },
+    "public/sounds/cs/martin/score/3.wav": {
+      "text": "Tři.",
+      "voice": "martin",
+      "seed": 504,
+      "output": "public/sounds/cs/martin/score/3.wav"
+    },
+    "public/sounds/cs/martin/score/4.wav": {
+      "text": "Čtyři.",
+      "voice": "martin",
+      "seed": 505,
+      "output": "public/sounds/cs/martin/score/4.wav"
+    },
+    "public/sounds/cs/martin/score/5.wav": {
+      "text": "Pět.",
+      "voice": "martin",
+      "seed": 506,
+      "output": "public/sounds/cs/martin/score/5.wav"
+    },
+    "public/sounds/cs/martin/score/6.wav": {
+      "text": "Šest.",
+      "voice": "martin",
+      "seed": 507,
+      "output": "public/sounds/cs/martin/score/6.wav"
+    },
+    "public/sounds/cs/martin/score/7.wav": {
+      "text": "Sedm.",
+      "voice": "martin",
+      "seed": 508,
+      "output": "public/sounds/cs/martin/score/7.wav"
+    },
+    "public/sounds/cs/martin/score/8.wav": {
+      "text": "Osm.",
+      "voice": "martin",
+      "seed": 509,
+      "output": "public/sounds/cs/martin/score/8.wav"
+    },
+    "public/sounds/cs/martin/score/9.wav": {
+      "text": "Devět.",
+      "voice": "martin",
+      "seed": 510,
+      "output": "public/sounds/cs/martin/score/9.wav"
+    },
+    "public/sounds/cs/martin/score/10.wav": {
+      "text": "Deset.",
+      "voice": "martin",
+      "seed": 511,
+      "output": "public/sounds/cs/martin/score/10.wav"
+    },
+    "public/sounds/cs/martin/score/11.wav": {
+      "text": "Jedenáct.",
+      "voice": "martin",
+      "seed": 512,
+      "output": "public/sounds/cs/martin/score/11.wav"
+    },
+    "public/sounds/cs/martin/score/12.wav": {
+      "text": "Dvanáct.",
+      "voice": "martin",
+      "seed": 513,
+      "output": "public/sounds/cs/martin/score/12.wav"
+    },
+    "public/sounds/cs/martin/score/13.wav": {
+      "text": "Třináct.",
+      "voice": "martin",
+      "seed": 514,
+      "output": "public/sounds/cs/martin/score/13.wav"
+    },
+    "public/sounds/cs/martin/score/14.wav": {
+      "text": "Čtrnáct.",
+      "voice": "martin",
+      "seed": 515,
+      "output": "public/sounds/cs/martin/score/14.wav"
+    },
+    "public/sounds/cs/martin/score/15.wav": {
+      "text": "Patnáct.",
+      "voice": "martin",
+      "seed": 516,
+      "output": "public/sounds/cs/martin/score/15.wav"
+    },
+    "public/sounds/cs/martin/score/16.wav": {
+      "text": "Šestnáct.",
+      "voice": "martin",
+      "seed": 517,
+      "output": "public/sounds/cs/martin/score/16.wav"
+    },
+    "public/sounds/cs/martin/score/17.wav": {
+      "text": "Sedmnáct.",
+      "voice": "martin",
+      "seed": 518,
+      "output": "public/sounds/cs/martin/score/17.wav"
+    },
+    "public/sounds/cs/martin/score/18.wav": {
+      "text": "Osmnáct.",
+      "voice": "martin",
+      "seed": 519,
+      "output": "public/sounds/cs/martin/score/18.wav"
+    },
+    "public/sounds/cs/martin/score/19.wav": {
+      "text": "Devatenáct.",
+      "voice": "martin",
+      "seed": 520,
+      "output": "public/sounds/cs/martin/score/19.wav"
+    },
+    "public/sounds/cs/martin/score/20.wav": {
+      "text": "Dvacet.",
+      "voice": "martin",
+      "seed": 521,
+      "output": "public/sounds/cs/martin/score/20.wav"
+    },
+    "public/sounds/cs/martin/score/21.wav": {
+      "text": "Dvacet jedna.",
+      "voice": "martin",
+      "seed": 522,
+      "output": "public/sounds/cs/martin/score/21.wav"
+    },
+    "public/sounds/cs/martin/score/22.wav": {
+      "text": "Dvacet dva.",
+      "voice": "martin",
+      "seed": 523,
+      "output": "public/sounds/cs/martin/score/22.wav"
+    },
+    "public/sounds/cs/martin/score/23.wav": {
+      "text": "Dvacet tři.",
+      "voice": "martin",
+      "seed": 524,
+      "output": "public/sounds/cs/martin/score/23.wav"
+    },
+    "public/sounds/cs/martin/score/24.wav": {
+      "text": "Dvacet čtyři.",
+      "voice": "martin",
+      "seed": 525,
+      "output": "public/sounds/cs/martin/score/24.wav"
+    },
+    "public/sounds/cs/martin/score/25.wav": {
+      "text": "Dvacet pět.",
+      "voice": "martin",
+      "seed": 526,
+      "output": "public/sounds/cs/martin/score/25.wav"
+    },
+    "public/sounds/cs/martin/score/26.wav": {
+      "text": "Dvacet šest.",
+      "voice": "martin",
+      "seed": 527,
+      "output": "public/sounds/cs/martin/score/26.wav"
+    },
+    "public/sounds/cs/martin/score/27.wav": {
+      "text": "Dvacet sedm.",
+      "voice": "martin",
+      "seed": 528,
+      "output": "public/sounds/cs/martin/score/27.wav"
+    },
+    "public/sounds/cs/martin/score/28.wav": {
+      "text": "Dvacet osm.",
+      "voice": "martin",
+      "seed": 529,
+      "output": "public/sounds/cs/martin/score/28.wav"
+    },
+    "public/sounds/cs/martin/score/29.wav": {
+      "text": "Dvacet devět.",
+      "voice": "martin",
+      "seed": 530,
+      "output": "public/sounds/cs/martin/score/29.wav"
+    },
+    "public/sounds/cs/martin/score/30.wav": {
+      "text": "Třicet.",
+      "voice": "martin",
+      "seed": 531,
+      "output": "public/sounds/cs/martin/score/30.wav"
+    },
+    "public/sounds/cs/martin/score/31.wav": {
+      "text": "Třicet jedna.",
+      "voice": "martin",
+      "seed": 532,
+      "output": "public/sounds/cs/martin/score/31.wav"
+    },
+    "public/sounds/cs/martin/score/32.wav": {
+      "text": "Třicet dva.",
+      "voice": "martin",
+      "seed": 533,
+      "output": "public/sounds/cs/martin/score/32.wav"
+    },
+    "public/sounds/cs/martin/score/33.wav": {
+      "text": "Třicet tři.",
+      "voice": "martin",
+      "seed": 534,
+      "output": "public/sounds/cs/martin/score/33.wav"
+    },
+    "public/sounds/cs/martin/score/34.wav": {
+      "text": "Třicet čtyři.",
+      "voice": "martin",
+      "seed": 535,
+      "output": "public/sounds/cs/martin/score/34.wav"
+    },
+    "public/sounds/cs/martin/score/35.wav": {
+      "text": "Třicet pět.",
+      "voice": "martin",
+      "seed": 536,
+      "output": "public/sounds/cs/martin/score/35.wav"
+    },
+    "public/sounds/cs/martin/score/36.wav": {
+      "text": "Třicet šest.",
+      "voice": "martin",
+      "seed": 537,
+      "output": "public/sounds/cs/martin/score/36.wav"
+    },
+    "public/sounds/cs/martin/score/37.wav": {
+      "text": "Třicet sedm.",
+      "voice": "martin",
+      "seed": 538,
+      "output": "public/sounds/cs/martin/score/37.wav"
+    },
+    "public/sounds/cs/martin/score/38.wav": {
+      "text": "Třicet osm.",
+      "voice": "martin",
+      "seed": 539,
+      "output": "public/sounds/cs/martin/score/38.wav"
+    },
+    "public/sounds/cs/martin/score/39.wav": {
+      "text": "Třicet devět.",
+      "voice": "martin",
+      "seed": 540,
+      "output": "public/sounds/cs/martin/score/39.wav"
+    },
+    "public/sounds/cs/martin/score/40.wav": {
+      "text": "Čtyřicet.",
+      "voice": "martin",
+      "seed": 541,
+      "output": "public/sounds/cs/martin/score/40.wav"
+    },
+    "public/sounds/cs/martin/score/41.wav": {
+      "text": "Čtyřicet jedna.",
+      "voice": "martin",
+      "seed": 542,
+      "output": "public/sounds/cs/martin/score/41.wav"
+    },
+    "public/sounds/cs/martin/score/42.wav": {
+      "text": "Čtyřicet dva.",
+      "voice": "martin",
+      "seed": 543,
+      "output": "public/sounds/cs/martin/score/42.wav"
+    },
+    "public/sounds/cs/martin/score/43.wav": {
+      "text": "Čtyřicet tři.",
+      "voice": "martin",
+      "seed": 544,
+      "output": "public/sounds/cs/martin/score/43.wav"
+    },
+    "public/sounds/cs/martin/score/44.wav": {
+      "text": "Čtyřicet čtyři.",
+      "voice": "martin",
+      "seed": 545,
+      "output": "public/sounds/cs/martin/score/44.wav"
+    },
+    "public/sounds/cs/martin/score/45.wav": {
+      "text": "Čtyřicet pět.",
+      "voice": "martin",
+      "seed": 546,
+      "output": "public/sounds/cs/martin/score/45.wav"
+    },
+    "public/sounds/cs/martin/score/46.wav": {
+      "text": "Čtyřicet šest.",
+      "voice": "martin",
+      "seed": 547,
+      "output": "public/sounds/cs/martin/score/46.wav"
+    },
+    "public/sounds/cs/martin/score/47.wav": {
+      "text": "Čtyřicet sedm.",
+      "voice": "martin",
+      "seed": 548,
+      "output": "public/sounds/cs/martin/score/47.wav"
+    },
+    "public/sounds/cs/martin/score/48.wav": {
+      "text": "Čtyřicet osm.",
+      "voice": "martin",
+      "seed": 549,
+      "output": "public/sounds/cs/martin/score/48.wav"
+    },
+    "public/sounds/cs/martin/score/49.wav": {
+      "text": "Čtyřicet devět.",
+      "voice": "martin",
+      "seed": 550,
+      "output": "public/sounds/cs/martin/score/49.wav"
+    },
+    "public/sounds/cs/martin/score/50.wav": {
+      "text": "Padesát.",
+      "voice": "martin",
+      "seed": 551,
+      "output": "public/sounds/cs/martin/score/50.wav"
+    },
+    "public/sounds/cs/martin/score/51.wav": {
+      "text": "Padesát jedna.",
+      "voice": "martin",
+      "seed": 552,
+      "output": "public/sounds/cs/martin/score/51.wav"
+    },
+    "public/sounds/cs/martin/score/52.wav": {
+      "text": "Padesát dva.",
+      "voice": "martin",
+      "seed": 553,
+      "output": "public/sounds/cs/martin/score/52.wav"
+    },
+    "public/sounds/cs/martin/score/53.wav": {
+      "text": "Padesát tři.",
+      "voice": "martin",
+      "seed": 554,
+      "output": "public/sounds/cs/martin/score/53.wav"
+    },
+    "public/sounds/cs/martin/score/54.wav": {
+      "text": "Padesát čtyři.",
+      "voice": "martin",
+      "seed": 555,
+      "output": "public/sounds/cs/martin/score/54.wav"
+    },
+    "public/sounds/cs/martin/score/55.wav": {
+      "text": "Padesát pět.",
+      "voice": "martin",
+      "seed": 556,
+      "output": "public/sounds/cs/martin/score/55.wav"
+    },
+    "public/sounds/cs/martin/score/56.wav": {
+      "text": "Padesát šest.",
+      "voice": "martin",
+      "seed": 557,
+      "output": "public/sounds/cs/martin/score/56.wav"
+    },
+    "public/sounds/cs/martin/score/57.wav": {
+      "text": "Padesát sedm.",
+      "voice": "martin",
+      "seed": 558,
+      "output": "public/sounds/cs/martin/score/57.wav"
+    },
+    "public/sounds/cs/martin/score/58.wav": {
+      "text": "Padesát osm.",
+      "voice": "martin",
+      "seed": 559,
+      "output": "public/sounds/cs/martin/score/58.wav"
+    },
+    "public/sounds/cs/martin/score/59.wav": {
+      "text": "Padesát devět.",
+      "voice": "martin",
+      "seed": 560,
+      "output": "public/sounds/cs/martin/score/59.wav"
+    },
+    "public/sounds/cs/martin/score/60.wav": {
+      "text": "Šedesát.",
+      "voice": "martin",
+      "seed": 561,
+      "output": "public/sounds/cs/martin/score/60.wav"
+    },
+    "public/sounds/cs/martin/score/61.wav": {
+      "text": "Šedesát jedna.",
+      "voice": "martin",
+      "seed": 562,
+      "output": "public/sounds/cs/martin/score/61.wav"
+    },
+    "public/sounds/cs/martin/score/62.wav": {
+      "text": "Šedesát dva.",
+      "voice": "martin",
+      "seed": 563,
+      "output": "public/sounds/cs/martin/score/62.wav"
+    },
+    "public/sounds/cs/martin/score/63.wav": {
+      "text": "Šedesát tři.",
+      "voice": "martin",
+      "seed": 564,
+      "output": "public/sounds/cs/martin/score/63.wav"
+    },
+    "public/sounds/cs/martin/score/64.wav": {
+      "text": "Šedesát čtyři.",
+      "voice": "martin",
+      "seed": 565,
+      "output": "public/sounds/cs/martin/score/64.wav"
+    },
+    "public/sounds/cs/martin/score/65.wav": {
+      "text": "Šedesát pět.",
+      "voice": "martin",
+      "seed": 566,
+      "output": "public/sounds/cs/martin/score/65.wav"
+    },
+    "public/sounds/cs/martin/score/66.wav": {
+      "text": "Šedesát šest.",
+      "voice": "martin",
+      "seed": 567,
+      "output": "public/sounds/cs/martin/score/66.wav"
+    },
+    "public/sounds/cs/martin/score/67.wav": {
+      "text": "Šedesát sedm.",
+      "voice": "martin",
+      "seed": 568,
+      "output": "public/sounds/cs/martin/score/67.wav"
+    },
+    "public/sounds/cs/martin/score/68.wav": {
+      "text": "Šedesát osm.",
+      "voice": "martin",
+      "seed": 569,
+      "output": "public/sounds/cs/martin/score/68.wav"
+    },
+    "public/sounds/cs/martin/score/69.wav": {
+      "text": "Šedesát devět.",
+      "voice": "martin",
+      "seed": 570,
+      "output": "public/sounds/cs/martin/score/69.wav"
+    },
+    "public/sounds/cs/martin/score/70.wav": {
+      "text": "Sedmdesát.",
+      "voice": "martin",
+      "seed": 571,
+      "output": "public/sounds/cs/martin/score/70.wav"
+    },
+    "public/sounds/cs/martin/score/71.wav": {
+      "text": "Sedmdesát jedna.",
+      "voice": "martin",
+      "seed": 572,
+      "output": "public/sounds/cs/martin/score/71.wav"
+    },
+    "public/sounds/cs/martin/score/72.wav": {
+      "text": "Sedmdesát dva.",
+      "voice": "martin",
+      "seed": 573,
+      "output": "public/sounds/cs/martin/score/72.wav"
+    },
+    "public/sounds/cs/martin/score/73.wav": {
+      "text": "Sedmdesát tři.",
+      "voice": "martin",
+      "seed": 574,
+      "output": "public/sounds/cs/martin/score/73.wav"
+    },
+    "public/sounds/cs/martin/score/74.wav": {
+      "text": "Sedmdesát čtyři.",
+      "voice": "martin",
+      "seed": 575,
+      "output": "public/sounds/cs/martin/score/74.wav"
+    },
+    "public/sounds/cs/martin/score/75.wav": {
+      "text": "Sedmdesát pět.",
+      "voice": "martin",
+      "seed": 576,
+      "output": "public/sounds/cs/martin/score/75.wav"
+    },
+    "public/sounds/cs/martin/score/76.wav": {
+      "text": "Sedmdesát šest.",
+      "voice": "martin",
+      "seed": 577,
+      "output": "public/sounds/cs/martin/score/76.wav"
+    },
+    "public/sounds/cs/martin/score/77.wav": {
+      "text": "Sedmdesát sedm.",
+      "voice": "martin",
+      "seed": 578,
+      "output": "public/sounds/cs/martin/score/77.wav"
+    },
+    "public/sounds/cs/martin/score/78.wav": {
+      "text": "Sedmdesát osm.",
+      "voice": "martin",
+      "seed": 579,
+      "output": "public/sounds/cs/martin/score/78.wav"
+    },
+    "public/sounds/cs/martin/score/79.wav": {
+      "text": "Sedmdesát devět.",
+      "voice": "martin",
+      "seed": 580,
+      "output": "public/sounds/cs/martin/score/79.wav"
+    },
+    "public/sounds/cs/martin/score/80.wav": {
+      "text": "Osmdesát.",
+      "voice": "martin",
+      "seed": 581,
+      "output": "public/sounds/cs/martin/score/80.wav"
+    },
+    "public/sounds/cs/martin/score/81.wav": {
+      "text": "Osmdesát jedna.",
+      "voice": "martin",
+      "seed": 582,
+      "output": "public/sounds/cs/martin/score/81.wav"
+    },
+    "public/sounds/cs/martin/score/82.wav": {
+      "text": "Osmdesát dva.",
+      "voice": "martin",
+      "seed": 583,
+      "output": "public/sounds/cs/martin/score/82.wav"
+    },
+    "public/sounds/cs/martin/score/83.wav": {
+      "text": "Osmdesát tři.",
+      "voice": "martin",
+      "seed": 584,
+      "output": "public/sounds/cs/martin/score/83.wav"
+    },
+    "public/sounds/cs/martin/score/84.wav": {
+      "text": "Osmdesát čtyři.",
+      "voice": "martin",
+      "seed": 585,
+      "output": "public/sounds/cs/martin/score/84.wav"
+    },
+    "public/sounds/cs/martin/score/85.wav": {
+      "text": "Osmdesát pět.",
+      "voice": "martin",
+      "seed": 586,
+      "output": "public/sounds/cs/martin/score/85.wav"
+    },
+    "public/sounds/cs/martin/score/86.wav": {
+      "text": "Osmdesát šest.",
+      "voice": "martin",
+      "seed": 587,
+      "output": "public/sounds/cs/martin/score/86.wav"
+    },
+    "public/sounds/cs/martin/score/87.wav": {
+      "text": "Osmdesát sedm.",
+      "voice": "martin",
+      "seed": 588,
+      "output": "public/sounds/cs/martin/score/87.wav"
+    },
+    "public/sounds/cs/martin/score/88.wav": {
+      "text": "Osmdesát osm.",
+      "voice": "martin",
+      "seed": 589,
+      "output": "public/sounds/cs/martin/score/88.wav"
+    },
+    "public/sounds/cs/martin/score/89.wav": {
+      "text": "Osmdesát devět.",
+      "voice": "martin",
+      "seed": 590,
+      "output": "public/sounds/cs/martin/score/89.wav"
+    },
+    "public/sounds/cs/martin/score/90.wav": {
+      "text": "Devadesát.",
+      "voice": "martin",
+      "seed": 591,
+      "output": "public/sounds/cs/martin/score/90.wav"
+    },
+    "public/sounds/cs/martin/score/91.wav": {
+      "text": "Devadesát jedna.",
+      "voice": "martin",
+      "seed": 592,
+      "output": "public/sounds/cs/martin/score/91.wav"
+    },
+    "public/sounds/cs/martin/score/92.wav": {
+      "text": "Devadesát dva.",
+      "voice": "martin",
+      "seed": 593,
+      "output": "public/sounds/cs/martin/score/92.wav"
+    },
+    "public/sounds/cs/martin/score/93.wav": {
+      "text": "Devadesát tři.",
+      "voice": "martin",
+      "seed": 594,
+      "output": "public/sounds/cs/martin/score/93.wav"
+    },
+    "public/sounds/cs/martin/score/94.wav": {
+      "text": "Devadesát čtyři.",
+      "voice": "martin",
+      "seed": 595,
+      "output": "public/sounds/cs/martin/score/94.wav"
+    },
+    "public/sounds/cs/martin/score/95.wav": {
+      "text": "Devadesát pět.",
+      "voice": "martin",
+      "seed": 596,
+      "output": "public/sounds/cs/martin/score/95.wav"
+    },
+    "public/sounds/cs/martin/score/96.wav": {
+      "text": "Devadesát šest.",
+      "voice": "martin",
+      "seed": 597,
+      "output": "public/sounds/cs/martin/score/96.wav"
+    },
+    "public/sounds/cs/martin/score/97.wav": {
+      "text": "Devadesát sedm.",
+      "voice": "martin",
+      "seed": 598,
+      "output": "public/sounds/cs/martin/score/97.wav"
+    },
+    "public/sounds/cs/martin/score/98.wav": {
+      "text": "Devadesát osm.",
+      "voice": "martin",
+      "seed": 599,
+      "output": "public/sounds/cs/martin/score/98.wav"
+    },
+    "public/sounds/cs/martin/score/99.wav": {
+      "text": "Devadesát devět.",
+      "voice": "martin",
+      "seed": 600,
+      "output": "public/sounds/cs/martin/score/99.wav"
+    },
+    "public/sounds/cs/martin/score/100.wav": {
+      "text": "Sto!",
+      "voice": "martin",
+      "seed": 601,
+      "output": "public/sounds/cs/martin/score/100.wav"
+    },
+    "public/sounds/cs/martin/score/101.wav": {
+      "text": "Sto jedna!",
+      "voice": "martin",
+      "seed": 602,
+      "output": "public/sounds/cs/martin/score/101.wav"
+    },
+    "public/sounds/cs/martin/score/102.wav": {
+      "text": "Sto dva!",
+      "voice": "martin",
+      "seed": 603,
+      "output": "public/sounds/cs/martin/score/102.wav"
+    },
+    "public/sounds/cs/martin/score/103.wav": {
+      "text": "Sto tři!",
+      "voice": "martin",
+      "seed": 604,
+      "output": "public/sounds/cs/martin/score/103.wav"
+    },
+    "public/sounds/cs/martin/score/104.wav": {
+      "text": "Sto čtyři!",
+      "voice": "martin",
+      "seed": 605,
+      "output": "public/sounds/cs/martin/score/104.wav"
+    },
+    "public/sounds/cs/martin/score/105.wav": {
+      "text": "Sto pět!",
+      "voice": "martin",
+      "seed": 606,
+      "output": "public/sounds/cs/martin/score/105.wav"
+    },
+    "public/sounds/cs/martin/score/106.wav": {
+      "text": "Sto šest!",
+      "voice": "martin",
+      "seed": 607,
+      "output": "public/sounds/cs/martin/score/106.wav"
+    },
+    "public/sounds/cs/martin/score/107.wav": {
+      "text": "Sto sedm!",
+      "voice": "martin",
+      "seed": 608,
+      "output": "public/sounds/cs/martin/score/107.wav"
+    },
+    "public/sounds/cs/martin/score/108.wav": {
+      "text": "Sto osm!",
+      "voice": "martin",
+      "seed": 609,
+      "output": "public/sounds/cs/martin/score/108.wav"
+    },
+    "public/sounds/cs/martin/score/109.wav": {
+      "text": "Sto devět!",
+      "voice": "martin",
+      "seed": 610,
+      "output": "public/sounds/cs/martin/score/109.wav"
+    },
+    "public/sounds/cs/martin/score/110.wav": {
+      "text": "Sto deset!",
+      "voice": "martin",
+      "seed": 611,
+      "output": "public/sounds/cs/martin/score/110.wav"
+    },
+    "public/sounds/cs/martin/score/111.wav": {
+      "text": "Sto jedenáct!",
+      "voice": "martin",
+      "seed": 612,
+      "output": "public/sounds/cs/martin/score/111.wav"
+    },
+    "public/sounds/cs/martin/score/112.wav": {
+      "text": "Sto dvanáct!",
+      "voice": "martin",
+      "seed": 613,
+      "output": "public/sounds/cs/martin/score/112.wav"
+    },
+    "public/sounds/cs/martin/score/113.wav": {
+      "text": "Sto třináct!",
+      "voice": "martin",
+      "seed": 614,
+      "output": "public/sounds/cs/martin/score/113.wav"
+    },
+    "public/sounds/cs/martin/score/114.wav": {
+      "text": "Sto čtrnáct!",
+      "voice": "martin",
+      "seed": 615,
+      "output": "public/sounds/cs/martin/score/114.wav"
+    },
+    "public/sounds/cs/martin/score/115.wav": {
+      "text": "Sto patnáct!",
+      "voice": "martin",
+      "seed": 616,
+      "output": "public/sounds/cs/martin/score/115.wav"
+    },
+    "public/sounds/cs/martin/score/116.wav": {
+      "text": "Sto šestnáct!",
+      "voice": "martin",
+      "seed": 617,
+      "output": "public/sounds/cs/martin/score/116.wav"
+    },
+    "public/sounds/cs/martin/score/117.wav": {
+      "text": "Sto sedmnáct!",
+      "voice": "martin",
+      "seed": 618,
+      "output": "public/sounds/cs/martin/score/117.wav"
+    },
+    "public/sounds/cs/martin/score/118.wav": {
+      "text": "Sto osmnáct!",
+      "voice": "martin",
+      "seed": 619,
+      "output": "public/sounds/cs/martin/score/118.wav"
+    },
+    "public/sounds/cs/martin/score/119.wav": {
+      "text": "Sto devatenáct!",
+      "voice": "martin",
+      "seed": 620,
+      "output": "public/sounds/cs/martin/score/119.wav"
+    },
+    "public/sounds/cs/martin/score/120.wav": {
+      "text": "Sto dvacet!",
+      "voice": "martin",
+      "seed": 621,
+      "output": "public/sounds/cs/martin/score/120.wav"
+    },
+    "public/sounds/cs/martin/score/121.wav": {
+      "text": "Sto dvacet jedna!",
+      "voice": "martin",
+      "seed": 622,
+      "output": "public/sounds/cs/martin/score/121.wav"
+    },
+    "public/sounds/cs/martin/score/122.wav": {
+      "text": "Sto dvacet dva!",
+      "voice": "martin",
+      "seed": 623,
+      "output": "public/sounds/cs/martin/score/122.wav"
+    },
+    "public/sounds/cs/martin/score/123.wav": {
+      "text": "Sto dvacet tři!",
+      "voice": "martin",
+      "seed": 624,
+      "output": "public/sounds/cs/martin/score/123.wav"
+    },
+    "public/sounds/cs/martin/score/124.wav": {
+      "text": "Sto dvacet čtyři!",
+      "voice": "martin",
+      "seed": 625,
+      "output": "public/sounds/cs/martin/score/124.wav"
+    },
+    "public/sounds/cs/martin/score/125.wav": {
+      "text": "Sto dvacet pět!",
+      "voice": "martin",
+      "seed": 626,
+      "output": "public/sounds/cs/martin/score/125.wav"
+    },
+    "public/sounds/cs/martin/score/126.wav": {
+      "text": "Sto dvacet šest!",
+      "voice": "martin",
+      "seed": 627,
+      "output": "public/sounds/cs/martin/score/126.wav"
+    },
+    "public/sounds/cs/martin/score/127.wav": {
+      "text": "Sto dvacet sedm!",
+      "voice": "martin",
+      "seed": 628,
+      "output": "public/sounds/cs/martin/score/127.wav"
+    },
+    "public/sounds/cs/martin/score/128.wav": {
+      "text": "Sto dvacet osm!",
+      "voice": "martin",
+      "seed": 629,
+      "output": "public/sounds/cs/martin/score/128.wav"
+    },
+    "public/sounds/cs/martin/score/129.wav": {
+      "text": "Sto dvacet devět!",
+      "voice": "martin",
+      "seed": 630,
+      "output": "public/sounds/cs/martin/score/129.wav"
+    },
+    "public/sounds/cs/martin/score/130.wav": {
+      "text": "Sto třicet!",
+      "voice": "martin",
+      "seed": 631,
+      "output": "public/sounds/cs/martin/score/130.wav"
+    },
+    "public/sounds/cs/martin/score/131.wav": {
+      "text": "Sto třicet jedna!",
+      "voice": "martin",
+      "seed": 632,
+      "output": "public/sounds/cs/martin/score/131.wav"
+    },
+    "public/sounds/cs/martin/score/132.wav": {
+      "text": "Sto třicet dva!",
+      "voice": "martin",
+      "seed": 633,
+      "output": "public/sounds/cs/martin/score/132.wav"
+    },
+    "public/sounds/cs/martin/score/133.wav": {
+      "text": "Sto třicet tři!",
+      "voice": "martin",
+      "seed": 634,
+      "output": "public/sounds/cs/martin/score/133.wav"
+    },
+    "public/sounds/cs/martin/score/134.wav": {
+      "text": "Sto třicet čtyři!",
+      "voice": "martin",
+      "seed": 635,
+      "output": "public/sounds/cs/martin/score/134.wav"
+    },
+    "public/sounds/cs/martin/score/135.wav": {
+      "text": "Sto třicet pět!",
+      "voice": "martin",
+      "seed": 636,
+      "output": "public/sounds/cs/martin/score/135.wav"
+    },
+    "public/sounds/cs/martin/score/136.wav": {
+      "text": "Sto třicet šest!",
+      "voice": "martin",
+      "seed": 637,
+      "output": "public/sounds/cs/martin/score/136.wav"
+    },
+    "public/sounds/cs/martin/score/137.wav": {
+      "text": "Sto třicet sedm!",
+      "voice": "martin",
+      "seed": 638,
+      "output": "public/sounds/cs/martin/score/137.wav"
+    },
+    "public/sounds/cs/martin/score/138.wav": {
+      "text": "Sto třicet osm!",
+      "voice": "martin",
+      "seed": 639,
+      "output": "public/sounds/cs/martin/score/138.wav"
+    },
+    "public/sounds/cs/martin/score/139.wav": {
+      "text": "Sto třicet devět!",
+      "voice": "martin",
+      "seed": 640,
+      "output": "public/sounds/cs/martin/score/139.wav"
+    },
+    "public/sounds/cs/martin/score/140.wav": {
+      "text": "Sto čtyřicet!",
+      "voice": "martin",
+      "seed": 641,
+      "output": "public/sounds/cs/martin/score/140.wav"
+    },
+    "public/sounds/cs/martin/score/141.wav": {
+      "text": "Sto čtyřicet jedna!",
+      "voice": "martin",
+      "seed": 642,
+      "output": "public/sounds/cs/martin/score/141.wav"
+    },
+    "public/sounds/cs/martin/score/142.wav": {
+      "text": "Sto čtyřicet dva!",
+      "voice": "martin",
+      "seed": 643,
+      "output": "public/sounds/cs/martin/score/142.wav"
+    },
+    "public/sounds/cs/martin/score/143.wav": {
+      "text": "Sto čtyřicet tři!",
+      "voice": "martin",
+      "seed": 644,
+      "output": "public/sounds/cs/martin/score/143.wav"
+    },
+    "public/sounds/cs/martin/score/144.wav": {
+      "text": "Sto čtyřicet čtyři!",
+      "voice": "martin",
+      "seed": 645,
+      "output": "public/sounds/cs/martin/score/144.wav"
+    },
+    "public/sounds/cs/martin/score/145.wav": {
+      "text": "Sto čtyřicet pět!",
+      "voice": "martin",
+      "seed": 646,
+      "output": "public/sounds/cs/martin/score/145.wav"
+    },
+    "public/sounds/cs/martin/score/146.wav": {
+      "text": "Sto čtyřicet šest!",
+      "voice": "martin",
+      "seed": 647,
+      "output": "public/sounds/cs/martin/score/146.wav"
+    },
+    "public/sounds/cs/martin/score/147.wav": {
+      "text": "Sto čtyřicet sedm!",
+      "voice": "martin",
+      "seed": 648,
+      "output": "public/sounds/cs/martin/score/147.wav"
+    },
+    "public/sounds/cs/martin/score/148.wav": {
+      "text": "Sto čtyřicet osm!",
+      "voice": "martin",
+      "seed": 649,
+      "output": "public/sounds/cs/martin/score/148.wav"
+    },
+    "public/sounds/cs/martin/score/149.wav": {
+      "text": "Sto čtyřicet devět!",
+      "voice": "martin",
+      "seed": 650,
+      "output": "public/sounds/cs/martin/score/149.wav"
+    },
+    "public/sounds/cs/martin/score/150.wav": {
+      "text": "Sto padesát!",
+      "voice": "martin",
+      "seed": 651,
+      "output": "public/sounds/cs/martin/score/150.wav"
+    },
+    "public/sounds/cs/martin/score/151.wav": {
+      "text": "Sto padesát jedna!",
+      "voice": "martin",
+      "seed": 652,
+      "output": "public/sounds/cs/martin/score/151.wav"
+    },
+    "public/sounds/cs/martin/score/152.wav": {
+      "text": "Sto padesát dva!",
+      "voice": "martin",
+      "seed": 653,
+      "output": "public/sounds/cs/martin/score/152.wav"
+    },
+    "public/sounds/cs/martin/score/153.wav": {
+      "text": "Sto padesát tři!",
+      "voice": "martin",
+      "seed": 654,
+      "output": "public/sounds/cs/martin/score/153.wav"
+    },
+    "public/sounds/cs/martin/score/154.wav": {
+      "text": "Sto padesát čtyři!",
+      "voice": "martin",
+      "seed": 655,
+      "output": "public/sounds/cs/martin/score/154.wav"
+    },
+    "public/sounds/cs/martin/score/155.wav": {
+      "text": "Sto padesát pět!",
+      "voice": "martin",
+      "seed": 656,
+      "output": "public/sounds/cs/martin/score/155.wav"
+    },
+    "public/sounds/cs/martin/score/156.wav": {
+      "text": "Sto padesát šest!",
+      "voice": "martin",
+      "seed": 657,
+      "output": "public/sounds/cs/martin/score/156.wav"
+    },
+    "public/sounds/cs/martin/score/157.wav": {
+      "text": "Sto padesát sedm!",
+      "voice": "martin",
+      "seed": 658,
+      "output": "public/sounds/cs/martin/score/157.wav"
+    },
+    "public/sounds/cs/martin/score/158.wav": {
+      "text": "Sto padesát osm!",
+      "voice": "martin",
+      "seed": 659,
+      "output": "public/sounds/cs/martin/score/158.wav"
+    },
+    "public/sounds/cs/martin/score/159.wav": {
+      "text": "Sto padesát devět!",
+      "voice": "martin",
+      "seed": 660,
+      "output": "public/sounds/cs/martin/score/159.wav"
+    },
+    "public/sounds/cs/martin/score/160.wav": {
+      "text": "Sto šedesát!",
+      "voice": "martin",
+      "seed": 661,
+      "output": "public/sounds/cs/martin/score/160.wav"
+    },
+    "public/sounds/cs/martin/score/161.wav": {
+      "text": "Sto šedesát jedna!",
+      "voice": "martin",
+      "seed": 662,
+      "output": "public/sounds/cs/martin/score/161.wav"
+    },
+    "public/sounds/cs/martin/score/162.wav": {
+      "text": "Sto šedesát dva!",
+      "voice": "martin",
+      "seed": 663,
+      "output": "public/sounds/cs/martin/score/162.wav"
+    },
+    "public/sounds/cs/martin/score/163.wav": {
+      "text": "Sto šedesát tři!",
+      "voice": "martin",
+      "seed": 664,
+      "output": "public/sounds/cs/martin/score/163.wav"
+    },
+    "public/sounds/cs/martin/score/164.wav": {
+      "text": "Sto šedesát čtyři!",
+      "voice": "martin",
+      "seed": 665,
+      "output": "public/sounds/cs/martin/score/164.wav"
+    },
+    "public/sounds/cs/martin/score/165.wav": {
+      "text": "Sto šedesát pět!",
+      "voice": "martin",
+      "seed": 666,
+      "output": "public/sounds/cs/martin/score/165.wav"
+    },
+    "public/sounds/cs/martin/score/166.wav": {
+      "text": "Sto šedesát šest!",
+      "voice": "martin",
+      "seed": 667,
+      "output": "public/sounds/cs/martin/score/166.wav"
+    },
+    "public/sounds/cs/martin/score/167.wav": {
+      "text": "Sto šedesát sedm!",
+      "voice": "martin",
+      "seed": 668,
+      "output": "public/sounds/cs/martin/score/167.wav"
+    },
+    "public/sounds/cs/martin/score/168.wav": {
+      "text": "Sto šedesát osm!",
+      "voice": "martin",
+      "seed": 669,
+      "output": "public/sounds/cs/martin/score/168.wav"
+    },
+    "public/sounds/cs/martin/score/169.wav": {
+      "text": "Sto šedesát devět!",
+      "voice": "martin",
+      "seed": 670,
+      "output": "public/sounds/cs/martin/score/169.wav"
+    },
+    "public/sounds/cs/martin/score/170.wav": {
+      "text": "Sto sedmdesát!",
+      "voice": "martin",
+      "seed": 671,
+      "output": "public/sounds/cs/martin/score/170.wav"
+    },
+    "public/sounds/cs/martin/score/171.wav": {
+      "text": "Sto sedmdesát jedna!",
+      "voice": "martin",
+      "seed": 672,
+      "output": "public/sounds/cs/martin/score/171.wav"
+    },
+    "public/sounds/cs/martin/score/172.wav": {
+      "text": "Sto sedmdesát dva!",
+      "voice": "martin",
+      "seed": 673,
+      "output": "public/sounds/cs/martin/score/172.wav"
+    },
+    "public/sounds/cs/martin/score/173.wav": {
+      "text": "Sto sedmdesát tři!",
+      "voice": "martin",
+      "seed": 674,
+      "output": "public/sounds/cs/martin/score/173.wav"
+    },
+    "public/sounds/cs/martin/score/174.wav": {
+      "text": "Sto sedmdesát čtyři!",
+      "voice": "martin",
+      "seed": 675,
+      "output": "public/sounds/cs/martin/score/174.wav"
+    },
+    "public/sounds/cs/martin/score/175.wav": {
+      "text": "Sto sedmdesát pět!",
+      "voice": "martin",
+      "seed": 676,
+      "output": "public/sounds/cs/martin/score/175.wav"
+    },
+    "public/sounds/cs/martin/score/176.wav": {
+      "text": "Sto sedmdesát šest!",
+      "voice": "martin",
+      "seed": 677,
+      "output": "public/sounds/cs/martin/score/176.wav"
+    },
+    "public/sounds/cs/martin/score/177.wav": {
+      "text": "Sto sedmdesát sedm!",
+      "voice": "martin",
+      "seed": 678,
+      "output": "public/sounds/cs/martin/score/177.wav"
+    },
+    "public/sounds/cs/martin/score/178.wav": {
+      "text": "Sto sedmdesát osm!",
+      "voice": "martin",
+      "seed": 679,
+      "output": "public/sounds/cs/martin/score/178.wav"
+    },
+    "public/sounds/cs/martin/score/179.wav": {
+      "text": "Sto sedmdesát devět!",
+      "voice": "martin",
+      "seed": 680,
+      "output": "public/sounds/cs/martin/score/179.wav"
+    },
+    "public/sounds/cs/martin/score/180.wav": {
+      "text": "Sto osmdesát!",
+      "voice": "martin",
+      "seed": 681,
+      "output": "public/sounds/cs/martin/score/180.wav"
+    },
+    "public/sounds/cs/martin/fun/ambrozovina.wav": {
+      "text": "Ambrožovka!",
+      "voice": "martin",
+      "seed": 501,
+      "output": "public/sounds/cs/martin/fun/ambrozovina.wav"
+    },
+    "public/sounds/cs/eliska/fun/gameon.wav": {
+      "text": "Hra začíná!",
+      "voice": "eliska",
+      "seed": 501,
+      "output": "public/sounds/cs/eliska/fun/gameon.wav"
+    },
+    "public/sounds/cs/martin/fun/gameon.wav": {
+      "text": "Hra začíná!",
+      "voice": "martin",
+      "seed": 501,
+      "output": "public/sounds/cs/martin/fun/gameon.wav"
+    }
+  }
+}

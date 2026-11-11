@@ -1,9 +1,10 @@
 import { isVoiceId } from './voices.ts';
 import type { VoiceId } from './voices.ts';
 
-// Zábavné hlášky efektů; nahrávky v public/sounds/cs/<hlas>/fun/<id>.wav (scripts/generate-voice.mjs).
+// Pevné herní hlášky; nahrávky v public/sounds/cs/<hlas>/fun/<id>.wav (scripts/generate-voice.mjs).
 export const PHRASES = {
-  ambrozovina: 'Ambrožovina!',
+  ambrozovina: 'Ambrožovka!',
+  gameon: 'Hra začíná!',
 } as const;
 
 export type PhraseId = keyof typeof PHRASES;

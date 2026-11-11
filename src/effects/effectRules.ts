@@ -18,9 +18,9 @@ const single = (darts: Dart[], number: number) => darts.some(dart => dart.number
 
 export const EFFECTS = {
   ambrozovina: {
-    name: 'Ambrožovina',
+    name: 'Ambrožovka',
     trigger: 'Kolo 1, 20 a 5 (single, libovolné pořadí)',
-    title: 'AMBROŽOVINA!',
+    title: 'AMBROŽOVKA!',
     subtitle: '1 · 20 · 5',
     phrase: 'ambrozovina',
     replacesScore: true,

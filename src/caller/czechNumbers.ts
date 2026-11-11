@@ -14,9 +14,9 @@ export function czechNumber(n: number): string {
   return n % 100 ? `${head} ${czechNumber(n % 100)}` : head;
 }
 
-// Text hlášení součtu kola pro generátor hlasu; 180 s důrazem.
+// Text hlášení součtu kola; od stovky důraz jako v odsouhlasených ukázkách.
 export function scoreAnnouncement(total: number): string {
   if (!Number.isInteger(total) || total < 0 || total > MAX_VISIT_SCORE) throw new RangeError(`Součet kola mimo rozsah: ${total}`);
   const words = czechNumber(total);
-  return words[0].toUpperCase() + words.slice(1) + (total === MAX_VISIT_SCORE ? '!' : '.');
+  return words[0].toUpperCase() + words.slice(1) + (total >= 100 ? '!' : '.');
 }
