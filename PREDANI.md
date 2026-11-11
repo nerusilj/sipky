@@ -11,7 +11,9 @@ Aktualizováno 11. 11. 2026. Před zahájením práce si projdi také `AGENTS.md
 
 ## Bezprostřední stav a další práce
 
-Zdrojová verze je **0.1.8**. Automatické vydání Linux DEB spouští tag `v0.1.8` přes `.github/workflows/release-linux.yml`. Aplikace, statické zvuky a offline hlasatel mají samostatné balíčky. Verze a původ doplňků jsou v `scripts/linux-components.json`, postup v `docs/linux.md`. Úspěch vydání ověř v GitHub Actions a v seznamu souborů vydání.
+Zdrojová verze je **0.1.8**. GitHub Actions automaticky zveřejnil tři linuxové DEB ve [vydání v0.1.8](https://github.com/nerusilj/sipky/releases/tag/v0.1.8). Samotná aplikace má 3,21 MiB, statické zvuky 25,49 MiB a offline hlasatel 414,60 MiB. Verze a původ doplňků jsou v `scripts/linux-components.json`, postup v `docs/linux.md`. Další tag `vX.Y.Z` spustí stejný workflow.
+
+Vydání prošlo 204 testy Node a 7 testy Rust. Kontrolní součty zveřejněných souborů ověřeny po stažení. Ve WSL Ubuntu 26.04 prošla simulace závislostí APT, izolovaný přechod z 0.1.7 a zkušební aktualizace samotné aplikace. Oba doplňky zůstaly ve verzi 1.0.0 a oba hlasy vytvořily WAV. Spuštění rozhraní, slyšitelný výstup a fyzický terč na cílovém Xubuntu zbývají ověřit.
 
 Linuxové balíčky z 5. 11. 2026 obsahují změny uvedené v sekcích vydání 0.1.7. Níže jsou změny ve zdrojích po 0.1.7.
 
