@@ -6,7 +6,7 @@ tag="v$version"
 [[ "${GITHUB_REF_NAME:-$tag}" == "$tag" && "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
 node -e 'if (require("./src-tauri/tauri.conf.json").version !== process.argv[1]) process.exit(1)' "$version"
 grep -Fx "version = \"$version\"" src-tauri/Cargo.toml
-cargo test --locked --manifest-path src-tauri/Cargo.toml
+TAURI_CONFIG='{"bundle":{"resources":[]}}' cargo test --locked --manifest-path src-tauri/Cargo.toml
 pnpm test
 
 out="$PWD/outputs/linux/$version"
