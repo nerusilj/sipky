@@ -6,6 +6,8 @@ Na GitHubu vyvolá tag `vX.Y.Z` sestavení a publikaci linuxových DEB. Číslo 
 
 Pro běžnou opravu ponechte `scripts/linux-components.json` beze změny. Při změně WAV upravte verzi a tag položky `zvuky`. Při změně hlasového workeru, modelu nebo jeho závislostí upravte `hlasatel`. Tag u položky určuje vydání, ke kterému se daný DEB přiloží. Workflow ověřuje, že u převzatého balíčku existuje soubor v odkazovaném vydání a jeho zdrojové vstupy se nezměnily. Hlavní verze doplňku vymezuje kompatibilitu.
 
+V prvním vydání po 0.1.8 s panelem **Verze aplikace** bude potřeba jednou nainstalovat nový DEB ručně. Panel potom kontroluje nejnovější stabilní vydání přímo v `nerusilj/sipky`. Tlačítko **Aktualizovat** je dostupné v nainstalované dělené verzi DEB pro x86_64. Vydání poskytuje `linux-components.json`, podle kterého aplikace dohledá chybějící nebo nekompatibilní zvuky a hlasatel. Stažené soubory ověří podle SHA-256 z GitHubu a předá je APT po potvrzení systémového dialogu. Po úspěšné instalaci aplikaci restartujte. Windows a AppImage zobrazují stav verze a odkaz na dostupné vydání.
+
 Po odeslání commitu na GitHub označte stejný commit tagem a odešlete tag. Pro první vydání je postup následující.
 
 ```sh

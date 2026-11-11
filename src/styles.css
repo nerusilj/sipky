@@ -570,6 +570,11 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent-light)
 .home-connection[open] .connection-expand svg{transform:rotate(90deg)}
 .home-connection .status-card{border-top:1px solid var(--line);padding:18px 24px}
 .home-connection .status-card dl{margin:0}
+.home-update{margin-top:12px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 20px;min-height:62px}
+.home-update-summary,.home-update-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px}
+.home-update-actions .text-button{font-size:13px;color:var(--accent-light)}
+.home-update .status-line{margin:0;font-size:13px}
+.home-update-note{flex-basis:100%;margin:0;color:var(--muted);font-size:13px}
 
 /* Nabídky hry: čtyři skupiny s přímým ztišením zvuku. */
 .game-tools{flex-wrap:nowrap;gap:6px;color:#fff}

@@ -1,6 +1,6 @@
 [package]
 name = "sipky"
-version = "0.1.8"
+version = "0.1.9"
 description = "Šipky – lokální šipkařská aplikace nad Autodarts"
 edition = "2021"
 rust-version = "1.77.2"
@@ -16,3 +16,10 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+semver = "1"
+reqwest = { version = "0.13.5", default-features = false, features = ["blocking", "native-tls-no-alpn"] }
+
+[target.'cfg(all(target_os = "linux", target_arch = "x86_64"))'.dependencies]
+sha2 = "0.10"
+tempfile = "3"

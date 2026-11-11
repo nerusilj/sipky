@@ -19,6 +19,7 @@ import HomePage from './pages/HomePage.tsx';
 import PlayersPage from './pages/PlayersPage.tsx';
 import SettingsPage from './pages/SettingsPage.tsx';
 import { useGame } from './game/gameStore.ts';
+import { useAppUpdate } from './appUpdate.ts';
 
 type Section = 'home' | 'game' | 'players' | 'settings' | 'dev';
 const NAV: { id: Section; label: string; Icon: ComponentType<{ size?: number }> }[] = [
@@ -35,6 +36,8 @@ export default function App() {
   const [leave, setLeave] = useState<'close' | 'newGame'>();
   const [closeError, setCloseError] = useState<string>();
   const closeGuard = useRef<WindowCloseGuard | undefined>(undefined);
+  const update = useAppUpdate();
+  const { installingRef } = update;
   const connection = useConnection();
   const venueName = useVenueName();
   const showDev = useShowDev();
@@ -65,13 +68,14 @@ export default function App() {
       setCloseError(undefined); setLeave(open ? 'close' : undefined);
     }, () => appWindow.destroy(), setCloseError);
     closeGuard.current = guard;
-    void appWindow.onCloseRequested(event => { if (disposed) event.preventDefault(); else guard.request(event); })
+    void appWindow.onCloseRequested(event => { if (disposed || installingRef.current) event.preventDefault(); else guard.request(event); })
       .then(stop => { if (disposed) stop(); else unlisten = stop; })
       .catch(() => { if (!disposed) setCloseError('Ochranu při zavírání aplikace se nepodařilo zapnout.'); });
     return () => { disposed = true; unlisten?.(); };
-  }, []);
+  }, [installingRef]);
 
   const newGame = (nextMode: GameMode) => {
+    if (installingRef.current) return;
     setPendingMode(nextMode);
     setCloseError(undefined);
     if (isAnyGameRunning()) { setLeave('newGame'); return; }
@@ -85,15 +89,15 @@ export default function App() {
         <span className={`dot ${online ? '' : 'amber-dot'}`}></span>
         <strong className={online ? 'online' : ''}>{online ? 'Autodarts připojeno' : 'Autodarts nepřipojeno'}</strong>
       </div>
-      <button className={`icon-button topbar-settings ${current === 'settings' ? 'active' : ''}`} onClick={() => setSection('settings')} aria-label="Nastavení" title="Nastavení"
+      <button className={`icon-button topbar-settings ${current === 'settings' ? 'active' : ''}`} disabled={update.installing} onClick={() => setSection('settings')} aria-label="Nastavení" title="Nastavení"
         aria-current={current === 'settings' ? 'page' : undefined}><SettingsIcon size={20} /><span>Nastavení</span></button>
     </header>
     <nav className="sidebar" aria-label="Hlavní navigace">
       {nav.map(({ id, label, Icon }) => <button key={id} className={`nav-item ${current === id ? 'active' : ''} ${id === 'dev' ? 'nav-dev' : ''}`}
-        aria-current={current === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon /><span>{label}</span></button>)}
+        aria-current={current === id ? 'page' : undefined} disabled={update.installing} onClick={() => setSection(id)}><Icon /><span>{label}</span></button>)}
     </nav></>}
     <main className="content">
-      {current === 'home' && <HomePage onPlay={newGame} />}
+      {current === 'home' && <HomePage onPlay={newGame} update={update} gameRunning={isAnyGameRunning()} />}
       {current === 'game' && (mode === 'cricket' ? <CricketPage onSettings={() => setSection('settings')} /> : <GamePage onSettings={() => setSection('settings')} />)}
       {current === 'players' && <PlayersPage />}
       {current === 'settings' && <SettingsPage onGame={hasGame ? () => setSection('game') : undefined} />}

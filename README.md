@@ -1,4 +1,4 @@
-# Šipky · v0.1.8
+# Šipky · v0.1.9
 
 Lokální šipkařská aplikace pro naši hospodu. Spustitelný soubor je `sipky` (Windows `sipky.exe`). Repozitář obsahuje zdroje, testy a návody k sestavení. Instalační balíčky a přenositelný hlasový runtime vznikají místně.
 

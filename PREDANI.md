@@ -11,9 +11,13 @@ Aktualizováno 11. 11. 2026. Před zahájením práce si projdi také `AGENTS.md
 
 ## Bezprostřední stav a další práce
 
-Zdrojová verze je **0.1.8**. GitHub Actions automaticky zveřejnil tři linuxové DEB ve [vydání v0.1.8](https://github.com/nerusilj/sipky/releases/tag/v0.1.8). Samotná aplikace má 3,21 MiB, statické zvuky 25,49 MiB a offline hlasatel 414,60 MiB. Verze a původ doplňků jsou v `scripts/linux-components.json`, postup v `docs/linux.md`. Další tag `vX.Y.Z` spustí stejný workflow.
+Zdrojová verze je **0.1.9**. GitHub Actions automaticky zveřejnil tři linuxové DEB ve [vydání v0.1.8](https://github.com/nerusilj/sipky/releases/tag/v0.1.8). Samotná aplikace měla 3,21 MiB, statické zvuky 25,49 MiB a offline hlasatel 414,60 MiB. Verze 0.1.9 přebírá oba doplňky 1.0.0 z tohoto vydání. Verze a původ doplňků jsou v `scripts/linux-components.json`, postup v `docs/linux.md`. Tag `vX.Y.Z` spouští automatické vydání.
 
 Vydání prošlo 204 testy Node a 7 testy Rust. Kontrolní součty zveřejněných souborů ověřeny po stažení. Ve WSL Ubuntu 26.04 prošla simulace závislostí APT, izolovaný přechod z 0.1.7 a zkušební aktualizace samotné aplikace. Oba doplňky zůstaly ve verzi 1.0.0 a oba hlasy vytvořily WAV. Spuštění rozhraní, slyšitelný výstup a fyzický terč na cílovém Xubuntu zbývají ověřit.
+
+Ve zdrojích po vydání 0.1.8 je nový panel **Verze aplikace** na dashboardu. Dotazuje se GitHub Releases `nerusilj/sipky`. Dělený DEB na x86_64 stahuje a ověřuje aktualizaci a případné nekompatibilní doplňky, instalaci potvrzuje systém přes PolicyKit a APT. Nová vydání přikládají `linux-components.json`. Windows a AppImage zobrazují stav a odkaz na vydání. Pro první přechod z 0.1.8 je potřeba ruční instalace vydání s tímto panelem.
+
+Prošla kontrola TypeScriptu, 204 testů Node, 9 testů Rust v Ubuntu 26.04 ve WSL a `cargo check --locked` ve Windows. Ověřen formát aktuální odpovědi GitHubu a metadata zveřejněného DEB. Skutečný průchod instalačním dialogem a restartem zbývá ověřit na Xubuntu po vydání.
 
 Linuxové balíčky z 5. 11. 2026 obsahují změny uvedené v sekcích vydání 0.1.7. Níže jsou změny ve zdrojích po 0.1.7.
 

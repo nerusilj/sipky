@@ -4,6 +4,7 @@ use tauri::Manager;
 use tauri_plugin_dialog::DialogExt;
 mod player_speech;
 mod static_audio;
+mod updates;
 
 fn resource_base(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     #[cfg(target_os = "linux")]
@@ -182,8 +183,10 @@ mod tests {
 pub fn run() {
     tauri::Builder::default()
         .manage(player_speech::PlayerSpeech::default())
+        .manage(updates::UpdateInstall::default())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![save_session, append_recording, load_players, save_players, player_speech::player_speech, static_audio::static_audio])
+        .invoke_handler(tauri::generate_handler![save_session, append_recording, load_players, save_players,
+            player_speech::player_speech, static_audio::static_audio, updates::check_app_update, updates::install_app_update])
         .run(tauri::generate_context!())
         .expect("Aplikaci Šipky nelze spustit");
 }

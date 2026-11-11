@@ -5,6 +5,8 @@ import { STATE_LABELS } from '../components/ConnectionPanel.tsx';
 import { ChevronIcon, TileBoard } from '../components/Icons.tsx';
 import { useConnection } from '../connection.ts';
 import { isVerifiedBoardVersion, VERIFIED_BOARD_VERSIONS } from '../autodarts/boardVersion.ts';
+import type { useAppUpdate } from '../appUpdate.ts';
+import AppUpdatePanel from '../components/AppUpdatePanel.tsx';
 
 const MODES = [
   { id: 'x01', title: 'X01', subtitle: 'Odpočítávání do nuly', available: true },
@@ -19,7 +21,11 @@ export function sinceText(at: number | undefined, now: number): string {
   return minutes < 60 ? `před ${minutes} min` : `před ${Math.round(minutes / 60)} h`;
 }
 
-export default function HomePage({ onPlay }: { onPlay: (mode: GameMode) => void }) {
+export default function HomePage({ onPlay, update, gameRunning }: {
+  onPlay: (mode: GameMode) => void;
+  update: ReturnType<typeof useAppUpdate>;
+  gameRunning: boolean;
+}) {
   const connection = useConnection();
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
@@ -30,7 +36,7 @@ export default function HomePage({ onPlay }: { onPlay: (mode: GameMode) => void 
   return <div className="page">
     <div className="page-heading"><div><h1>Vítejte u šipek</h1><p>Vyberte herní mód a začněte hrát.</p></div></div>
     <div className="modes">
-      {MODES.map(mode => <button key={mode.id} className={`mode-tile ${mode.id}`} disabled={!mode.available}
+      {MODES.map(mode => <button key={mode.id} className={`mode-tile ${mode.id}`} disabled={!mode.available || update.installing}
         title={mode.available ? `Nová hra ${mode.title}` : 'Připravujeme'} onClick={() => { if (mode.available) onPlay(mode.id); }}>
         <TileBoard /><strong>{mode.title}</strong><span>{mode.subtitle}</span>
         {!mode.available && <span className="mode-soon">PŘIPRAVUJEME</span>}<span className="mode-chevron"><ChevronIcon size={18} /></span>
@@ -61,5 +67,6 @@ export default function HomePage({ onPlay }: { onPlay: (mode: GameMode) => void 
       <AutodartsLogo className={`status-logo ${online ? 'online' : ''}`} />
     </section>
     </details>
+    <AppUpdatePanel update={update} gameRunning={gameRunning} />
   </div>;
 }

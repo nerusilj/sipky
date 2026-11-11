@@ -13,7 +13,7 @@ out="$PWD/outputs/linux/$version"
 mkdir -p "$out"
 work=$(mktemp -d)
 trap 'rm -rf -- "$work"' EXIT
-deps=()
+deps=(pkexec ca-certificates libssl3t64)
 packages=()
 printf '## Instalace a aktualizace na Xubuntu x86_64\n\n' > "$out/INSTALACE.md"
 printf 'Při prvním přechodu z 0.1.7 stáhni všechny tři uvedené balíčky. Při dalších aktualizacích stačí nový balíček aplikace a případné chybějící nebo novější závislosti.\n\n' >> "$out/INSTALACE.md"
@@ -87,7 +87,8 @@ packages+=("$app")
 printf '\nPrvní instalace / přechod z 0.1.7:\n\n```bash\nsudo apt install ./sipky_%s_amd64.deb ./sipky-zvuky_*.deb ./sipky-hlasatel_*.deb\n```\n' "$version" >> "$out/INSTALACE.md"
 printf '\nDalší aktualizace aplikace s kompatibilními závislostmi:\n\n```bash\nsudo apt install ./sipky_%s_amd64.deb\n```\n' "$version" >> "$out/INSTALACE.md"
 bash scripts/check-split-debs.sh "${packages[@]}"
+cp scripts/linux-components.json "$out/linux-components.json"
 (
   cd "$out"
-  sha256sum -- "${packages[@]##*/}" > SHA256SUMS.txt
+  sha256sum -- "${packages[@]##*/}" linux-components.json > SHA256SUMS.txt
 )
