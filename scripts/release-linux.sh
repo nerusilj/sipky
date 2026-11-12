@@ -85,7 +85,11 @@ cp "${bundles[0]}" "$app"
 python3 scripts/fix-linux-deb.py "$app"
 packages+=("$app")
 printf '\nPrvní instalace / přechod z 0.1.7:\n\n```bash\nsudo apt install ./sipky_%s_amd64.deb ./sipky-zvuky_*.deb ./sipky-hlasatel_*.deb\n```\n' "$version" >> "$out/INSTALACE.md"
-printf '\nDalší aktualizace aplikace s kompatibilními závislostmi:\n\n```bash\nsudo apt install ./sipky_%s_amd64.deb\n```\n' "$version" >> "$out/INSTALACE.md"
+{
+  printf '\nRuční aktualizace z předchozího vydání se všemi doplňky:\n\n```bash\nsudo apt install'
+  printf ' ./%s' "${packages[@]##*/}"
+  printf '\n```\n'
+} >> "$out/INSTALACE.md"
 bash scripts/check-split-debs.sh "${packages[@]}"
 cp scripts/linux-components.json "$out/linux-components.json"
 (

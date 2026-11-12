@@ -1,10 +1,10 @@
-import { playApplause } from '../caller/caller.ts';
+import { playCheckoutSound } from '../caller/caller.ts';
 
 // Stejná oslava při každém platném zavření; konfety kreslí komponenta Confetti.
 const listeners = new Set<() => void>();
 
 export function celebrate(): void {
-  playApplause();
+  playCheckoutSound();
   listeners.forEach(listener => listener());
 }
 

@@ -65,7 +65,7 @@ export default function SettingsPage({ onGame }: { onGame?: () => void }) {
           <span className="muted small">{EFFECTS[id].trigger}{EFFECTS[id].replacesScore ? ' · nahradí hlášení součtu' : ''}</span>
         </li>)}
         <li className={effectsEnabled ? '' : 'muted-row'}>
-          <Toggle checked={confettiEnabled} disabled={!effectsEnabled} onChange={setConfettiEnabled}><strong>Konfety a potlesk</strong></Toggle>
+          <Toggle checked={confettiEnabled} disabled={!effectsEnabled} onChange={setConfettiEnabled}><strong>Konfety a fanfára</strong></Toggle>
           <span className="muted small">Při každém platném zavření, u každého hráče</span>
         </li>
       </ul>

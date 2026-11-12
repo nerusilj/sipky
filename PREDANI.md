@@ -1,6 +1,6 @@
 # Předání projektu Šipky
 
-Aktualizováno 11. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
+Aktualizováno 12. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
 
 ## Projekt a způsob práce
 
@@ -11,7 +11,13 @@ Aktualizováno 11. 11. 2026. Před zahájením práce si projdi také `AGENTS.md
 
 ## Bezprostřední stav a další práce
 
-Zdrojová verze je **0.1.9**. GitHub Actions zveřejnil [vydání v0.1.9](https://github.com/nerusilj/sipky/releases/tag/v0.1.9) s jediným DEB aplikace (3,90 MiB). Zvuky a hlasatel 1.0.0 zůstávají ve [vydání v0.1.8](https://github.com/nerusilj/sipky/releases/tag/v0.1.8). Kontrolní součty stažených souborů souhlasí. Ve WSL Ubuntu 26.04 prošla simulace závislostí APT a izolovaný přechod z 0.1.8 na 0.1.9 pouze s novým DEB aplikace. Oba doplňky zůstaly ve verzi 1.0.0. Verze a původ doplňků jsou v `scripts/linux-components.json`, postup v `docs/linux.md`. Tag `vX.Y.Z` spouští automatické vydání.
+- Zdroje pro linuxové vydání **0.1.10** vyžadují doplněk **zvuky 1.0.1**, který přináší fanfáru při dohození v X01 i Cricketu. Offline hlasatel 1.0.0 se přebírá z vydání 0.1.8. Na Xubuntu lze z 0.1.9 použít panel **Verze aplikace** nebo ručně nainstalovat nové DEB aplikace a zvuků v jednom kroku.
+
+- Uživatel odmítl ruční prodloužení posledního „á“ v Eliščině úvodní hlášce „Hra začíná!“ kvůli nepřirozenému zvuku. Ve zdrojích i v nativní vývojové aplikaci Windows je opět původní WAV. Po obnovení prošly dva Rust testy načítání zvuků. Pomalejší varianty celé věty z lokálního Supertonicu jsou zatím k poslechu v chatu a čekají na výběr.
+
+- Původní potlesk při dohození v X01 a Cricketu nahradila uživatelem vybraná [trubková fanfára od PeekabooLabCreative](https://pixabay.com/sound-effects/film-special-effects-11l-victory-sound-with-t-1749487402950-357606/) pod licencí Pixabay. Je ve stávajícím souboru `public/sounds/game/applause.wav`, převedená na WAV a ztišená o 13 dB kvůli souběhu s hlasatelem. Nastavení a ukázka v DEV mají popisek **Konfety a fanfára**. Prošla kontrola typů, 204 Node testů a osm Rust testů ve Windows. WAV byl zkopírován také do prostředků nativní vývojové aplikace Windows. Balíčky 0.1.9 a zvuky 1.0.0 vyšly s původním potleskem.
+
+GitHub Actions zveřejnil [vydání v0.1.9](https://github.com/nerusilj/sipky/releases/tag/v0.1.9) s jediným DEB aplikace (3,90 MiB). Toto vydání přebírá zvuky a hlasatel 1.0.0 z [vydání v0.1.8](https://github.com/nerusilj/sipky/releases/tag/v0.1.8). Kontrolní součty stažených souborů souhlasí. Ve WSL Ubuntu 26.04 prošla simulace závislostí APT a izolovaný přechod z 0.1.8 na 0.1.9 pouze s novým DEB aplikace. Oba doplňky zůstaly ve verzi 1.0.0. Verze a původ doplňků jsou v `scripts/linux-components.json`, postup v `docs/linux.md`. Tag `vX.Y.Z` spouští automatické vydání.
 
 Vydání prošlo 204 testy Node a 7 testy Rust. Kontrolní součty zveřejněných souborů ověřeny po stažení. Ve WSL Ubuntu 26.04 prošla simulace závislostí APT, izolovaný přechod z 0.1.7 a zkušební aktualizace samotné aplikace. Oba doplňky zůstaly ve verzi 1.0.0 a oba hlasy vytvořily WAV. Spuštění rozhraní, slyšitelný výstup a fyzický terč na cílovém Xubuntu zbývají ověřit.
 

@@ -172,18 +172,18 @@ class Caller {
 }
 
 export const caller = new Caller();
-const applause = new Caller();
+const checkoutSound = new Caller();
 
-// Potlesk běží souběžně s hlasatelem a nečeká na jeho frontu.
-export function playApplause(): void {
-  applause.stop();
-  void applause.enqueueTurnSound('applause');
+// Fanfára běží souběžně s hlasatelem a nečeká na jeho frontu.
+export function playCheckoutSound(): void {
+  checkoutSound.stop();
+  void checkoutSound.enqueueTurnSound('checkout');
 }
 
 subscribeSoundEnabled(enabled => {
   if (!enabled) {
     caller.stop();
-    applause.stop();
+    checkoutSound.stop();
   }
 });
 export function useCaller(): CallerSnapshot {

@@ -2,6 +2,6 @@
 export const TURN_SOUNDS = {
   bust: { url: '/sounds/game/bust.wav', label: 'BUST' },
   miss: { url: '/sounds/game/miss.wav', label: 'Mimo' },
-  applause: { url: '/sounds/game/applause.wav', label: 'Potlesk' },
+  checkout: { url: '/sounds/game/applause.wav', label: 'Fanfára při dohození' },
 } as const;
 export type TurnSound = keyof typeof TURN_SOUNDS;

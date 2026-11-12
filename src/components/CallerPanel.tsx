@@ -38,7 +38,7 @@ export default function CallerPanel() {
         <button onClick={() => triggerEffect(id)}>▶ Efekt s hláškou</button>
         <button onClick={() => void caller.playPhrase(EFFECTS[id].phrase)}>Jen hláška</button>
       </span>)}
-      <span className="caller-effect"><strong>Konfety a potlesk</strong><span className="muted small">Platné zavření hry</span>
+      <span className="caller-effect"><strong>Konfety a fanfára</strong><span className="muted small">Platné zavření hry</span>
         <button onClick={() => celebrate()}>▶ Vyzkoušet</button></span>
     </div>
     {state.playing !== undefined && <p className="small muted">Hraje: {state.playing}</p>}

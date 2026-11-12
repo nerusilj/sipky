@@ -44,7 +44,7 @@ test('ztišení se načte z nastavení, umlčí všechny nahrávky a zachová na
   celebrate();
   assert.equal(AudioStub.instances.length, 2);
   assert.equal(AudioStub.instances[1].url, '/sounds/game/applause.wav');
-  assert.equal(AudioStub.instances[0].paused, false, 'potlesk nepřeruší hlášení skóre');
+  assert.equal(AudioStub.instances[0].paused, false, 'fanfára nepřeruší hlášení skóre');
   setSoundEnabled(false);
   assert.equal(AudioStub.instances[0].paused, true);
   assert.equal(AudioStub.instances[1].paused, true);
