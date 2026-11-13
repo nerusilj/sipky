@@ -11,7 +11,7 @@ Aktualizováno 13. 11. 2026. Před zahájením práce si projdi také `AGENTS.md
 
 ## Bezprostřední stav a další práce
 
-- Verze zdrojů **0.1.11** zahrnuje ovládání terče Autodarts, živý stav a Reset ve hře X01 i Cricketu a možnost integraci vypnout. Dělený DEB přebírá zvuky 1.0.1 z vydání 0.1.10 a hlasatele 1.0.0 z vydání 0.1.8.
+- GitHub Actions úspěšně zveřejnil [Šipky 0.1.11](https://github.com/nerusilj/sipky/releases/tag/v0.1.11) pro Xubuntu x86_64. Vydání zahrnuje ovládání terče Autodarts, živý stav a Reset ve hře X01 i Cricketu a možnost integraci vypnout. Dělený DEB přebírá zvuky 1.0.1 z vydání 0.1.10 a hlasatele 1.0.0 z vydání 0.1.8. Prošla kontrola TypeScriptu, 207 testů Node a 9 testů Rust ve Windows. SHA-256 staženého DEB a manifestu souhlasí. Ověření instalace a fyzického terče na cílovém Xubuntu zbývá.
 
 - Stav ve spodním herním panelu se aktualizuje po doručení zprávy WebSocket. Úvodní snímek se načte při připojení a stav se načte také po ovládacím příkazu. Delší hlášky mohou rozšířit panel a při nedostatku šířky se zobrazí až na dvou řádcích v dosavadní výšce panelu. Hlavní komponenta aplikace odebírá pouze stav spojení, takže její překreslení nespouští každá zpráva terče.
 
