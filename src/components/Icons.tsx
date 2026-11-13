@@ -47,6 +47,8 @@ export const EffectsIcon = ({ disabled = false, ...p }: IconProps & { disabled?:
 </Svg>;
 export const ChevronDownIcon = (p: IconProps) => <Svg {...p}><path d="m6 9 6 6 6-6" /></Svg>;
 export const PlayIcon = (p: IconProps) => <Svg {...p}><path d="m8 5 11 7-11 7V5Z" /></Svg>;
+export const StopIcon = (p: IconProps) => <Svg {...p}><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" /></Svg>;
+export const EjectIcon = (p: IconProps) => <Svg {...p}><path d="m5 13 7-8 7 8Z" fill="currentColor" /><path d="M5 18h14" strokeWidth="2.5" /></Svg>;
 export const TrophyIcon = (p: IconProps) => <Svg {...p}><path d="M7 3h10v6a5 5 0 0 1-10 0V3ZM7 5H3v2a4 4 0 0 0 4 4M17 5h4v2a4 4 0 0 1-4 4M12 14v6M7 21h10" /></Svg>;
 export const BoardConnectionIcon = (p: IconProps) => <Svg {...p}><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1" /><path d="M12 3v4M12 17v4M3 12h4M17 12h4" /></Svg>;
 export const KeyboardIcon = (p: IconProps) => <Svg {...p}><rect x="2" y="5" width="20" height="14" rx="3" /><path d="M6 9h.1M10 9h.1M14 9h.1M18 9h.1M6 13h.1M10 13h.1M14 13h.1M18 13h.1M8 16h8" /></Svg>;

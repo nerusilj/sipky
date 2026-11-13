@@ -44,13 +44,13 @@ export default function CallerPanel() {
     {state.playing !== undefined && <p className="small muted">Hraje: {state.playing}</p>}
     {state.error && <div className="notice" role="status"><span>{state.error}</span></div>}
     <div className="caller-log">
-      <span className="field-label">OHLÁŠENÁ KOLA Z TERČE</span>
+      <span className="field-label">OHLÁŠENÁ KOLA</span>
       {state.log.length ? <ol>{state.log.map(visit => <li key={visit.at}>
         <time>{new Date(visit.at).toLocaleTimeString('cs-CZ', { hour12: false })}</time>
         <span className="caller-darts">{visit.darts.map(dart => dart.name).join(' · ')}{visit.effect && <em> · {visit.effect}</em>}</span>
         <strong>{visit.total}</strong>
         <button className="text-button" onClick={() => void caller.play(visit.total)} aria-label={`Přehrát ${visit.total}`}>▶</button>
-      </li>)}</ol> : <p className="small muted">Zatím žádné kolo. Po třetí šipce nebo vytažení šipek se tu objeví součet.</p>}
+      </li>)}</ol> : <p className="small muted">Zatím žádné ohlášené kolo.</p>}
     </div>
   </section>;
 }

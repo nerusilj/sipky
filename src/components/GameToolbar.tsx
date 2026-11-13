@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { DartIcon, FocusPlayerIcon, RowsIcon, SettingsIcon, SoundIcon, StatsIcon, TilesIcon } from './Icons.tsx';
 import Toggle from './Toggle.tsx';
-import { setBoardVisible, setCallerEnabled, setEffectsEnabled, setGameView, setSoundEnabled, useBoardVisible, useCallerEnabled, useEffectsEnabled, useGameView, useSoundEnabled } from '../settings.ts';
+import { setBoardVisible, setCallerEnabled, setEffectsEnabled, setGameView, setSoundEnabled, useAutodartsEnabled, useBoardVisible, useCallerEnabled, useEffectsEnabled, useGameView, useSoundEnabled } from '../settings.ts';
 
 function ToolMenu({ label, icon, children, className = '' }: { label: string; icon: ReactNode; children: ReactNode; className?: string }) {
   const menu = useRef<HTMLDetailsElement>(null);
@@ -34,6 +34,7 @@ export default function GameToolbar({ onStatistics, onSettings, statisticsOpen, 
 }) {
   const view = useGameView(), board = useBoardVisible(), sound = useSoundEnabled();
   const caller = useCallerEnabled(), effects = useEffectsEnabled();
+  const autodartsEnabled = useAutodartsEnabled();
   return <div className="game-tools" role="toolbar" aria-label="Nastavení a přehled hry">
     {onBullOff && <button className="icon-button" aria-label="Rozhoz na střed" title={bullOffActive ? 'Rozhoz na střed právě probíhá' : 'Rozhodnout leg rozhozem na střed'}
       aria-haspopup="dialog" aria-controls="finish-leg-dialog" disabled={bullOffActive} onClick={onBullOff}><DartIcon size={24} /></button>}
@@ -45,8 +46,8 @@ export default function GameToolbar({ onStatistics, onSettings, statisticsOpen, 
         options={([{ value: 'tiles', label: 'Dlaždice', Icon: TilesIcon }, { value: 'rows', label: 'Řádky', Icon: RowsIcon }, { value: 'focus', label: 'Aktivní hráč', Icon: FocusPlayerIcon }] as const)
           .map(({ value, label, Icon }) => ({ value, label: <><Icon size={20} /><span>{label}</span></> }))} />
       <div className="tool-divider" /></>}
-      <Toggle checked={board} onChange={setBoardVisible}>Zobrazit terč</Toggle>
-      <div className="tool-divider" />
+      {autodartsEnabled && <><Toggle checked={board} onChange={setBoardVisible}>Zobrazit terč</Toggle>
+        <div className="tool-divider" /></>}
       <span className="tool-menu-label">Hlas a efekty</span>
       <Toggle checked={sound && caller} disabled={!sound} onChange={setCallerEnabled}>Hlasatel</Toggle>
       <Toggle checked={effects} onChange={setEffectsEnabled}>Zábavné efekty</Toggle>

@@ -1,7 +1,7 @@
 export const DEFAULT_BOARD_ADDRESS = '127.0.0.1:3180';
 const DEFAULT_PORT = 3180;
 
-// Jediné adresy, které aplikace otevírá. Žádné ovládací endpointy ani /api/config či /api/system s klíči terče.
+// Adresy pro čtení stavu a zpráv z Board Manageru.
 export const EVENTS_PATH = '/api/events';
 export const VERSION_PATH = '/api/version';
 export const STATE_PATH = '/api/state';

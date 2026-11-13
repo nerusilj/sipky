@@ -10,9 +10,11 @@ import { usePlayers } from '../players/players.ts';
 import { filterMessages, messageStore, MAX_MESSAGES } from '../inspector/messageStore.ts';
 import { saveSession } from '../inspector/saveSession.ts';
 import type { StoredMessage } from '../inspector/types.ts';
+import { useAutodartsEnabled } from '../settings.ts';
 
 export default function DevPage({ onSettings }: { onSettings: () => void }) {
   const connection = useConnection();
+  const autodartsEnabled = useAutodartsEnabled();
   const recording = useRecorder();
   const players = usePlayers();
   const [messages, setMessages] = useState<readonly StoredMessage[]>([]);
@@ -29,7 +31,7 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
   const deferredSearch = useDeferredValue(search);
 
   useEffect(() => {
-    if (paused) return;
+    if (!autodartsEnabled || paused) return;
     const refresh = () => {
       const next = messageStore.stats();
       if (next.revision !== revision.current) {
@@ -39,7 +41,7 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
     };
     refresh(); const timer = window.setInterval(refresh, 200);
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, [autodartsEnabled, paused]);
 
   const channels = useMemo(() => [...new Set(messages.flatMap(message => message.channel ? [message.channel] : []))].sort(), [messages]);
   const filtered = useMemo(() => [...filterMessages(messages, channel, deferredSearch, direction)].reverse(), [messages, channel, deferredSearch, direction]);
@@ -64,6 +66,7 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
     finally { setSaving(false); }
   }
   return <div className="page">
+    {autodartsEnabled ? <>
     <div className="page-heading"><div><span className="eyebrow orange">DEV · POZOROVAT. ZAZNAMENAT. POROZUMĚT.</span><h1>Inspektor událostí</h1><p>Surové zprávy z Board Manageru beze změny a bez interpretace.</p></div>
       <div className="readonly"><span aria-hidden="true">◈</span><div><strong>Pouze čtení</strong><span>Bez zásahů do terče a hry</span></div></div>
     </div>
@@ -85,6 +88,7 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
       {recording.error && <span className="rec-error">Zápis selhává: {recording.error} Řádky čekají ve frontě.</span>}
       {recording.lost > 0 && <span className="rec-error">Fronta byla plná, {recording.lost.toLocaleString('cs-CZ')} řádků se nezapsalo.</span>}
     </div>
+    </> : <div className="page-heading"><h1>Vývojářské nástroje</h1></div>}
     <div className="recording card">
       <strong>Hráči</strong>
       <code>{recording.enabled ? 'Dokumenty/Sipky/hraci.json' : 'localStorage prohlížeče (vývoj)'}</code>
@@ -92,6 +96,7 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
       <span className="muted">{players.loaded ? `${players.players.length} hráčů${players.readOnly ? ' · jen ke čtení' : ''}` : 'načítám…'}</span>
       {players.error && <span className="rec-error">{players.error}</span>}
     </div>
+    {autodartsEnabled && <>
     {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Zavřít oznámení">×</button></div>}
     <div className="metrics"><div><span className="field-label">ZPRÁVY V BUFFERU</span><strong>{stats.count.toLocaleString('cs-CZ')}<small> / {MAX_MESSAGES.toLocaleString('cs-CZ')}</small></strong></div>
       <div><span className="field-label">PŘIJATO OD VYMAZÁNÍ</span><strong>{stats.received.toLocaleString('cs-CZ')}</strong></div>
@@ -107,7 +112,8 @@ export default function DevPage({ onSettings }: { onSettings: () => void }) {
       <Filters channels={channels} channel={channel} direction={direction} search={search} onChannel={v => {setChannel(v);setPage(0);}} onDirection={v => {setDirection(v);setPage(0);}} onSearch={v => {setSearch(v);setPage(0);}} />
       <div className="split"><EventLog messages={filtered} hasCaptured={messages.length > 0} page={page} selectedId={selectedId} onPage={setPage} onSelect={select} /><EventDetails message={selected} /></div>
     </section>
+    </>}
     <CallerPanel />
-    <footer><span><span className="orange">●</span> Záznam celých obálek · JSONL · Časy s milisekundami</span><span>Zdroj: lokální Board Manager · pouze čtení</span></footer>
+    {autodartsEnabled && <footer><span><span className="orange">●</span> Záznam celých obálek · JSONL · Časy s milisekundami</span><span>Zdroj: lokální Board Manager · pouze čtení</span></footer>}
   </div>;
 }

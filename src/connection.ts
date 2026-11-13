@@ -1,14 +1,17 @@
 import { useSyncExternalStore } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import { DEFAULT_BOARD_ADDRESS } from './autodarts/boardAddress.ts';
 import { LocalBoardClient } from './autodarts/LocalBoardClient.ts';
 import { fetchBoardVersion } from './autodarts/boardVersion.ts';
-import { fetchBoardState } from './autodarts/boardState.ts';
+import { fetchBoardStateSnapshot, playableBoardState } from './autodarts/boardState.ts';
+import { readBoardStatus } from './autodarts/boardStatus.ts';
 import type { ConnectionState } from './autodarts/types.ts';
 import { messageStore } from './inspector/messageStore.ts';
 import { VisitTracker } from './caller/visitTracker.ts';
 import type { BoardEvent } from './caller/visitTracker.ts';
-import { feedActiveGame } from './game/activeGame.ts';
+import { feedActiveGame, resetGameBoardInputs } from './game/activeGame.ts';
 import { recorder } from './recording.ts';
+import { isAutodartsEnabled, setAutodartsEnabled } from './settings.ts';
 
 export { useRecorder } from './recording.ts';
 
@@ -25,50 +28,69 @@ onBoardEvent(event => { if (event.kind === 'visit') recorder.meta('visit', { tot
 
 const ADDRESS_KEY = 'sipky.boardAddress';
 
-export interface ConnectionSnapshot { address: string; state: ConnectionState; version?: string; versionLoading?: boolean; lastMessageAt?: number }
+export type BoardCommand = 'start' | 'stop' | 'reset';
+
+export interface ConnectionSnapshot {
+  address: string;
+  state: ConnectionState;
+  version?: string;
+  versionLoading?: boolean;
+  lastMessageAt?: number;
+  boardStatus?: string;
+  commandPending?: BoardCommand;
+  commandResult?: { action: BoardCommand; error?: string };
+}
 
 // Jediné spojení s terčem pro celou aplikaci; zprávy jdou do společného úložiště inspektoru.
 class BoardConnection {
   private client?: LocalBoardClient;
   private snapshot: ConnectionSnapshot = { address: storedAddress(), state: 'disconnected' };
   private readonly listeners = new Set<() => void>();
+  private connectionEpoch = 0;
+  private stateRevision = 0;
+  private stateRequest = 0;
 
   get = () => this.snapshot;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
 
+  setEnabled(enabled: boolean): void {
+    if (enabled === isAutodartsEnabled()) return;
+    setAutodartsEnabled(enabled);
+    if (!enabled) this.disconnect();
+    resetGameBoardInputs(enabled);
+    if (enabled) this.start();
+  }
+
   // Vyhodí chybu u neplatné adresy; jinak naváže spojení a adresu si zapamatuje.
   connect(address = this.snapshot.address): void {
+    if (!isAutodartsEnabled()) return;
     const next = new LocalBoardClient(address);
     this.client?.disconnect();
     this.client = next;
-    this.update({ address: address.trim(), version: undefined, versionLoading: false });
+    this.update({ address: address.trim(), version: undefined, versionLoading: false, boardStatus: undefined, lastMessageAt: undefined });
     try { localStorage.setItem(ADDRESS_KEY, address.trim()); } catch { /* Adresa se jen nezapamatuje. */ }
     recorder.meta('connect', { address: address.trim() });
-    let stateRevision = 0;
-    let epoch = 0;
     next.onState(state => {
       if (this.client !== next || state === this.snapshot.state) return;
-      const expectedEpoch = ++epoch;
+      const epoch = ++this.connectionEpoch;
       const connected = state === 'connected';
-      this.update({ state, version: undefined, versionLoading: connected });
+      this.update({ state, version: undefined, versionLoading: connected, boardStatus: undefined, commandResult: undefined });
       recorder.meta('state', { state });
       if (!connected) return;
       // Verzi čteme při každém (znovu)připojení; Board Manager se mezitím mohl aktualizovat.
       void fetchBoardVersion(address).then(version => {
-        if (this.client !== next || epoch !== expectedEpoch) return;
+        if (this.connectionEpoch !== epoch) return;
         this.update({ version, versionLoading: false }); recorder.meta('version', { boardManager: version ?? null });
       });
-      const expectedRevision = stateRevision;
-      void fetchBoardState(address).then(payload => {
-        if (this.client !== next || stateRevision !== expectedRevision || epoch !== expectedEpoch || !payload) return;
-        feedActiveGame(payload);
-        recorder.meta('board-snapshot', { payload });
-      });
+      void this.refreshBoardState(address, epoch, true);
     });
     visitTracker.reset();
     next.onMessage(message => {
-      if ((message.payload as { type?: unknown } | null)?.type === 'state') stateRevision++;
-      messageStore.append(message); recorder.message(message); this.update({ lastMessageAt: Date.now() });
+      if (this.client !== next) return;
+      const isState = (message.payload as { type?: unknown } | null)?.type === 'state';
+      if (isState) this.stateRevision++;
+      messageStore.append(message); recorder.message(message);
+      this.update({ lastMessageAt: Date.now(), ...(isState ? { boardStatus: readBoardStatus(message.payload) } : {}) });
       feedActiveGame(message.payload);
       for (const event of visitTracker.handle(message.payload)) boardEventListeners.forEach(listener => listener(event));
     });
@@ -84,7 +106,36 @@ class BoardConnection {
   disconnect(): void {
     if (this.client) recorder.meta('disconnect');
     this.client?.disconnect(); this.client = undefined;
-    this.update({ state: 'disconnected', version: undefined, versionLoading: false });
+    this.update({ state: 'disconnected', version: undefined, versionLoading: false, boardStatus: undefined });
+  }
+
+  async controlBoard(action: BoardCommand): Promise<void> {
+    const { address, state, commandPending } = this.snapshot;
+    if (!isAutodartsEnabled() || state !== 'connected' || commandPending) return;
+    const epoch = this.connectionEpoch;
+    this.update({ commandPending: action, commandResult: undefined });
+    let failure: string | undefined;
+    try {
+      await invoke('send_board_command', { address, action });
+      if (this.connectionEpoch === epoch) await this.refreshBoardState(address, epoch, false);
+    } catch (error) {
+      failure = typeof error === 'string' ? error : 'Příkaz Autodarts se nepodařilo odeslat.';
+    } finally {
+      this.update({ commandPending: undefined, commandResult: this.connectionEpoch === epoch ? { action, error: failure } : undefined });
+    }
+  }
+
+  private async refreshBoardState(address: string, epoch: number, initializeGame: boolean): Promise<void> {
+    const request = ++this.stateRequest;
+    const revision = this.stateRevision;
+    const payload = await fetchBoardStateSnapshot(address);
+    if (!payload || this.connectionEpoch !== epoch || this.stateRequest !== request || this.stateRevision !== revision) return;
+    this.update({ boardStatus: readBoardStatus(payload) });
+    if (!initializeGame) return;
+    const playable = playableBoardState(payload);
+    if (!playable) return;
+    feedActiveGame(playable);
+    recorder.meta('board-snapshot', { payload: playable });
   }
 
   private update(patch: Partial<ConnectionSnapshot>): void {
@@ -100,4 +151,8 @@ function storedAddress(): string {
 export const boardConnection = new BoardConnection();
 export function useConnection(): ConnectionSnapshot {
   return useSyncExternalStore(boardConnection.subscribe, boardConnection.get);
+}
+
+export function useConnectionState(): ConnectionState {
+  return useSyncExternalStore(boardConnection.subscribe, () => boardConnection.get().state);
 }

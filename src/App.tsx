@@ -7,8 +7,8 @@ import type { ComponentType } from 'react';
 import Confetti from './components/Confetti.tsx';
 import EffectOverlay from './components/EffectOverlay.tsx';
 import { BoardConnectionIcon, DartIcon, DevIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
-import { boardConnection, useConnection } from './connection.ts';
-import { useShowDev, useVenueName } from './settings.ts';
+import { boardConnection, useConnectionState } from './connection.ts';
+import { useAutodartsEnabled, useShowDev, useVenueName } from './settings.ts';
 import DevPage from './pages/DevPage.tsx';
 import GamePage from './pages/GamePage.tsx';
 import CricketPage from './pages/CricketPage.tsx';
@@ -38,10 +38,10 @@ export default function App() {
   const closeGuard = useRef<WindowCloseGuard | undefined>(undefined);
   const update = useAppUpdate();
   const { installingRef } = update;
-  const connection = useConnection();
+  const online = useConnectionState() === 'connected';
+  const autodartsEnabled = useAutodartsEnabled();
   const venueName = useVenueName();
   const showDev = useShowDev();
-  const online = connection.state === 'connected';
   const nav = NAV.filter(item => item.id !== 'dev' || showDev);
   // Po skrytí sekce DEV se z ní odejde na Domů.
   const current: Section = section === 'dev' && !showDev ? 'home' : section;
@@ -50,7 +50,7 @@ export default function App() {
   const hasGame = !!game || !!cricket;
   const gameScreen = current === 'game' && hasGame;
 
-  // Desktopová aplikace se k terči připojí sama; spojení je pouze pro čtení.
+  // Připojení k terči navazujeme po spuštění aplikace.
   useEffect(() => boardConnection.start(), []);
 
   useEffect(() => {
@@ -85,10 +85,10 @@ export default function App() {
   return <div className={`shell ${gameScreen ? 'game-screen' : ''}`}>
     {!gameScreen && <><header className="topbar">
       <div className="brand"><span className="brand-emblem" aria-hidden="true"><BoardConnectionIcon size={30} /></span><div className="brand-copy"><span className="brand-product">ŠIPKY</span><strong>{venueName}</strong></div></div>
-      <div className="topbar-status">
+      {autodartsEnabled && <div className="topbar-status">
         <span className={`dot ${online ? '' : 'amber-dot'}`}></span>
         <strong className={online ? 'online' : ''}>{online ? 'Autodarts připojeno' : 'Autodarts nepřipojeno'}</strong>
-      </div>
+      </div>}
       <button className={`icon-button topbar-settings ${current === 'settings' ? 'active' : ''}`} disabled={update.installing} onClick={() => setSection('settings')} aria-label="Nastavení" title="Nastavení"
         aria-current={current === 'settings' ? 'page' : undefined}><SettingsIcon size={20} /><span>Nastavení</span></button>
     </header>

@@ -7,11 +7,13 @@ import { bullThrowLabel, bullThrowNeedsDistance, bullThrowRequiresTakeout } from
 import { BULL_THROW_CHOICES } from '../game/x01.ts';
 import type { BullOffReview, BullThrowChoice, X01State } from '../game/x01.ts';
 import type { BoardPhase } from '../game/boardInput.ts';
+import { useAutodartsEnabled } from '../settings.ts';
 
 export default function BullOffArena({ state, phase, busy, onCorrect }: {
   state: X01State; phase?: BoardPhase; busy: boolean; onCorrect: (player: number, round: number, choice: BullThrowChoice) => boolean;
 }) {
   const bull = state.bullOff!;
+  const autodartsEnabled = useAutodartsEnabled();
   const list = useRef<HTMLOListElement>(null);
   const player = state.players[state.current];
   const live = state.visit[0];
@@ -20,7 +22,8 @@ export default function BullOffArena({ state, phase, busy, onCorrect }: {
   const selectedHit = editing?.round === bull.round ? roundHit(editing.player) : undefined;
   const participants = bull.ranking ? bull.previous[0]?.map(hit => hit.player) ?? bull.contenders : bull.contenders;
   const missing = !!live && bullThrowNeedsDistance(live);
-  const status = phase === 'blocked' ? 'Nejdřív vyjměte šipky z terče.'
+  const status = !autodartsEnabled && !player.bot && !live && !busy ? 'Rozhoz vyžaduje Autodarts. Zapněte jej v nastavení nebo rozhoz zrušte.'
+    : phase === 'blocked' ? 'Nejdřív vyjměte šipky z terče.'
     : missing ? 'Terč neposlal vzdálenost. Opravte zásah tužkou nebo vraťte hod a opakujte ho.'
     : busy ? 'Vyhodnocuji hod…'
     : live && !player.bot && phase !== 'manual' && bullThrowRequiresTakeout(live) ? 'Vytáhněte šipku ze středu.'

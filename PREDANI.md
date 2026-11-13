@@ -1,6 +1,6 @@
 # Předání projektu Šipky
 
-Aktualizováno 12. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
+Aktualizováno 13. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
 
 ## Projekt a způsob práce
 
@@ -10,6 +10,26 @@ Aktualizováno 12. 11. 2026. Před zahájením práce si projdi také `AGENTS.md
 - Při práci ve stávajícím checkoutu zachovej případné rozpracované změny. Staré Piper hlasy byly záměrně odstraněny.
 
 ## Bezprostřední stav a další práce
+
+- Verze zdrojů **0.1.11** zahrnuje ovládání terče Autodarts, živý stav a Reset ve hře X01 i Cricketu a možnost integraci vypnout. Dělený DEB přebírá zvuky 1.0.1 z vydání 0.1.10 a hlasatele 1.0.0 z vydání 0.1.8.
+
+- Stav ve spodním herním panelu se aktualizuje po doručení zprávy WebSocket. Úvodní snímek se načte při připojení a stav se načte také po ovládacím příkazu. Delší hlášky mohou rozšířit panel a při nedostatku šířky se zobrazí až na dvou řádcích v dosavadní výšce panelu. Hlavní komponenta aplikace odebírá pouze stav spojení, takže její překreslení nespouští každá zpráva terče.
+
+- **Nastavení → Autodarts → Používat Autodarts** je ve výchozím stavu zapnuté a volba se pamatuje. Vypnutí odpojí terč, skryje jeho ovládání, stav a inspektor v DEV. X01 a Cricket lze dál ovládat ručně. Již zaznamenané šipky zůstávají ve hře. Opětovné zapnutí připojí uloženou adresu a při synchronizaci počká na prázdný terč. Zapnutí a vypnutí, změny na Domů, v Nastavení, DEV a v X01 byly ověřeny v nativním okně Windows. Příjem hodů při přepínání ověřen simulací v X01 i Cricketu.
+
+- Stav Autodarts a Reset jsou nyní vlevo uvnitř společného spodního panelu X01 a Cricketu. Stav má barevný text a tečku, Reset malou ikonu a od herních tlačítek jej odděluje tenká linka. V nativních Windows ověřeno na šesti kartách X01 bez posuvníku se stavem obnovování spojení. Prošla kontrola typů a 207 Node testů. Vývojové okno zůstalo otevřené na zkušební hře.
+
+- Na úvodní kartě je ve zdrojích barevný stav detekce z `status`. Živý stav, jeho čtení bez seznamu hodů a přednost WebSocket zprávy před opožděným GET jsou ověřeny simulací.
+
+- Na pokyn uživatele byl odstraněn nový místní export diagnostiky Autodarts. Uživatel chce návrhy na vzdálený příjem hlášení s volitelným přepínačem v Nastavení. Způsob doručení zatím není zvolený.
+
+- Start, Stop a Reset jsou v řádku úvodní karty Autodarts. Nativní požadavky jdou na nastavenou adresu terče. Prošla kontrola typů, 206 testů Node a 9 testů Rust. Ve vývojových Šipkách na Windows byly kliknutím ověřené všechny tři požadavky proti lokálnímu simulátoru a přechody žlutá → zelená → oranžová → zelená. Simulátor je po kontrole vypnutý. Fyzický terč zbývá ověřit. Prázdný stav z resetu může v aktivní hře potvrdit dosavadní kolo. Příkazy a seznam stavů jsou v `docs/board-manager-local.md`.
+
+- Úvodní karta teď ukazuje jedno tlačítko Stop/Start podle stavu detekce a Reset, obě s ikonami. X01 a Cricket sdílejí spodní barevný proužek s živým stavem z Autodarts. V nativní hře X01 ověřeno zobrazení žlutého stavu `starting` z místního Autodarts 2.1.1 a jeho čitelnost v maximalizovaném okně. Prošla kontrola typů a 206 Node testů, včetně stavů vytažení a přepnutí Start/Stop. Kalibrace se spouští z Autodarts.
+
+- V X01 a Cricketu je na pravém konci barevného stavového proužku malé tlačítko Reset s ikonou. Volá stávající příkaz Autodarts a je neaktivní bez spojení nebo během příkazu. Prošla kontrola typů a 206 Node testů. Nové tlačítko zatím nebylo stisknuto na fyzickém terči.
+
+- Samostatný řádek se stavem Autodarts nahradil tmavý štítek s barevnou tečkou a ikonou Reset vlevo od herního ovládání. Je součástí stejného řádku v X01 i Cricketu, takže výška pro karty se vrátila na původní rozměr. V maximalizovaném nativním okně Windows bylo v X01 vidět všech šest karet ve dvou řadách bez posuvníku. Vývojové okno zůstalo otevřené na zkušebním zápase.
 
 - Zdroje pro linuxové vydání **0.1.10** vyžadují doplněk **zvuky 1.0.1**, který přináší fanfáru při dohození v X01 i Cricketu. Offline hlasatel 1.0.0 se přebírá z vydání 0.1.8. Na Xubuntu lze z 0.1.9 použít panel **Verze aplikace** nebo ručně nainstalovat nové DEB aplikace a zvuků v jednom kroku.
 

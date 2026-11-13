@@ -16,11 +16,11 @@ Board Manager **2.0.2** (headless), Windows, port 3180.
 
 Pozor: `/api/state` z tohoto zařízení neobsahuje klíč `throws`, pokud nejsou šipky.
 
-## Pravidla pouze pro čtení
+## Spojení s terčem
 
-- Aplikace poslouchá `ws://<host>:<port>/api/events` (nic na něj neodesílá). Po připojení volá pouze `GET /api/version` a `GET /api/state`. Počáteční stav se ignoruje, pokud mezitím přišla novější živá zpráva; slouží k obnovení již zapíchnutých šipek. Verze se zobrazí, jen když vypadá jako číslo verze.
+- Aplikace poslouchá `ws://<host>:<port>/api/events`. Po připojení volá `GET /api/version` a `GET /api/state`. Počáteční stav se ignoruje, pokud mezitím přišla novější živá zpráva. Slouží k obnovení již zapíchnutých šipek. Verze se zobrazí, pokud vypadá jako číslo verze.
 - Nikdy nevolá `/api/config` ani `/api/system`: vracejí API klíč terče a TLS klíč.
-- Nikdy nevolá PUT, POST ani PATCH (start, stop, reset, restart, kalibrace, streamy).
+- Úvodní řádek Autodarts nabízí Stop nebo Start podle stavu detekce a samostatný Reset. Reset je v X01 a Cricketu dostupný také ikonou uvnitř spodního panelu herního ovládání. Po stisku tlačítka odešlou Šipky místní HTTP požadavek. Po přijetí příkazu si znovu načtou stav detekce. Rozehraná hra dál zpracovává živé zprávy.
 
 ## Formát zpráv a záznamy skutečného terče
 
@@ -73,3 +73,19 @@ Oprava čte obě struktury zásahu i souřadnic a rozpoznává názvy událostí
 Hráč se stále střídá pouze na skutečně prázdném terči. Samotný název `takeoutFinished` nestačí: v reálných zprávách 2.1.0 se objevuje i se zapíchnutou první šipkou dalšího kola. Průběžné ubývání šipek při `takeoutInProgress` nesmaže skóre. Bouncer se nikdy nepoužije jako zásah středu se souřadnicemi 0,0.
 
 Regresní fixture `tests/fixtures/board-manager-2.1-sessions.json` obsahuje 522 původních stavů terče z devíti nedělních relací (včetně jednoho počátečního snapshotu), bez osobních údajů hráčů. Před opravou vytvořil parser při přehrání těchto relací nula kol. Očekávání byla před změnou parseru odvozena původním enginem nad explicitním převodem nových zpráv do starého formátu. Po opravě se shodují počty všech 90 potvrzených kol, jejich bodové výsledky, zbytky i rozehrané šipky. Další testy ověřují skutečný vstup do X01 i Cricketu, neúplné vytažení a počáteční snapshot. Původní regresní replay z 11. října zůstává zachovaný; v úterním produkčním záznamu nový parser přečte všech 3 149 uložených výskytů šipek bez odmítnutí.
+
+## Stav a ovládání detekce
+
+Šipky zobrazují `status` z `GET /api/state` a z živých zpráv `type: "state"`. Přednost má novější živý stav. V podrobnostech je původní text, v přehledu a ve spodním ovládání X01 i Cricketu český popis a barevná tečka. Podle dokumentace Autodarts znamená zelená `Throw` nebo čekání na vytažení `Takeout`, žlutá `Takeout in progress`, oranžová `Stopped` a fialová `Calibrating`. Neznámý text zobrazíme v neutrální barvě. `takeoutFinished` je událost, po vytažení se stav běžně vrátí na `Throw`. [Autodarts Desktop – What the board is doing](https://docs.autodarts.com/getting-started/detection/autodarts-desktop/#what-the-board-is-doing)
+
+HomeDarts uvádí také `starting`, `stopping`, `offline` a `error`. V našich záznamech z 2.1.0 se vyskytují `Starting`, `throw`, `takeout`, `takeoutInProgress` a `calibrating`. [Přehled stavů HomeDarts](https://dennis-otto.github.io/homedarts-for-autodarts/entities.html#live-visit)
+
+Lokální příkazy používá komunitní klient darts-caller a ovládání na Board Manageru 2 popisuje také integrace HomeDarts. [Zdrojový kód darts-caller](https://github.com/lbormann/darts-caller/blob/master/darts-caller.py#L911-L932) · [Ovládání HomeDarts](https://dennis-otto.github.io/homedarts-for-autodarts/entities.html#controls)
+
+| Akce | Požadavek | Účinek |
+|---|---|---|
+| Start | `PUT /api/detection/start` | Zapne detekci hodů. |
+| Stop | `PUT /api/detection/stop` | Vypne detekci hodů. |
+| Reset | `POST /api/reset` | Vyčistí zjištěné šipky a vrátí detekci do stavu připraveného k hodu. |
+
+HomeDarts popisuje reset zaseknutého vytažení na 2.0.2 a restart detekce přes Stop a Start na 2.1. Při zkoušce resetu na cílovém terči mimo zápas sledujte HTTP odpověď, následný `status`, prázdný seznam zásahů a rozpoznání další šipky. V rozehraných Šipkách může prázdný stav z resetu potvrdit dosavadní kolo. Ověření ovládání ze Šipek na fyzickém terči zbývá provést. [Popsaná ověření HomeDarts](https://dennis-otto.github.io/homedarts-for-autodarts/entities.html#a-takeout-the-board-never-finishes)

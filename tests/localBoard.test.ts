@@ -3,12 +3,17 @@ import assert from 'node:assert/strict';
 import { setImmediate as turn } from 'node:timers/promises';
 import { eventsUrl, stateUrl, versionUrl } from '../src/autodarts/boardAddress.ts';
 import { fetchBoardState } from '../src/autodarts/boardState.ts';
+import { boardStartStopAction, boardStatusDisplay } from '../src/autodarts/boardStatus.ts';
 import { fetchBoardVersion, isVerifiedBoardVersion, parseVersion } from '../src/autodarts/boardVersion.ts';
 import { LocalBoardClient, RECONNECT_MAX_MS } from '../src/autodarts/LocalBoardClient.ts';
 import type { ListenSocket } from '../src/autodarts/LocalBoardClient.ts';
 import type { ConnectionState } from '../src/autodarts/types.ts';
 import type { CapturedWsMessage } from '../src/inspector/types.ts';
 import { boardConnection } from '../src/connection.ts';
+import { endGame, enterDart, getGameSnapshot, startGame } from '../src/game/gameStore.ts';
+import { endCricket, enterCricketDart, getCricketSnapshot, startCricket } from '../src/game/cricketStore.ts';
+import { makeDart } from '../src/game/x01.ts';
+import { isAutodartsEnabled, isSoundEnabled, setSoundEnabled } from '../src/settings.ts';
 
 class FakeSocket implements ListenSocket {
   binaryType = 'blob';
@@ -114,6 +119,170 @@ test('počáteční šipky se čtou jen přes GET /api/state, bez klíčů a ovl
   assert.equal(calls[0][1]?.method, 'GET');
   for (const invalid of [null, [], {}, { numThrows: 4 }, { numThrows: '1' }]) assert.equal(await fetchBoardState('board.local', response(invalid)), undefined);
   assert.equal(await fetchBoardState('board.local', (async () => { throw new Error('offline'); }) as typeof fetch), undefined);
+});
+
+test('stav detekce lze číst i bez rozpoznaných šipek a opožděný GET nepřepíše živý stav', async t => {
+  const sockets: FakeSocket[] = [];
+  t.mock.method(globalThis, 'WebSocket', function (url: string) {
+    const socket = new FakeSocket(url);
+    sockets.push(socket);
+    return socket;
+  });
+  let sendSnapshot!: (response: Response) => void;
+  t.mock.method(globalThis, 'fetch', async (url: string) => url.endsWith('/api/version')
+    ? new Response('2.1.0') : new Promise<Response>(resolve => { sendSnapshot = resolve; }));
+
+  try {
+    boardConnection.connect('board.local');
+    const socket = sockets[0];
+    socket.onopen!();
+    socket.onmessage!({ data: '{"type":"state","data":{"status":"takeoutInProgress"}}' });
+    sendSnapshot(new Response('{"status":"Starting"}'));
+    await turn();
+    assert.equal(boardConnection.get().boardStatus, 'takeoutInProgress');
+    assert.deepEqual(boardStatusDisplay('Takeout in progress'), { label: 'Vyjímání šipek', tone: 'yellow' });
+    assert.deepEqual(boardStatusDisplay('takeout'), { label: 'Vyjměte šipky', tone: 'green' });
+    assert.equal(boardStartStopAction(boardConnection.get().boardStatus), 'stop');
+    assert.deepEqual(boardStatusDisplay('nextStatus'), { label: 'nextStatus', tone: 'neutral' });
+
+    boardConnection.disconnect();
+    assert.equal(boardConnection.get().boardStatus, undefined);
+    boardConnection.connect('board.local');
+    sockets[1].onopen!();
+    sendSnapshot(new Response('{"status":"Stopped","running":false}'));
+    await turn();
+    assert.equal(boardConnection.get().boardStatus, 'Stopped');
+    assert.equal(boardStartStopAction(boardConnection.get().boardStatus), 'start');
+  } finally { boardConnection.disconnect(); }
+});
+
+test('ovládání Autodarts odešle jeden příkaz, načte stav a zobrazí odmítnutí', async t => {
+  const sockets: FakeSocket[] = [];
+  t.mock.method(globalThis, 'WebSocket', function (url: string) {
+    const socket = new FakeSocket(url);
+    sockets.push(socket);
+    return socket;
+  });
+  let status = 'Takeout in progress';
+  const getState = t.mock.method(globalThis, 'fetch', async (url: string) => url.endsWith('/api/version')
+    ? new Response('2.1.0') : Response.json({ status }));
+  let finishReset!: () => void;
+  const invoke = t.mock.fn(async (_command: string, { action }: { action: string }) => {
+    if (action === 'stop') throw 'Autodarts příkaz odmítl (HTTP 409).';
+    await new Promise<void>(resolve => { finishReset = resolve; });
+  });
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: { __TAURI_INTERNALS__: { invoke } } });
+
+  try {
+    await boardConnection.controlBoard('start');
+    assert.equal(invoke.mock.callCount(), 0);
+    boardConnection.connect('board.local:3181');
+    sockets[0].onopen!();
+    await turn();
+    assert.equal(boardConnection.get().boardStatus, 'Takeout in progress');
+
+    const reset = boardConnection.controlBoard('reset');
+    assert.equal(boardConnection.get().commandPending, 'reset');
+    await boardConnection.controlBoard('stop');
+    assert.equal(invoke.mock.callCount(), 1);
+    assert.deepEqual(invoke.mock.calls[0].arguments.slice(0, 2), ['send_board_command', { address: 'board.local:3181', action: 'reset' }]);
+    status = 'Throw';
+    finishReset();
+    await reset;
+    await turn();
+    assert.equal(boardConnection.get().boardStatus, 'Throw');
+    assert.deepEqual(boardConnection.get().commandResult, { action: 'reset', error: undefined });
+
+    const count = getState.mock.callCount();
+    await boardConnection.controlBoard('stop');
+    assert.equal(getState.mock.callCount(), count);
+    assert.deepEqual(boardConnection.get().commandResult, { action: 'stop', error: 'Autodarts příkaz odmítl (HTTP 409).' });
+    boardConnection.disconnect();
+    assert.equal(boardConnection.get().commandResult, undefined);
+  } finally {
+    boardConnection.disconnect();
+    Reflect.deleteProperty(globalThis, 'window');
+  }
+});
+
+test('vypnutí Autodarts zachová ruční hru a zapnutí počká na čistý terč', async t => {
+  const sockets: FakeSocket[] = [];
+  t.mock.method(globalThis, 'WebSocket', function (url: string) {
+    const socket = new FakeSocket(url);
+    sockets.push(socket);
+    return socket;
+  });
+  const saved = new Map<string, string>();
+  const storage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
+    getItem: (key: string) => saved.get(key) ?? null,
+    setItem: (key: string, value: string) => saved.set(key, value),
+  } });
+  const replies: ((response: Response) => void)[] = [];
+  t.mock.method(globalThis, 'fetch', async (url: string) => url.endsWith('/api/version')
+    ? new Response('2.1.0') : new Promise<Response>(resolve => replies.push(resolve)));
+  const frame = (...numbers: number[]) => ({ type: 'state', data: {
+    status: 'throw', running: true, throws: numbers.map(n => ({ segmentNumber: n, multiplier: 1, segmentName: `S${n}` })),
+  } });
+  const players = [{ id: 'a', name: 'A', color: '#fff' }, { id: 'b', name: 'B', color: '#aaa' }];
+  const x01 = { startScore: 301, doubleOut: false, legsToWin: 1 };
+  const sound = isSoundEnabled();
+  setSoundEnabled(false);
+
+  try {
+    assert.equal(isAutodartsEnabled(), true);
+    boardConnection.connect('board.local');
+    sockets[0].onopen!();
+    startGame(x01, players);
+    startCricket({ legsToWin: 1 }, players);
+    const oldMessage = sockets[0].onmessage!;
+    oldMessage({ data: JSON.stringify(frame(20)) });
+
+    boardConnection.setEnabled(false);
+    assert.equal(saved.get('sipky.autodartsEnabled'), 'false');
+    assert.equal(sockets[0].closed, true);
+    assert.equal(boardConnection.get().state, 'disconnected');
+    oldMessage({ data: JSON.stringify(frame(20, 18)) });
+    replies[0](Response.json(frame(20, 18).data));
+    boardConnection.start();
+    boardConnection.connect('board.local');
+    await turn();
+    assert.equal(sockets.length, 1);
+    assert.equal(boardConnection.get().version, undefined);
+    assert.equal(getGameSnapshot().boardPhase, 'manual');
+    assert.equal(getCricketSnapshot().boardPhase, 'manual');
+    assert.deepEqual(getGameSnapshot().game?.current.map(dart => dart.number), [20]);
+    assert.deepEqual(getCricketSnapshot().game?.current.map(dart => dart.number), [20]);
+    enterDart(makeDart(19, 1));
+    enterCricketDart(makeDart(19, 1));
+    assert.deepEqual(getGameSnapshot().game?.current.map(dart => dart.number), [20, 19]);
+    assert.deepEqual(getCricketSnapshot().game?.current.map(dart => dart.number), [20, 19]);
+
+    boardConnection.setEnabled(true);
+    assert.equal(saved.get('sipky.autodartsEnabled'), 'true');
+    assert.equal(sockets.length, 2);
+    assert.equal(sockets[1].url, 'ws://board.local:3180/api/events');
+    sockets[1].onopen!();
+    startGame(x01, players);
+    startCricket({ legsToWin: 1 }, players);
+    replies[1](Response.json(frame(20).data));
+    await turn();
+    const message = (...numbers: number[]) => sockets[1].onmessage!({ data: JSON.stringify(frame(...numbers)) });
+    message(20, 18);
+    assert.equal(getGameSnapshot().game?.current.length, 0);
+    assert.equal(getCricketSnapshot().game?.current.length, 0);
+    message();
+    message(17);
+    assert.equal(getGameSnapshot().game?.current[0].number, 17);
+    assert.equal(getCricketSnapshot().game?.current[0].number, 17);
+  } finally {
+    endGame(); endCricket();
+    if (!isAutodartsEnabled()) boardConnection.setEnabled(true);
+    boardConnection.disconnect();
+    setSoundEnabled(sound);
+    if (storage) Object.defineProperty(globalThis, 'localStorage', storage);
+    else Reflect.deleteProperty(globalThis, 'localStorage');
+  }
 });
 
 test('připojí se, předá zprávy beze změny a nic neodešle', () => {

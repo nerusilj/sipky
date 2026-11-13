@@ -43,6 +43,7 @@ export class BoardGameInput<Game extends { current: Dart[] } = X01Game> {
   private owned = false;
   private blocked = false;
   private manual = false;
+  private waitForEmpty = false;
   private overrides = new Map<number, Dart>();
   private bullTurn?: { retained: number; dartIndex?: number };
   get hasPhysicalBullThrow(): boolean { return !this.manual && this.bullTurn?.dartIndex !== undefined; }
@@ -51,7 +52,7 @@ export class BoardGameInput<Game extends { current: Dart[] } = X01Game> {
 
   get phase(): BoardPhase {
     if (this.manual) return 'manual';
-    if (this.blocked) return 'blocked';
+    if (this.blocked || this.waitForEmpty) return 'blocked';
     if (this.takingOut || this.darts.length >= 3) return 'takeout';
     return this.darts.length > (this.bullTurn?.retained ?? 0) ? 'throwing' : 'ready';
   }
@@ -89,6 +90,14 @@ export class BoardGameInput<Game extends { current: Dart[] } = X01Game> {
     this.takingOut = phase === 'takeout';
     this.owned = darts.length > 0 && !this.manual && !this.blocked;
     this.bullTurn = undefined;
+    this.waitForEmpty = false;
+  }
+
+  // Rozehrané skóre zůstane ruční. Po zapnutí počkáme na fyzicky prázdný terč.
+  resetPhysicalInput(hasCurrentDarts: boolean, enabled: boolean): void {
+    this.restore([], hasCurrentDarts ? 'manual' : 'ready');
+    this.notice = undefined;
+    this.waitForEmpty = enabled;
   }
 
   handle(payload: unknown, game?: Game): { game?: Game; committed: boolean } {
@@ -104,6 +113,10 @@ export class BoardGameInput<Game extends { current: Dart[] } = X01Game> {
     const frame = readFrame(payload);
     if (!frame) return { game, committed: false };
     this.notice = undefined;
+    if (this.waitForEmpty) {
+      if (frame.darts.length || frame.takingOut) return { game, committed: false };
+      this.waitForEmpty = false;
+    }
     const status = game && !this.blocked && !this.manual ? this.rules.status(game) : undefined;
     if (game && status?.bullOff) return this.handleBullOff(frame, game);
     if (!game && this.bullTurn) {

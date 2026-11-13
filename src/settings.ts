@@ -13,7 +13,9 @@ const DISABLED_EFFECTS_KEY = 'sipky.disabledEffects';
 const CONFETTI_KEY = 'sipky.confettiEnabled';
 const DEV_KEY = 'sipky.showDev';
 const GAME_VIEW_KEY = 'sipky.gameView';
+const AUTODARTS_KEY = 'sipky.autodartsEnabled';
 const BOARD_VISIBLE_KEY = 'sipky.boardVisible';
+let autodartsEnabled = read(AUTODARTS_KEY) !== 'false';
 let boardVisible = read(BOARD_VISIBLE_KEY) === 'true';
 export type GameView = 'tiles' | 'rows' | 'focus';
 const storedGameView = read(GAME_VIEW_KEY);
@@ -129,5 +131,9 @@ export function useDisabledEffects(): readonly EffectId[] { return useSyncExtern
 export function useVenueName(): string { return useSyncExternalStore(subscribe, () => venueName); }
 export function useCallerEnabled(): boolean { return useSyncExternalStore(subscribe, () => callerEnabled); }
 
+export function setAutodartsEnabled(value: boolean): void { autodartsEnabled = value; write(AUTODARTS_KEY, String(value)); }
+export function isAutodartsEnabled(): boolean { return autodartsEnabled; }
+export function useAutodartsEnabled(): boolean { return useSyncExternalStore(subscribe, isAutodartsEnabled); }
+
 export function setBoardVisible(value: boolean): void { boardVisible = value; write(BOARD_VISIBLE_KEY, String(value)); }
-export function useBoardVisible(): boolean { return useSyncExternalStore(subscribe, () => boardVisible); }
+export function useBoardVisible(): boolean { return useSyncExternalStore(subscribe, () => autodartsEnabled && boardVisible); }

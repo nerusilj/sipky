@@ -14,7 +14,7 @@ import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import Toggle from '../components/Toggle.tsx';
 import { ChevronIcon, CloseIcon, ExitIcon, PencilIcon, PlusIcon, TrophyIcon, VisitDartIcon } from '../components/Icons.tsx';
-import { useGameView, useBoardVisible } from '../settings.ts';
+import { useAutodartsEnabled, useGameView, useBoardVisible } from '../settings.ts';
 import { suggestCheckout } from '../game/checkout.ts';
 import { cancelGameBullOff, continueAfterBullOff, correctBullOffThrow, endGame, enterDart, markBullOffMiss, nextPlayer, rematch, replaceCurrentDart, startGame, undoDart, useGame } from '../game/gameStore.ts';
 import { dartLabel, DARTS_PER_VISIT, ENDLESS, legDartNumber, legThreeDartAverage, NO_ROUND_LIMIT, playerDisplayedLegsWon, playerFinishPlace, playerTotals, threeDartAverage } from '../game/x01.ts';
@@ -160,6 +160,7 @@ function SelectedGamePlayer({ player, order, onRemove }: { player: GamePlayer; o
 
 function GameBoard({ state, onSettings }: { state: X01State; onSettings: () => void }) {
   const gameView = useGameView();
+  const autodartsEnabled = useAutodartsEnabled();
   const boardVisible = useBoardVisible();
   const { game, completing, botPaused, boardPhase, bullOffResultOpen } = useGame();
   const [manualVisible, setManualVisible] = useState(false);
@@ -211,7 +212,7 @@ function GameBoard({ state, onSettings }: { state: X01State; onSettings: () => v
         onSelect={!finished && !botTurn && !state.bullOff && !completing ? selectDart : undefined} />}
       <div className="game-head-actions">
         <GameToolbar statisticsOpen={statisticsOpen} onStatistics={() => setStatisticsOpen(true)} onSettings={onSettings}
-          onBullOff={!finished ? () => setConfirmBullOff(true) : undefined} bullOffActive={!!state.bullOff || !!bullOffResultOpen} />
+          onBullOff={autodartsEnabled && !finished ? () => setConfirmBullOff(true) : undefined} bullOffActive={!!state.bullOff || !!bullOffResultOpen} />
       </div>
     </div>
     {bullOffResultOpen && state.lastBullOffResult ? <BullOffResults state={state} onContinue={continueAfterBullOff} /> : <>

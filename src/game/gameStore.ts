@@ -182,6 +182,14 @@ export function feedGameFromBoard(payload: unknown): void {
   if (snapshot.game && boardInput.phase !== 'manual' && boardInput.phase !== 'blocked') prepareBoardSpeech(snapshot.game);
 }
 
+export function resetX01BoardInput(enabled: boolean): void {
+  const game = snapshot.game;
+  buffered.length = 0;
+  clearTimeout(bullAdvanceTimer); bullAdvanceTimer = undefined;
+  boardInput.resetPhysicalInput(!!game?.current.length, enabled);
+  if (game) set(game);
+}
+
 function scheduleBullOffAdvance(): void {
   // Necháme terči krátký čas na opravu zásahu ještě před automatickým předáním tahu.
   if (bullAdvanceTimer !== undefined || !canAdvanceBullThrow()) return;

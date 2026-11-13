@@ -121,6 +121,12 @@ export function feedCricketFromBoard(payload: unknown) {
   if (snapshot.game && snapshot.game.current.length > previous) miss(snapshot.game, snapshot.game.current.at(-1)!);
   if (snapshot.game && board.phase !== 'manual' && board.phase !== 'blocked') prepareSpeech(snapshot.game);
 }
+export function resetCricketBoardInput(enabled: boolean): void {
+  const game = snapshot.game;
+  buffered.length = 0;
+  board.resetPhysicalInput(!!game?.current.length, enabled);
+  if (game) set(game);
+}
 function announcePlayer(gameStart = false) {
   caller.cancelPlayer(); const state = snapshot.state;
   if (!state || state.winner !== undefined || state.visit.length || snapshot.completing) return;

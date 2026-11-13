@@ -1,5 +1,11 @@
 // Board Manager 2.0 posílá numThrows a názvy s mezerami; 2.1 pole throws a camelCase.
 // Neměníme původní zprávy v inspektoru, pouze jejich čtení ve hře.
+export function boardStateData(payload: unknown): Record<string, unknown> | undefined {
+  const envelope = payload as { type?: unknown; data?: unknown } | null;
+  const data = envelope?.type === 'state' ? envelope.data : undefined;
+  return data && typeof data === 'object' && !Array.isArray(data) ? data as Record<string, unknown> : undefined;
+}
+
 export function boardThrowValues(data: Record<string, unknown>): unknown[] | undefined {
   const values = Array.isArray(data.throws) ? data.throws
     : data.throws === undefined && data.numThrows === 0 ? [] : undefined;

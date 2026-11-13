@@ -7,7 +7,7 @@ import { ChevronDownIcon, PlayIcon } from '../components/Icons.tsx';
 import { boardConnection, useConnection } from '../connection.ts';
 import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setCallerEnabled, setCallerVoice, setConfettiEnabled, setEffectEnabled, setEffectsEnabled,
   setShowDev, setVenueName, useCallerEnabled, useCallerVoice, useConfettiEnabled, useDisabledEffects, useEffectsEnabled, useShowDev,
-  useVenueName, setSoundEnabled, useSoundEnabled } from '../settings.ts';
+  useVenueName, setSoundEnabled, useSoundEnabled, useAutodartsEnabled } from '../settings.ts';
 import { caller } from '../caller/caller.ts';
 import { EFFECT_IDS, EFFECTS } from '../effects/effectRules.ts';
 import { VOICES } from '../caller/voices.ts';
@@ -18,6 +18,7 @@ const VOICE_IDS = Object.keys(VOICES) as VoiceId[];
 
 export default function SettingsPage({ onGame }: { onGame?: () => void }) {
   const connection = useConnection();
+  const autodartsEnabled = useAutodartsEnabled();
   const venueName = useVenueName();
   const callerEnabled = useCallerEnabled();
   const soundEnabled = useSoundEnabled();
@@ -38,6 +39,9 @@ export default function SettingsPage({ onGame }: { onGame?: () => void }) {
   return <div className="page settings-page">
     <div className="page-heading"><div><h1>Nastavení</h1><p>Zvuk, efekty a připojení k terči.</p></div>
       {onGame && <button className="primary" onClick={onGame}>Zpět do hry</button>}</div>
+    <ConnectionPanel enabled={autodartsEnabled} onEnabled={enabled => {
+      setAddress(connection.address); setNotice(''); boardConnection.setEnabled(enabled);
+    }} address={address} state={connection.state} onAddress={setAddress} onConnect={connect} onDisconnect={() => boardConnection.disconnect()} />
     <section className="settings-card card" aria-labelledby="voice-title">
       <div className="caller-head">
         <div><span className="eyebrow">ZVUK</span><h2 id="voice-title">Zvuk a hlasatel</h2></div>
@@ -70,7 +74,6 @@ export default function SettingsPage({ onGame }: { onGame?: () => void }) {
         </li>
       </ul>
     </section>
-    <ConnectionPanel address={address} state={connection.state} onAddress={setAddress} onConnect={connect} onDisconnect={() => boardConnection.disconnect()} />
     <details className="settings-disclosure card"><summary><span>Obecné</span><ChevronDownIcon size={20} /></summary><div className="settings-disclosure-body">
     <section className="settings-card card venue-card" aria-label="Horní lišta">
       <div className="venue-name">
@@ -90,7 +93,7 @@ export default function SettingsPage({ onGame }: { onGame?: () => void }) {
         <div><span className="eyebrow">PRO VÝVOJÁŘE</span><h2 id="dev-title">Sekce DEV</h2></div>
         <Toggle checked={showDev} onChange={setShowDev}>Zobrazit v menu</Toggle>
       </div>
-      <p className="small muted">Inspektor zpráv z terče, záznam na disk a kontrola hlášení a efektů.</p>
+      <p className="small muted">{autodartsEnabled ? 'Inspektor zpráv z terče, záznam na disk a kontrola hlášení a efektů.' : 'Kontrola hlášení a efektů.'}</p>
     </section>
       <div className="app-information"><strong>Šipky · verze {packageInfo.version}</strong><p>Hlasy: {VOICE_IDS.map(id => VOICES[id].credit).join(' · ')}.</p></div>
     </div></details>

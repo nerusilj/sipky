@@ -1,15 +1,22 @@
-import { boardThrowValues } from './boardMessages.ts';
+import { boardStateData, boardThrowValues } from './boardMessages.ts';
 import { stateUrl } from './boardAddress.ts';
 
-// Při (znovu)připojení načteme již zapíchnuté šipky, i když terč právě nic neposílá.
-// Volající nesmí aplikovat tuto odpověď přes novější živou událost.
-export async function fetchBoardState(address: string, fetchImpl: typeof fetch = fetch): Promise<unknown | undefined> {
+export async function fetchBoardStateSnapshot(address: string, fetchImpl: typeof fetch = fetch) {
   try {
     const response = await fetchImpl(stateUrl(address), { method: 'GET', signal: AbortSignal.timeout(5000) });
     if (!response.ok) return;
     const value = await response.json();
-    const data = value?.type === 'state' ? value.data : value;
-    if (!data || typeof data !== 'object' || Array.isArray(data) || !boardThrowValues(data)) return;
-    return { type: 'state', data };
+    const payload = value?.type === 'state' ? value : { type: 'state', data: value };
+    const data = boardStateData(payload);
+    if (data) return { type: 'state', data };
   } catch { return; }
+}
+
+// Počáteční hody přijmeme jen z odpovědi s platným seznamem šipek.
+export function playableBoardState(payload: Awaited<ReturnType<typeof fetchBoardStateSnapshot>>) {
+  if (payload && boardThrowValues(payload.data)) return payload;
+}
+
+export async function fetchBoardState(address: string, fetchImpl: typeof fetch = fetch) {
+  return playableBoardState(await fetchBoardStateSnapshot(address, fetchImpl));
 }
