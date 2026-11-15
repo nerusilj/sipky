@@ -7,6 +7,7 @@ import ThrowKeypad from '../components/ThrowKeypad.tsx';
 import PlayerName from '../components/PlayerName.tsx';
 import Dartboard from '../components/Dartboard.tsx';
 import GameToolbar from '../components/GameToolbar.tsx';
+import type { GameToolbarActions } from '../components/GameToolbar.tsx';
 import GameControls from '../components/GameControls.tsx';
 import FinishLegDialog from '../components/FinishLegDialog.tsx';
 import GamePlayerDialog from '../components/GamePlayerDialog.tsx';
@@ -30,9 +31,9 @@ const MAX_GAME_PLAYERS = 8;
 // ENDLESS = hra dokola, jinak počet vítězných legů, který ukončí zápas.
 const LEG_OPTIONS = [ENDLESS, 1, 2, 3, 4, 5];
 
-export default function GamePage({ onSettings }: { onSettings: () => void }) {
+export default function GamePage(actions: GameToolbarActions) {
   const { state } = useGame();
-  return state ? <GameBoard state={state} onSettings={onSettings} /> : <GameSetup />;
+  return state ? <GameBoard state={state} {...actions} /> : <GameSetup />;
 }
 
 function legsText(n: number): string {
@@ -158,7 +159,7 @@ function SelectedGamePlayer({ player, order, onRemove }: { player: GamePlayer; o
   </div>;
 }
 
-function GameBoard({ state, onSettings }: { state: X01State; onSettings: () => void }) {
+function GameBoard({ state, ...actions }: { state: X01State } & GameToolbarActions) {
   const gameView = useGameView();
   const autodartsEnabled = useAutodartsEnabled();
   const boardVisible = useBoardVisible();
@@ -211,7 +212,7 @@ function GameBoard({ state, onSettings }: { state: X01State; onSettings: () => v
       {!state.bullOff && !bullOffResultOpen && <SharedVisit state={state} darts={darts} selected={manualOpen ? editIndex : undefined}
         onSelect={!finished && !botTurn && !state.bullOff && !completing ? selectDart : undefined} />}
       <div className="game-head-actions">
-        <GameToolbar statisticsOpen={statisticsOpen} onStatistics={() => setStatisticsOpen(true)} onSettings={onSettings}
+        <GameToolbar {...actions} statisticsOpen={statisticsOpen} onStatistics={() => setStatisticsOpen(true)}
           onBullOff={autodartsEnabled && !finished ? () => setConfirmBullOff(true) : undefined} bullOffActive={!!state.bullOff || !!bullOffResultOpen} />
       </div>
     </div>

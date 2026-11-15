@@ -6,7 +6,7 @@ import { WindowCloseGuard } from './windowClose.ts';
 import type { ComponentType } from 'react';
 import Confetti from './components/Confetti.tsx';
 import EffectOverlay from './components/EffectOverlay.tsx';
-import { BoardConnectionIcon, DartIcon, DevIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
+import { BoardConnectionIcon, DartIcon, DevIcon, FullscreenIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
 import { boardConnection, useConnectionState } from './connection.ts';
 import { useAutodartsEnabled, useShowDev, useVenueName } from './settings.ts';
 import DevPage from './pages/DevPage.tsx';
@@ -20,6 +20,7 @@ import PlayersPage from './pages/PlayersPage.tsx';
 import SettingsPage from './pages/SettingsPage.tsx';
 import { useGame } from './game/gameStore.ts';
 import { useAppUpdate } from './appUpdate.ts';
+import { useGameFullscreen } from './useGameFullscreen.ts';
 
 type Section = 'home' | 'game' | 'players' | 'settings' | 'dev';
 const NAV: { id: Section; label: string; Icon: ComponentType<{ size?: number }> }[] = [
@@ -49,6 +50,7 @@ export default function App() {
   const { game: cricket } = useCricket();
   const hasGame = !!game || !!cricket;
   const gameScreen = current === 'game' && hasGame;
+  const fullscreen = useGameFullscreen(gameScreen);
 
   // Připojení k terči navazujeme po spuštění aplikace.
   useEffect(() => boardConnection.start(), []);
@@ -82,6 +84,15 @@ export default function App() {
     endAnyGame(); setMode(nextMode); setSection('game');
   };
 
+  const fullscreenLabel = fullscreen.active ? 'Obnovit okno' : 'Celá obrazovka';
+  const gameActions = {
+    onSettings: () => setSection('settings'),
+    fullscreenButton: fullscreen.available && <button type="button" className="icon-button" aria-label={fullscreenLabel}
+      title={fullscreenLabel} disabled={fullscreen.pending} onClick={fullscreen.toggle}>
+      <FullscreenIcon size={24} active={fullscreen.active} />
+    </button>,
+  };
+
   return <div className={`shell ${gameScreen ? 'game-screen' : ''}`}>
     {!gameScreen && <><header className="topbar">
       <div className="brand"><span className="brand-emblem" aria-hidden="true"><BoardConnectionIcon size={30} /></span><div className="brand-copy"><span className="brand-product">ŠIPKY</span><strong>{venueName}</strong></div></div>
@@ -98,7 +109,7 @@ export default function App() {
     </nav></>}
     <main className="content">
       {current === 'home' && <HomePage onPlay={newGame} update={update} gameRunning={isAnyGameRunning()} />}
-      {current === 'game' && (mode === 'cricket' ? <CricketPage onSettings={() => setSection('settings')} /> : <GamePage onSettings={() => setSection('settings')} />)}
+      {current === 'game' && (mode === 'cricket' ? <CricketPage {...gameActions} /> : <GamePage {...gameActions} />)}
       {current === 'players' && <PlayersPage />}
       {current === 'settings' && <SettingsPage onGame={hasGame ? () => setSection('game') : undefined} />}
       {current === 'dev' && <DevPage onSettings={() => setSection('settings')} />}
@@ -112,5 +123,6 @@ export default function App() {
         else { endAnyGame(); setMode(pendingMode); setSection('game'); setLeave(undefined); }
       }} />}
     {closeError && !leave && <p role="alert">{closeError}</p>}
+    {fullscreen.error && <p className="game-fullscreen-error card" role="alert">{fullscreen.error}</p>}
   </div>;
 }

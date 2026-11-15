@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import PlayerName from '../components/PlayerName.tsx';
 import GamePlayerDialog from '../components/GamePlayerDialog.tsx';
 import GameToolbar from '../components/GameToolbar.tsx';
+import type { GameToolbarActions } from '../components/GameToolbar.tsx';
 import GameControls from '../components/GameControls.tsx';
 import ThrowKeypad from '../components/ThrowKeypad.tsx';
 import Dartboard from '../components/Dartboard.tsx';
@@ -23,9 +24,9 @@ const SETUP_KEY = 'sipky.lastCricketSetup';
 const legsText = (legs: number) => legs === 0 ? 'Hra dokola' : legs === 1 ? 'Na 1 vítězný leg' : legs < 5 ? `Na ${legs} vítězné legy` : `Na ${legs} vítězných legů`;
 const playerCount = (n: number) => `${n} ${n === 1 ? 'hráč' : n < 5 ? 'hráči' : 'hráčů'}`;
 const decimal = (n: number) => n.toFixed(2).replace('.', ',');
-export default function CricketPage({ onSettings }: { onSettings: () => void }) {
+export default function CricketPage(actions: GameToolbarActions) {
   const { state } = useCricket();
-  return state ? <CricketBoard state={state} onSettings={onSettings} /> : <CricketSetup />;
+  return state ? <CricketBoard state={state} {...actions} /> : <CricketSetup />;
 }
 function CricketSetup() {
   const { players, loaded } = usePlayers();
@@ -79,7 +80,7 @@ function CricketMarks({ count }: { count: number }) {
     {count >= 1 && <path d="M14 34l20-20" />}{count >= 2 && <path d="M14 14l20 20" />}{count >= 3 && <circle cx="24" cy="24" r="19" />}
   </svg>;
 }
-function CricketBoard({ state, onSettings }: { state: CricketState; onSettings: () => void }) {
+function CricketBoard({ state, ...actions }: { state: CricketState } & GameToolbarActions) {
   const { game, completing, boardNotice, botPaused } = useCricket();
   const boardVisible = useBoardVisible();
   const [manual, setManual] = useState(false), [multiplier, setMultiplier] = useState(1);
@@ -113,7 +114,7 @@ function CricketBoard({ state, onSettings }: { state: CricketState; onSettings: 
         </button>)}
         <div className="visit-total" aria-label={`Kolo: ${marks} zásahů, ${points} bodů`}><strong>{marks}</strong>{points > 0 && <span>+{points} b.</span>}</div>
       </section>
-      <div className="game-head-actions"><GameToolbar layoutOptions={false} statisticsOpen={stats} onStatistics={() => setStats(true)} onSettings={onSettings} /></div>
+      <div className="game-head-actions"><GameToolbar {...actions} layoutOptions={false} statisticsOpen={stats} onStatistics={() => setStats(true)} /></div>
     </div>
     {boardNotice && <p role="status" className="cricket-notice">{boardNotice}</p>}
     {finished && <section className="winner-panel card" role="status" aria-label="Výsledek zápasu">

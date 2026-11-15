@@ -28,8 +28,10 @@ function ToolMenu({ label, icon, children, className = '' }: { label: string; ic
   </details>;
 }
 
-export default function GameToolbar({ onStatistics, onSettings, statisticsOpen, layoutOptions = true, onBullOff, bullOffActive = false }: {
-  layoutOptions?: boolean; onStatistics: () => void; onSettings: () => void; statisticsOpen: boolean;
+export type GameToolbarActions = { onSettings: () => void; fullscreenButton: ReactNode };
+
+export default function GameToolbar({ onStatistics, onSettings, fullscreenButton, statisticsOpen, layoutOptions = true, onBullOff, bullOffActive = false }: GameToolbarActions & {
+  layoutOptions?: boolean; onStatistics: () => void; statisticsOpen: boolean;
   onBullOff?: () => void; bullOffActive?: boolean;
 }) {
   const view = useGameView(), board = useBoardVisible(), sound = useSoundEnabled();
@@ -54,5 +56,6 @@ export default function GameToolbar({ onStatistics, onSettings, statisticsOpen, 
       <div className="tool-divider" />
       <button className="tool-menu-action" onClick={onSettings}><SettingsIcon size={18} />Nastavení aplikace</button>
     </ToolMenu>
+    {fullscreenButton}
   </div>;
 }

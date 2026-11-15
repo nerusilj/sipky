@@ -598,9 +598,10 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent-light)
 .home-update .status-line{margin:0;font-size:13px}
 .home-update-note{flex-basis:100%;margin:0;color:var(--muted);font-size:13px}
 
-/* Nabídky hry: čtyři skupiny s přímým ztišením zvuku. */
+/* Akce a nabídky hry v pravém horním rohu. */
 .game-tools{flex-wrap:nowrap;gap:6px;color:#fff}
 .game-tools .icon-button{width:44px;height:44px;min-width:44px;min-height:44px;color:#e8ebef}
+.game-fullscreen-error{position:fixed;top:70px;right:24px;z-index:110;margin:0;padding:10px 14px;color:var(--text)}
 .tool-menu{position:relative}
 .tool-menu>summary{display:flex;align-items:center;justify-content:center;list-style:none;cursor:pointer}
 .tool-menu>summary::-webkit-details-marker{display:none}
