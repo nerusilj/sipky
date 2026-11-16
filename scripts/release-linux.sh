@@ -74,9 +74,12 @@ done
 
 # Linuxový config přibaluje prostředky do AppImage. Pro tento DEB je přepíšeme
 # a také vyřadíme kopii WAV z frontendu před vložením do binárky Rustu.
+export VITE_CAST_APP_ID="${VITE_CAST_APP_ID:-1A195F93}"
+[[ "$VITE_CAST_APP_ID" =~ ^[0-9A-F]{8}$ ]]
 config=$(node -e 'console.log(JSON.stringify({build: {beforeBuildCommand: "pnpm build && rm -rf -- dist/sounds"}, bundle: {resources: [], linux: {deb: {depends: process.argv.slice(1)}}}}))' "${deps[@]}")
 SIPKY_SPLIT_PACKAGE=1 pnpm tauri build --bundles deb --config "$config"
 test ! -e dist/sounds
+grep -Fq -- "$VITE_CAST_APP_ID" dist/assets/*.js
 bundle_dir="src-tauri/target/release/bundle/deb"
 bundles=("$bundle_dir"/*_"$version"_amd64.deb)
 [[ "${#bundles[@]}" == 1 && -f "${bundles[0]}" ]]
