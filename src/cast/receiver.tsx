@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { createRoot } from 'react-dom/client';
 import PlayerName from '../components/PlayerName.tsx';
 import type { BoardStatusDisplay } from '../autodarts/boardStatus.ts';
@@ -8,6 +9,10 @@ import { X01PlayerCard, X01Visit } from '../components/X01Scoreboard.tsx';
 import { CricketScoreboard, CricketVisit } from '../components/CricketScoreboard.tsx';
 import { TrophyIcon } from '../components/Icons.tsx';
 import { legsText } from '../game/x01Presentation.ts';
+import { gamePanelLayout } from '../game/panelLayout.ts';
+import Confetti from '../components/Confetti.tsx';
+import { EffectVisual } from '../components/EffectOverlay.tsx';
+import { showConfetti } from '../effects/confetti.ts';
 import type { GamePlayer } from '../game/x01.ts';
 import { CAST_NAMESPACE, CAST_PROTOCOL, readCastMessage } from './protocol.ts';
 import type { CastSnapshot } from './protocol.ts';
@@ -42,13 +47,44 @@ function AutodartsStatus({ status }: { status: BoardStatusDisplay }) {
   </div>;
 }
 
+type X01PlayersDisplay = Extract<NonNullable<CastSnapshot['game']>, { mode: 'x01' }>['players'];
+
+function X01Players({ players }: { players: X01PlayersDisplay }) {
+  const viewport = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ width: 1796, height: 900 });
+  useEffect(() => {
+    const node = viewport.current;
+    if (!node) return;
+    const measure = () => setSize({ width: node.clientWidth, height: node.clientHeight });
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+  const layout = gamePanelLayout(size.width, size.height);
+  // V TV zobrazení musí zůstat všichni hráči viditelní i bez posouvání.
+  const columns = Math.max(1, Math.ceil(players.length / 2), Math.min(layout.columns, players.length));
+  const tileWidth = columns > layout.columns ? Math.floor((size.width - 14 * (columns - 1)) / columns) : layout.tileWidth;
+  const style = {
+    '--game-columns': columns,
+    '--game-tile-width': `${tileWidth}px`,
+    '--game-tile-height': `${layout.tileHeight}px`,
+    '--game-score-size': `${layout.scoreSize}px`,
+  } as CSSProperties;
+  return <div className="tv-player-viewport" ref={viewport}>
+    <div className="game-players tv-players" style={style}>
+      {players.map(score => <X01PlayerCard key={score.player.id} score={score} />)}
+    </div>
+  </div>;
+}
+
 function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
   const game = snapshot?.game;
   const boardStatus = snapshot?.autodartsEnabled ? snapshot.boardStatus : undefined;
   const autodarts = boardStatus && <AutodartsStatus status={boardStatus} />;
   if (!game || !snapshot) return <div className="tv-idle">
     {autodarts && <div className="tv-idle-status">{autodarts}</div>}
-    <h1>{snapshot?.venue || 'ŠIPKY TV'}</h1>
+    <h1>ŠIPKY TV</h1>
     <p>{snapshot ? 'Čekám na zahájení hry' : 'Čekám na připojení'}</p>
   </div>;
 
@@ -59,8 +95,6 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
   const winner = x01 ? game.players.find(score => score.winner)?.player
     : game.winner === undefined ? undefined : game.score.players[game.winner]?.player;
   const liveBoard = snapshot.boardVisible && !winner;
-  const count = x01 ? game.players.length : game.score.players.length;
-  const columns = count <= 3 ? Math.max(1, count) : Math.ceil(count / 2);
 
   return <main className="page game tv-game">
     <div className="game-head">
@@ -81,10 +115,7 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
       : <>
         {winner && <Winner player={winner} />}
         <div className="tv-workspace">
-          {x01 ? <div className="tv-players" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
-            data-single-row={count <= 3}>
-            {game.players.map(score => <X01PlayerCard key={score.player.id} score={score} />)}
-          </div> : <CricketScoreboard score={game.score} readOnly />}
+          {x01 ? <X01Players players={game.players} /> : <CricketScoreboard score={game.score} readOnly />}
           {liveBoard && <aside className="tv-board" aria-label="Živý terč"><Dartboard darts={game.darts} /></aside>}
         </div>
       </>}
@@ -104,6 +135,7 @@ function Receiver() {
     if (!framework) return;
     const context = framework.CastReceiverContext.getInstance();
     let active: string | undefined;
+    let celebration = 0;
     const revisions = new Map<string, number>();
     context.addCustomMessageListener(CAST_NAMESPACE, ({ data, senderId }) => {
       const message = readCastMessage(data);
@@ -113,6 +145,9 @@ function Receiver() {
       if (message.seq > revision) {
         revisions.set(senderId, message.seq);
         if (message.type === 'state') {
+          const nextCelebration = message.snapshot.celebration ?? 0;
+          if (active === senderId && nextCelebration > celebration) showConfetti();
+          celebration = nextCelebration;
           active = senderId;
           setSnapshot(message.snapshot);
         } else if (active === senderId) {
@@ -135,9 +170,13 @@ function Receiver() {
       customNamespaces: { [CAST_NAMESPACE]: framework.system.MessageType.JSON },
     });
   }, []);
-  return <div className="tv-stage game-screen" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
-    <Scoreboard snapshot={snapshot} />
-  </div>;
+  return <>
+    <div className="tv-stage game-screen" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
+      <Scoreboard snapshot={snapshot} />
+    </div>
+    <Confetti />
+    <EffectVisual active={snapshot?.effect} />
+  </>;
 }
 
 createRoot(document.getElementById('root')!).render(<Receiver />);

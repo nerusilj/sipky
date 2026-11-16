@@ -6,6 +6,8 @@ import type { Dart } from '../caller/visitTracker.ts';
 import type { BoardPhase } from '../game/boardInput.ts';
 import { BOARD_STATUS_TONES } from '../autodarts/boardStatus.ts';
 import type { BoardStatusDisplay } from '../autodarts/boardStatus.ts';
+import { EFFECT_IDS } from '../effects/effectRules.ts';
+import type { ActiveEffect } from '../effects/effects.ts';
 
 export const CAST_NAMESPACE = 'urn:x-cast:cz.sipky.scoreboard.v1';
 export const CAST_PROTOCOL = 1;
@@ -61,6 +63,8 @@ export type CastSnapshot = {
   boardVisible: boolean;
   autodartsEnabled: boolean;
   boardStatus?: BoardStatusDisplay;
+  effect?: ActiveEffect;
+  celebration?: number;
   game?: ReturnType<typeof x01Display> | ReturnType<typeof cricketDisplay>;
 };
 
@@ -80,6 +84,11 @@ export function readCastMessage(data: unknown): CastMessage | undefined {
   const boardStatus = snapshot.boardStatus;
   if (boardStatus !== undefined && (!boardStatus || typeof boardStatus.label !== 'string'
     || !BOARD_STATUS_TONES.includes(boardStatus.tone))) return;
+  const effect = snapshot.effect;
+  if (effect !== undefined && (!effect || !EFFECT_IDS.includes(effect.id)
+    || !Number.isSafeInteger(effect.key) || effect.key < 1)) return;
+  if (snapshot.celebration !== undefined
+    && (!Number.isSafeInteger(snapshot.celebration) || snapshot.celebration < 0)) return;
   const game = snapshot.game;
   if (game && (!game.settings || !Array.isArray(game.darts) || !Number.isInteger(game.leg) || !Number.isInteger(game.round)
     || (game.mode === 'x01' ? !Array.isArray(game.players) || !game.visit

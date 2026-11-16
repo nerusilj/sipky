@@ -32,6 +32,15 @@ export function dismissEffect(): void {
   set(undefined);
 }
 
+export function subscribeEffect(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+}
+
+export function getActiveEffect(): ActiveEffect | undefined {
+  return active;
+}
+
 export function useActiveEffect(): ActiveEffect | undefined {
-  return useSyncExternalStore(listener => { listeners.add(listener); return () => { listeners.delete(listener); }; }, () => active);
+  return useSyncExternalStore(subscribeEffect, getActiveEffect);
 }

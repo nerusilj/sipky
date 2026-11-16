@@ -3,6 +3,7 @@ import { EFFECTS } from '../effects/effectRules.ts';
 import type { EffectRule } from '../effects/effectRules.ts';
 import BoardSectors from './BoardSectors.tsx';
 import { dismissEffect, useActiveEffect } from '../effects/effects.ts';
+import type { ActiveEffect } from '../effects/effects.ts';
 
 const COLORS = ['#ff7a1f', '#ffd29a', '#3fcfbf', '#b6f5ea', '#ffffff', '#ff6a50', '#a68cf0'];
 // Konfety s pevným „náhodným“ rozložením, aby se při každém vykreslení nehýbaly jinak.
@@ -17,10 +18,13 @@ const CONFETTI = Array.from({ length: 56 }, (_, i) => {
 
 // Efekt přes celou obrazovku; kliknutím se zavře dřív.
 export default function EffectOverlay() {
-  const active = useActiveEffect();
+  return <EffectVisual active={useActiveEffect()} onDismiss={dismissEffect} />;
+}
+
+export function EffectVisual({ active, onDismiss }: { active?: ActiveEffect; onDismiss?: () => void }) {
   if (!active) return null;
   const effect: EffectRule = EFFECTS[active.id];
-  return <div key={active.key} className="effect-overlay" role="alert" onClick={dismissEffect}>
+  return <div key={active.key} className="effect-overlay" role="alert" onClick={onDismiss}>
     <div className="effect-rings" aria-hidden="true"><span /><span /><span /></div>
     <div className="effect-confetti" aria-hidden="true">{CONFETTI.map((style, i) => <i key={i} style={style} />)}</div>
     <div className="effect-text" aria-label={`${effect.title} ${effect.subtitle}`}><strong>{effect.title}</strong>

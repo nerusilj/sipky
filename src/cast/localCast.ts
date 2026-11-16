@@ -8,6 +8,8 @@ import { getGameSnapshot, subscribeGame } from '../game/gameStore.ts';
 import { getCastDisplaySettings, subscribeSettings } from '../settings.ts';
 import { cricketDisplay, x01Display } from './protocol.ts';
 import type { CastSnapshot } from './protocol.ts';
+import { onCelebrate } from '../effects/confetti.ts';
+import { getActiveEffect, subscribeEffect } from '../effects/effects.ts';
 
 interface Television { id: string; name: string }
 interface ConnectedTelevision extends Television { certificate: string }
@@ -29,6 +31,7 @@ let stopPublishing: (() => void)[] = [];
 let scheduled = false;
 let inFlight = false;
 let pending = false;
+let celebration = 0;
 let previous: { attempt: string; json: string } | undefined;
 
 function loadTelevision(): ConnectedTelevision | undefined {
@@ -60,6 +63,8 @@ function snapshot(): CastSnapshot {
   const cricket = getCricketSnapshot();
   return {
     ...display,
+    effect: getActiveEffect(),
+    celebration,
     boardStatus: display.autodartsEnabled ? gameBoardStatusDisplay(connection, connection.commandPending === 'reset') : undefined,
     game: x01.state ? x01Display(x01.state, !!x01.bullOffResultOpen, x01.boardPhase, !!x01.completing)
       : cricket.state ? cricketDisplay(cricket.state, cricket.game?.current) : undefined,
@@ -109,6 +114,7 @@ function endAttempt() {
   previous = undefined;
   for (const stop of stopPublishing) stop();
   stopPublishing = [];
+  celebration = 0;
 }
 
 function listenForDisconnect() {
@@ -154,7 +160,10 @@ export async function connectTelevision(television: Television, certificate?: st
     const current = Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
     const json = JSON.stringify(snapshot());
     attempt = current;
-    stopPublishing = [subscribeGame(schedule), subscribeCricket(schedule), subscribeSettings(schedule), subscribeBoardStatus()];
+    stopPublishing = [
+      subscribeGame(schedule), subscribeCricket(schedule), subscribeSettings(schedule), subscribeBoardStatus(),
+      subscribeEffect(schedule), onCelebrate(() => { celebration++; schedule(); }),
+    ];
     const connected = await invoke<ConnectedTelevision>('cast_connect', {
       id: television.id, appId: APP_ID, attempt: current, snapshot: json, certificate,
     });

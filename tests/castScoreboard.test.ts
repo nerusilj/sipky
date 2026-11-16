@@ -47,3 +47,13 @@ test('Cast Cricket promítne tabulku i neukončené kolo a používá verzovanou
   assert.equal(readCastMessage({ ...message, snapshot: { ...message.snapshot, game: { mode: 'other' } } }), undefined);
   assert.deepEqual(readCastMessage({ v: CAST_PROTOCOL, type: 'offline', seq: 2 }), { v: CAST_PROTOCOL, type: 'offline', seq: 2 });
 });
+
+test('Cast přijímá starší snapshot i volitelné TV efekty v protokolu v1', () => {
+  const snapshot = { venue: 'Šipky', autodartsEnabled: false, boardVisible: false };
+  const send = (extra = {}) => readCastMessage({ v: CAST_PROTOCOL, type: 'state', seq: 1, snapshot: { ...snapshot, ...extra } });
+  assert.ok(send());
+  assert.ok(send({ effect: { id: 'ambrozovina', key: 2 }, celebration: 3 }));
+  assert.equal(send({ effect: { id: 'unknown', key: 2 } }), undefined);
+  assert.equal(send({ effect: { id: 'ambrozovina', key: 0 } }), undefined);
+  assert.equal(send({ celebration: -1 }), undefined);
+});

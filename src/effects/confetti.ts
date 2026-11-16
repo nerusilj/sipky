@@ -5,6 +5,10 @@ const listeners = new Set<() => void>();
 
 export function celebrate(): void {
   playCheckoutSound();
+  showConfetti();
+}
+
+export function showConfetti(): void {
   listeners.forEach(listener => listener());
 }
 
