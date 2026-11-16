@@ -8,7 +8,10 @@ html,body,#root{width:100%;height:100%;overflow:hidden;margin:0;background:#0b0e
 .tv-stage.game-screen .game-head .visit-slot strong,.tv-stage.game-screen .game-head .visit-total strong{font-size:42px}
 .tv-stage .visit-strip .dart-register{animation:none}
 .tv-header-status{grid-column:3;display:grid;justify-items:end;gap:8px;min-width:0}
-.tv-venue{font-size:24px;color:var(--muted);text-align:right;overflow-wrap:anywhere}
+.tv-brand{display:inline-flex;align-items:center;gap:1.2%;width:100%;color:#eceff2;vertical-align:middle}
+.tv-brand img{display:block;width:82%;height:auto}
+.tv-brand svg{display:block;width:16.8%;height:auto}
+.tv-header-status .tv-brand{width:174px}
 .tv-autodarts{display:flex;align-items:center;gap:14px;min-width:0;max-width:100%;padding:8px 14px;font-size:18px;color:var(--muted)}
 .tv-autodarts .board-detection-status{font-size:22px;line-height:1.15;font-weight:650}
 .tv-autodarts .board-detection-status::before{width:10px;height:10px}
@@ -30,6 +33,6 @@ html,body,#root{width:100%;height:100%;overflow:hidden;margin:0;background:#0b0e
 .tv-stage .bull-player-state{margin-top:2px}
 .tv-stage .bull-results{width:950px}
 .tv-stage .bull-final-result{overflow-wrap:anywhere}
-.tv-idle{height:100%;display:grid;place-content:center;text-align:center}
-.tv-idle h1{font-size:76px;margin:0 0 10px}
-.tv-idle p{font-size:29px;color:var(--muted)}
+.tv-idle{height:100%;padding-top:463px;text-align:center;background:#000 url('./tv-idle-motif.png') no-repeat left 174px / 665px 636px}
+.tv-idle h1{width:540px;margin:0 auto;font-size:0}
+.tv-idle p{margin:27px 0 0;font:30px/1.35 "Segoe UI",system-ui,sans-serif;color:#a3a8ae}

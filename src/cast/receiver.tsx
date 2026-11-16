@@ -16,6 +16,7 @@ import { showConfetti } from '../effects/confetti.ts';
 import type { GamePlayer } from '../game/x01.ts';
 import { CAST_NAMESPACE, CAST_PROTOCOL, readCastMessage } from './protocol.ts';
 import type { CastSnapshot } from './protocol.ts';
+import tvWordmark from './tv-wordmark.png';
 import '../styles.css';
 import './receiver.css';
 
@@ -45,6 +46,17 @@ function AutodartsStatus({ status }: { status: BoardStatusDisplay }) {
     <span>Autodarts</span>
     <strong className="board-detection-status" data-tone={status.tone}>{status.label}</strong>
   </div>;
+}
+
+function TvBrand() {
+  return <span className="tv-brand">
+    <img src={tvWordmark} alt="Šipky TV" />
+    <svg viewBox="0 0 72 68" fill="none" stroke="currentColor" strokeWidth="4.5"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3.5" y="4" width="65" height="46" rx="8" />
+      <path d="M36 50v12M23 62h26" />
+    </svg>
+  </span>;
 }
 
 type X01PlayersDisplay = Extract<NonNullable<CastSnapshot['game']>, { mode: 'x01' }>['players'];
@@ -84,7 +96,7 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
   const autodarts = boardStatus && <AutodartsStatus status={boardStatus} />;
   if (!game || !snapshot) return <div className="tv-idle">
     {autodarts && <div className="tv-idle-status">{autodarts}</div>}
-    <h1>ŠIPKY TV</h1>
+    <h1><TvBrand /></h1>
     <p>{snapshot ? 'Čekám na zahájení hry' : 'Čekám na připojení'}</p>
   </div>;
 
@@ -106,7 +118,7 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
       {x01 ? !game.bull && !game.result && <X01Visit state={game.visit} darts={game.darts} readOnly />
         : <CricketVisit darts={game.darts} marks={game.marks} points={game.points} readOnly />}
       <div className="tv-header-status">
-        <div className="tv-venue">ŠIPKY TV</div>
+        <TvBrand />
         {autodarts}
       </div>
     </div>
