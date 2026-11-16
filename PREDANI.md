@@ -5,6 +5,7 @@ Aktualizováno 16. 11. 2026. Před zahájením práce si projdi také `AGENTS.md
 ## Linux release 0.1.14
 
 - Linuxový release 0.1.13 byl zastaven, protože release build nepředával veřejné ID Google Cast. Release skript ve verzi 0.1.14 předává výchozí ID `1A195F93` a kontroluje jeho přítomnost v sestaveném frontendu. Používá stávající balíčky zvuků 1.0.1 z v0.1.10 a hlasatele 1.0.0 z v0.1.8.
+- [Šipky 0.1.14](https://github.com/nerusilj/sipky/releases/tag/v0.1.14) byly sestaveny a zveřejněny na Ubuntu runneru GitHub Actions z commitu `5490210`. Workflow `43880742372` prošlo. SHA-256 staženého DEB a manifestu souhlasí. Instalace na Xubuntu a fyzický test TV zbývají.
 - Kompatibilita se staršími TV se v tomto release kroku neupravovala.
 
 ## Projekt a způsob práce
@@ -16,7 +17,7 @@ Aktualizováno 16. 11. 2026. Před zahájením práce si projdi také `AGENTS.md
 
 ## Bezprostřední stav a další práce
 
-- Google Cast aplikace `1A195F93` je podle uživatele ve stavu **Published**. Čekací obrazovka i záhlaví hry na TV zobrazují **ŠIPKY TV**. Panely X01 sdílejí výpočet rozměrů s notebookem a receiver zobrazuje Ambrožovku i konfety ze snapshotu protokolu v1. Prošly oba frontendové buildy a 211 Node testů. Fyzická kontrola nových efektů a kompatibility s druhou TV zbývá. Instalační balíčky tyto změny ještě neobsahují.
+- Google Cast aplikace `1A195F93` je podle uživatele ve stavu **Published**. Čekací obrazovka i záhlaví hry na TV zobrazují **ŠIPKY TV**. Panely X01 sdílejí výpočet rozměrů s notebookem a receiver zobrazuje Ambrožovku i konfety ze snapshotu protokolu v1. Prošly oba frontendové buildy a 211 Node testů. Podpora odesílání je součástí Linux vydání 0.1.14. Fyzická kontrola nových efektů a kompatibility s druhou TV zbývá.
 
 - Po tagu `v0.1.12` přibyl vlastní Google Cast Web Receiver pro X01, Cricket a rozhoz. Připojení je přímo na **Domů → Připojit k TV**. Nativní odesílač v Rustu hledá Chromecast v místní síti, ověřuje jeho certifikát a posílá aktuální stav přes kanál Cast. Aplikace si pamatuje naposledy úspěšně připojenou televizi a nabízí připojení jedním kliknutím. Receiver sdílí herní komponenty a používá vlastní plochu 1920 × 1080. Prohlížeč s testovacím SDK zobrazil oba režimy s osmi hráči a živým terčem při 1920 × 1080 a 1280 × 720.
 - Prošlo 209 Node testů a 11 Rust testů, včetně spuštění simulovaného receiveru, potvrzení zobrazení, okamžitého odeslání nového stavu a ukončení relace. Nativní vývojové Šipky ve Windows se spustily a tlačítko našlo dvě zařízení. Windows při prvním hledání zobrazil dotaz firewallu. Nastavení firewallu se neměnilo. Vývojové okno a Vite na portu 1420 zůstaly spuštěné.
