@@ -2,6 +2,12 @@
 
 Aktualizováno 16. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
 
+## Linux release 0.1.13 — příprava
+
+- Na pokyn uživatele připravováno vydání Linuxu z větve `main`; verze zdrojů byla zvýšena z 0.1.12 na 0.1.13 v `package.json`, konfiguraci Tauri, balíčku `sipky` v Cargo.toml a jeho záznamu v Cargo.lock. `scripts/linux-components.json` zůstává beze změny (zvuky 1.0.1 z v0.1.10, hlasatel 1.0.0 z v0.1.8).
+- Checkout při přípravě: větev `main`, HEAD a `origin/main` `146e2f8` (`Zobrazit název ŠIPKY TV také během hry`), před úpravami čistý. Fetch proběhl mimo sandbox. `gh` CLI není nainstalované; dostupnost GitHub API přes místní síť se nepodařilo ověřit. Tag/commit, běh `.github/workflows/release-linux.yml` a veřejné artefakty zatím nejsou ověřené.
+- Kompatibilita se staršími TV se v tomto release kroku neupravovala.
+
 ## Projekt a způsob práce
 
 - Šipky, původně Darts CZ, používají React, TypeScript, Vite a Tauri/Rust. Pro práci na dalším počítači použij klon `https://github.com/nerusilj/sipky.git`.
