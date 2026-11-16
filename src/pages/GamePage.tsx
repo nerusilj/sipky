@@ -1,7 +1,8 @@
+import { X01PlayerCard, X01Visit } from '../components/X01Scoreboard.tsx';
+import { legCount, legsText, x01PlayerScore } from '../game/x01Presentation.ts';
 import SegmentedControl from '../components/SegmentedControl.tsx';
 import BullOffArena, { BullOffResults } from '../components/BullOffArena.tsx';
 import { bullThrowNeedsDistance, bullThrowRequiresTakeout } from '../game/bullOffRanking.ts';
-import PlacementBadge from '../components/PlacementBadge.tsx';
 import { availableGamePlayers } from '../game/bots.ts';
 import ThrowKeypad from '../components/ThrowKeypad.tsx';
 import PlayerName from '../components/PlayerName.tsx';
@@ -14,11 +15,10 @@ import GamePlayerDialog from '../components/GamePlayerDialog.tsx';
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import Toggle from '../components/Toggle.tsx';
-import { ChevronIcon, CloseIcon, ExitIcon, PencilIcon, PlusIcon, TrophyIcon, VisitDartIcon } from '../components/Icons.tsx';
+import { ChevronIcon, CloseIcon, ExitIcon, PlusIcon, TrophyIcon } from '../components/Icons.tsx';
 import { useAutodartsEnabled, useGameView, useBoardVisible } from '../settings.ts';
-import { suggestCheckout } from '../game/checkout.ts';
 import { cancelGameBullOff, continueAfterBullOff, correctBullOffThrow, endGame, enterDart, markBullOffMiss, nextPlayer, rematch, replaceCurrentDart, startGame, undoDart, useGame } from '../game/gameStore.ts';
-import { dartLabel, DARTS_PER_VISIT, ENDLESS, legDartNumber, legThreeDartAverage, NO_ROUND_LIMIT, playerDisplayedLegsWon, playerFinishPlace, playerTotals, threeDartAverage } from '../game/x01.ts';
+import { dartLabel, DARTS_PER_VISIT, ENDLESS, NO_ROUND_LIMIT, playerDisplayedLegsWon, playerTotals, threeDartAverage } from '../game/x01.ts';
 import type { Dart, GamePlayer, NextLegOrder, X01Settings, X01State } from '../game/x01.ts';
 import { loadLastSetup, ROUND_LIMITS, saveLastSetup } from '../game/lastSetup.ts';
 import { START_SCORES, isStartScore } from '../game/startScores.ts';
@@ -34,16 +34,6 @@ const LEG_OPTIONS = [ENDLESS, 1, 2, 3, 4, 5];
 export default function GamePage(actions: GameToolbarActions) {
   const { state } = useGame();
   return state ? <GameBoard state={state} {...actions} /> : <GameSetup />;
-}
-
-function legsText(n: number): string {
-  if (n === ENDLESS) return 'Hra dokola';
-  return n === 1 ? 'Na 1 vítězný leg' : n < 5 ? `Na ${n} vítězné legy` : `Na ${n} vítězných legů`;
-}
-
-// Česky: 1 leg, 2–4 legy, 0 a 5+ legů.
-function legCount(n: number): string {
-  return `${n} ${n === 1 ? 'leg' : n >= 2 && n <= 4 ? 'legy' : 'legů'}`;
 }
 
 const QUICK_SCORES: readonly StartScore[] = [301, 501];
@@ -209,7 +199,7 @@ function GameBoard({ state, ...actions }: { state: X01State } & GameToolbarActio
           {' · '}kolo {state.round}{settings.maxRounds && state.round <= settings.maxRounds ? ` z ${settings.maxRounds}` : ''}
           {state.finishersNeeded > 1 && ` · zavřít musí ${state.finishersNeeded}`}</p></div>
       </div>
-      {!state.bullOff && !bullOffResultOpen && <SharedVisit state={state} darts={darts} selected={manualOpen ? editIndex : undefined}
+      {!state.bullOff && !bullOffResultOpen && <X01Visit state={state} darts={darts} selected={manualOpen ? editIndex : undefined}
         onSelect={!finished && !botTurn && !state.bullOff && !completing ? selectDart : undefined} />}
       <div className="game-head-actions">
         <GameToolbar {...actions} statisticsOpen={statisticsOpen} onStatistics={() => setStatisticsOpen(true)}
@@ -218,7 +208,7 @@ function GameBoard({ state, ...actions }: { state: X01State } & GameToolbarActio
     </div>
     {bullOffResultOpen && state.lastBullOffResult ? <BullOffResults state={state} onContinue={continueAfterBullOff} /> : <>
     {finished && <WinnerPanel state={state} onNewGame={endGame} />}
-    {state.bullOff && !finished ? <BullOffArena state={state} phase={boardPhase} busy={!!completing} onCorrect={correctBullOffThrow} /> :
+    {state.bullOff && !finished ? <BullOffArena state={state} autodartsEnabled={autodartsEnabled} phase={boardPhase} busy={!!completing} onCorrect={correctBullOffThrow} /> :
     <div className={`game-play-layout view-${gameView} ${boardVisible && !manualOpen ? 'has-side-panel' : ''}`}>
       <div className="game-dashboard">
         {gameView === 'rows' ? <GameRows state={state} keypad={manualOpen ? keypad : undefined} />
@@ -321,34 +311,6 @@ function GamePlayers({ state, keypad }: PlayerViewProps) {
   </div>;
 }
 
-function BustFragments() {
-  return <div className="bust-fragments" aria-hidden="true">{Array.from({ length: 9 }, (_, i) => <i key={i} />)}</div>;
-}
-
-function SharedVisit({ state, darts, selected, onSelect }: { state: X01State; darts: Dart[]; selected?: number; onSelect?: (index: number) => void }) {
-  const finished = state.winner !== undefined;
-  const last = finished && !state.lastLegByBullOff ? state.history.at(-1) : undefined;
-  const shown = finished ? last?.darts ?? [] : darts;
-  const result = last ?? state.visitResult;
-  const total = state.bullOff ? shown[0]?.score ?? 0 : result.scored;
-  return <section className={`visit-strip ${result.bust ? 'has-bust' : ''}`} aria-label="Aktuální hody" aria-live="polite">
-    {result.bust && <BustFragments />}
-    {Array.from({ length: DARTS_PER_VISIT }, (_, i) => {
-      const label = `${i + 1}. šipka: ${shown[i] ? dartLabel(shown[i]) : 'neházeno'}`;
-      const className = `visit-slot ${shown[i] ? 'filled' : 'empty'}`;
-      const content = <>{shown[i] ? <strong className="dart-register" key={dartLabel(shown[i])}>{dartLabel(shown[i])}</strong> : <VisitDartIcon />}
-        {selected === i && <span className="visit-edit-icon"><PencilIcon size={15} /></span>}</>;
-      // Při potvrzení kola zachovat stejný element: button → div by znovu spustilo animaci všech čísel.
-      return <button type="button" key={i} className={className} aria-label={label} aria-pressed={selected === i}
-        title={shown[i] ? `Opravit ${i + 1}. šipku` : `Zadat ${i + 1}. šipku`}
-        disabled={!onSelect || (!shown[i] && (i !== shown.length || state.visitResult.closed))} onClick={() => onSelect?.(i)}>{content}</button>;
-    })}
-    <div className={`visit-total ${result.bust ? 'bust' : ''}`} aria-label={result.bust ? 'Výsledek kola: BUST' : `Skóre kola: ${total}`}>
-      {(state.bullOff || finished && state.lastLegByBullOff) && <span>Rozhoz</span>}
-      <strong>{result.bust ? 'BUST' : total}</strong></div>
-  </section>;
-}
-
 function EndGameDialog({ state, onClose }: { state: X01State; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const continueButton = useRef<HTMLButtonElement>(null);
@@ -392,56 +354,8 @@ function StatisticsDialog({ state, onClose }: { state: X01State; onClose: () => 
 }
 
 function PlayerScore({ state, index }: { state: X01State; index: number }) {
-  const player = state.players[index];
-  const active = index === state.current && state.winner === undefined && !state.bullOff;
-  const busted = active && state.visitResult.bust;
-  const place = playerFinishPlace(state, index);
-  const legsWon = playerDisplayedLegsWon(state, index);
-  const remaining = active ? state.visitResult.remaining : state.remaining[index];
-  const dartsLeft = active ? DARTS_PER_VISIT - state.visit.length : DARTS_PER_VISIT;
-  const checkout = active && state.settings.doubleOut && !state.visitResult.closed ? suggestCheckout(remaining, dartsLeft) : undefined;
-  const lastVisit = [...state.history].reverse().find(visit => visit.player === index && visit.leg === state.leg);
-  // Aktivní hráč začíná vždy prázdným pruhem, předchozí kolo zůstává jen u čekajících hráčů.
-  const shownDarts = active ? state.visit : lastVisit?.darts ?? [];
-  const visitTotal = active ? state.visitResult.scored : lastVisit?.scored ?? 0;
-  const visitBusted = active ? state.visitResult.bust : lastVisit?.bust ?? false;
-  const dartNumber = legDartNumber(state, index);
-  const legAverage = legThreeDartAverage(state, index).toFixed(1).replace('.', ',');
-  return <section className={`score-card card ${active ? 'active' : ''} ${busted ? 'has-bust' : ''} ${state.winner === index ? 'winner' : ''} ${place !== undefined ? 'done' : ''}`} aria-label={player.name} data-player-index={index}>
-    {busted && <BustFragments />}
-    {place !== undefined && <PlacementBadge place={place} />}
-    <div className="score-head">
-      <div className="score-player-details"><PlayerName name={player.name} color={player.color} avatarSeed={player.id} avatarId={player.avatarId} avatarSize={52} className="plain" /></div>
-    </div>
-    <div className="player-score-line"><div className="score-remaining">{remaining}</div>
-      <span className="player-legs-badge" aria-label={`Vyhrané legy: ${legsWon}`} title={`Vyhráno ${legCount(legsWon)}`}><span>{legsWon}</span></span>
-    </div>
-    <div className={`player-bottom ${checkout ? 'has-checkout' : ''}`}>
-    <div className="player-visit-strip" role="group" aria-hidden={!!checkout} aria-label={active ? 'Aktuální hody hráče' : 'Poslední kolo hráče'}>
-      {Array.from({ length: DARTS_PER_VISIT }, (_, i) => <div key={i} className={`player-visit-slot ${shownDarts[i] ? 'filled' : 'empty'}`}
-        aria-label={`${i + 1}. šipka: ${shownDarts[i] ? dartLabel(shownDarts[i]) : 'neházeno'}`}>
-        {shownDarts[i] ? <strong>{dartLabel(shownDarts[i])}</strong> : <VisitDartIcon />}
-      </div>)}
-      <div className="player-visit-slot player-visit-total" aria-label={visitBusted ? 'Výsledek kola: BUST' : `Skóre kola: ${visitTotal}`}>
-        <strong>{visitBusted ? 'BUST' : visitTotal}</strong>
-      </div>
-    </div>
-    <div className="player-leg-summary" role="group" aria-hidden={!!checkout} aria-label="Šipky a průměr aktuálního legu">
-      <span className="leg-dart-number" aria-label={`Hozené šipky v legu: ${dartNumber}`}
-        title={`V aktuálním legu hozeno ${dartNumber} šipek`}><VisitDartIcon /><strong>{dartNumber}</strong></span>
-      <span className="leg-summary-divider" aria-hidden="true" />
-      <span className="leg-average" aria-label={`Průměr aktuálního legu na 3 šipky: ${legAverage}`} title="Průměr aktuálního legu na 3 šipky"><span aria-hidden="true">Ø</span><strong>{legAverage}</strong></span>
-    </div>
-    {checkout && <div className="player-checkout" role="group" aria-label={`Zavřít: ${checkout.map(dartLabel).join(', ')}`} title={`Doporučené zavření: ${checkout.map(dartLabel).join(' → ')}`}>
-      <div className="player-checkout-route" aria-hidden="true">{checkout.map((dart, i) =>
-        <span className="player-checkout-step" key={i}><strong className={i === checkout.length - 1 ? 'checkout-finish' : ''}>{dartLabel(dart)}</strong>
-          {i < checkout.length - 1 && <span className="checkout-arrow">→</span>}</span>)}
-      </div>
-    </div>}
-    </div>
-  </section>;
+  return <X01PlayerCard score={x01PlayerScore(state, index)} />;
 }
-
 
 function History({ state }: { state: X01State }) {
   const [leg, setLeg] = useState(state.leg);

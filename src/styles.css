@@ -869,3 +869,10 @@ button.primary:hover:not(:disabled){background:var(--accent-light);border-color:
 @media(max-width:760px){.bull-arena{grid-template-columns:minmax(0,1fr);overflow:auto;gap:18px}.bull-arena-board{height:min(74vw,420px);min-height:280px}.bull-arena-sidebar{min-height:180px;overflow:visible}.bull-participants{overflow:visible;flex:none}.bull-results{padding:16px}.bull-results li{gap:10px;padding-right:10px}.bull-results .player-tag{font-size:18px}.bull-final-result{font-size:13px}}
 
 @media(prefers-reduced-motion:reduce){.segmented>button,.toggle-track,.toggle-knob{transition:none}}
+
+.home-cast .home-board-actions{flex-wrap:wrap}
+.home-cast .home-board-actions button{min-width:0;overflow-wrap:anywhere}
+.home-cast-devices,.home-cast-error{padding:0 24px 14px}
+.home-cast-devices ul{list-style:none;margin:0 0 10px;padding:0;display:flex;gap:8px;flex-wrap:wrap}
+.home-cast-devices li{max-width:100%}
+.home-cast-devices button{max-width:100%;overflow-wrap:anywhere}

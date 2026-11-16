@@ -9,6 +9,7 @@
     "dev": "vite",
     "check": "tsc --noEmit",
     "build": "tsc --noEmit && vite build",
+    "build:cast": "tsc --noEmit && vite build --config vite.cast.config.ts",
     "preview": "vite preview",
     "test": "node --test tests/*.test.ts",
     "tauri": "tauri",

@@ -1,0 +1,31 @@
+html,body,#root{width:100%;height:100%;overflow:hidden;margin:0;background:#0b0e13}
+.tv-stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;overflow:hidden;background:#0b0d10;transform-origin:center;--accent-edge:#414d59}
+.tv-stage.game-screen .tv-game{padding:44px 62px}
+.tv-stage.game-screen .game-head{grid-template-columns:minmax(0,1fr) 590px minmax(0,1fr);align-items:center;margin-bottom:30px}
+.tv-stage.game-screen .game-head h1{font-size:40px}
+.tv-stage.game-screen .game-head p{font-size:22px}
+.tv-stage.game-screen .game-head .visit-strip{grid-column:2;grid-row:1;width:100%;min-height:80px}
+.tv-stage.game-screen .game-head .visit-slot strong,.tv-stage.game-screen .game-head .visit-total strong{font-size:42px}
+.tv-stage .visit-strip .dart-register{animation:none}
+.tv-venue{grid-column:3;font-size:24px;color:var(--muted);text-align:right;overflow-wrap:anywhere}
+.tv-workspace{flex:1 1 auto;min-height:0;display:flex;gap:24px}
+.tv-players{flex:1 1 auto;min-width:0;display:grid;grid-auto-rows:minmax(0,1fr);gap:18px}
+.tv-players .score-card{--game-score-size:116px;min-width:0;min-height:0;overflow:hidden}
+.tv-players[data-single-row=true] .score-card{--game-score-size:168px}
+.tv-players .player-tag{max-width:100%}
+.tv-board{align-self:center;flex:0 0 390px;min-width:0}
+.tv-stage .winner-panel{display:flex;padding:12px 24px}
+.tv-stage .cricket-table-scroll{overflow:hidden}
+.tv-stage .cricket-table th,.tv-stage .cricket-table td{min-width:0;padding:8px}
+.tv-stage .cricket-table thead th{height:166px}
+.tv-stage .cricket-table td{height:auto}
+.tv-stage .cricket-score>strong{font-size:58px}
+.tv-stage .cricket-marks{width:48px;height:48px}
+.tv-stage .bull-arena{grid-template-columns:minmax(0,1fr) 590px}
+.tv-stage .bull-player-card{min-height:83px;padding:10px 16px}
+.tv-stage .bull-player-state{margin-top:2px}
+.tv-stage .bull-results{width:950px}
+.tv-stage .bull-final-result{overflow-wrap:anywhere}
+.tv-idle{height:100%;display:grid;place-content:center;text-align:center}
+.tv-idle h1{font-size:76px;margin:0 0 10px}
+.tv-idle p{font-size:29px;color:var(--muted)}

@@ -107,6 +107,10 @@ Používejte jeden správce balíčků. Součástí dodávky je `pnpm-lock.yaml`
   - Export JSONL přes nativní Tauri dialog; ukládá celý aktuální buffer, nikoli jen filtr nebo zmrazený pohled. Žádné indexy vyhledávání v exportu. Časy ISO 8601 UTC s milisekundami (`Z`); seznam používá místní čas.
   - Parser zachová celé obálky, neznámá pole, chyby odběru i neplatný JSON. Nedělá závěry o hodech či skóre.
 
+## Chromecast
+
+Živé skóre odešlete na Chromecast přes **Domů → Připojit k TV**. Nasazení vlastního televizního receiveru popisuje [Chromecast](docs/chromecast.md).
+
 ## Závislosti a struktura
 
 Runtime JS: pouze React, React DOM a `@tauri-apps/api` pro IPC. Vývoj: TypeScript, Vite, typy Reactu, Tauri CLI. Rust: Tauri, build helper, `tauri-plugin-dialog` pro nativní dialog a `serde_json` pro kontrolu exportu. Žádná UI knihovna ani testovací framework; čistá logika používá vestavěný Node test runner.

@@ -10,6 +10,7 @@ import { isVerifiedBoardVersion, VERIFIED_BOARD_VERSIONS } from '../autodarts/bo
 import { boardStartStopAction, boardStatusDisplay } from '../autodarts/boardStatus.ts';
 import type { useAppUpdate } from '../appUpdate.ts';
 import AppUpdatePanel from '../components/AppUpdatePanel.tsx';
+import HomeCast from '../components/HomeCast.tsx';
 import { useAutodartsEnabled } from '../settings.ts';
 
 const MODES = [
@@ -104,6 +105,7 @@ export default function HomePage({ onPlay, update, gameRunning }: {
         </div>
       </div>
     </section>}
+    {isTauri() && <HomeCast disabled={update.installing} />}
     <AppUpdatePanel update={update} gameRunning={gameRunning} />
   </div>;
 }

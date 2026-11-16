@@ -1,5 +1,6 @@
 node_modules/
 dist/
+/dist-cast/
 src-tauri/target/
 src-tauri/tts-runtime/
 src-tauri/tts-runtime.next/

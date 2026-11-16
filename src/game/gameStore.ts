@@ -360,8 +360,12 @@ export function decideBullOffWinner(player: number): void {
   recorder.meta('game-bulloff-decision', { player: snapshot.game.players[player].name });
 }
 
+export function subscribeGame(listener: () => void) {
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+}
 export function useGame(): GameSnapshot {
-  return useSyncExternalStore(listener => { listeners.add(listener); return () => { listeners.delete(listener); }; }, () => snapshot);
+  return useSyncExternalStore(subscribeGame, getGameSnapshot);
 }
 
 export function getGameSnapshot(): GameSnapshot { return snapshot; }

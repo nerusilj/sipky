@@ -138,4 +138,8 @@ function announcePlayer(gameStart = false) {
   botRunner.waitFor(announcement);
 }
 export function getCricketSnapshot() { return snapshot; }
-export function useCricket() { return useSyncExternalStore(listener => { listeners.add(listener); return () => { listeners.delete(listener); }; }, getCricketSnapshot); }
+export function subscribeCricket(listener: () => void) {
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+}
+export function useCricket() { return useSyncExternalStore(subscribeCricket, getCricketSnapshot); }

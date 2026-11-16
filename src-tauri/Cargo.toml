@@ -18,6 +18,18 @@ tauri-plugin-dialog = "2"
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
 semver = "1"
+futures-util = { version = "0.3", features = ["sink"] }
+mdns-sd = "0.21.7"
+prost = "0.14"
+rand = "0.8"
+ring = "0.17"
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+rustls-webpki = { version = "0.103", features = ["ring"] }
+tokio = { version = "1", features = ["macros", "net", "sync", "time"] }
+tokio-rustls = { version = "0.26", default-features = false, features = ["ring", "tls12"] }
+tokio-util = { version = "0.7", features = ["codec"] }
+x509-parser = { version = "0.16", features = ["verify"] }
+uuid = { version = "1", features = ["v4"] }
 reqwest = { version = "0.13.5", default-features = false, features = ["blocking", "native-tls-no-alpn"] }
 
 [target.'cfg(all(target_os = "linux", target_arch = "x86_64"))'.dependencies]

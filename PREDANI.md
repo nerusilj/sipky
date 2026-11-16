@@ -1,6 +1,6 @@
 # Předání projektu Šipky
 
-Aktualizováno 13. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
+Aktualizováno 16. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
 
 ## Projekt a způsob práce
 
@@ -10,6 +10,11 @@ Aktualizováno 13. 11. 2026. Před zahájením práce si projdi také `AGENTS.md
 - Při práci ve stávajícím checkoutu zachovej případné rozpracované změny. Staré Piper hlasy byly záměrně odstraněny.
 
 ## Bezprostřední stav a další práce
+
+- Po tagu `v0.1.12` přibyl vlastní Google Cast Web Receiver pro X01, Cricket a rozhoz. Připojení je přímo na **Domů → Připojit k TV**. Nativní odesílač v Rustu hledá Chromecast v místní síti, ověřuje jeho certifikát a posílá aktuální stav přes kanál Cast. Aplikace si pamatuje naposledy úspěšně připojenou televizi a nabízí připojení jedním kliknutím. Receiver sdílí herní komponenty a používá vlastní plochu 1920 × 1080. Prohlížeč s testovacím SDK zobrazil oba režimy s osmi hráči a živým terčem při 1920 × 1080 a 1280 × 720.
+- Prošlo 209 Node testů a 11 Rust testů, včetně spuštění simulovaného receiveru, potvrzení zobrazení, okamžitého odeslání nového stavu a ukončení relace. Nativní vývojové Šipky ve Windows se spustily a tlačítko našlo dvě zařízení. Windows při prvním hledání zobrazil dotaz firewallu. Nastavení firewallu se neměnilo. Vývojové okno a Vite na portu 1420 zůstaly spuštěné.
+- `pnpm build:cast` vytvoří `dist-cast/`. Pro první skutečné připojení zbývá nasadit receiver na HTTPS, zaregistrovat testovací Chromecast a vložit přidělené ID jako `VITE_CAST_APP_ID` při spuštění vývojového frontendu. Běžný uživatel po publikování receiveru a sestavení aplikace s tímto ID nic dalšího nezadává. Fyzické ověření na Chromecastu 3 a Xubuntu zbývá. Nový instalátor se nesestavoval. Návod je v `docs/chromecast.md`.
+- V nastavení GitHub Pages je jako zdroj vybrané **GitHub Actions**. Ručně spouštěná úloha `.github/workflows/cast-pages.yml` sestavuje receiver z větve `main` a zveřejňuje pouze její televizní výstup.
 
 - GitHub Actions úspěšně zveřejnil [Šipky 0.1.11](https://github.com/nerusilj/sipky/releases/tag/v0.1.11) pro Xubuntu x86_64. Vydání zahrnuje ovládání terče Autodarts, živý stav a Reset ve hře X01 i Cricketu a možnost integraci vypnout. Dělený DEB přebírá zvuky 1.0.1 z vydání 0.1.10 a hlasatele 1.0.0 z vydání 0.1.8. Prošla kontrola TypeScriptu, 207 testů Node a 9 testů Rust ve Windows. SHA-256 staženého DEB a manifestu souhlasí. Ověření instalace a fyzického terče na cílovém Xubuntu zbývá.
 

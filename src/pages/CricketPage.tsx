@@ -1,3 +1,5 @@
+import { CricketScoreboard, CricketVisit, decimal } from '../components/CricketScoreboard.tsx';
+import { cricketScore } from '../game/cricketPresentation.ts';
 import SegmentedControl from '../components/SegmentedControl.tsx';
 import { availableGamePlayers } from '../game/bots.ts';
 import { useEffect, useRef, useState } from 'react';
@@ -9,8 +11,8 @@ import GameControls from '../components/GameControls.tsx';
 import ThrowKeypad from '../components/ThrowKeypad.tsx';
 import Dartboard from '../components/Dartboard.tsx';
 import ConfirmLeaveDialog from '../components/ConfirmLeaveDialog.tsx';
-import { ChevronIcon, CloseIcon, ExitIcon, PencilIcon, PlusIcon, TrophyIcon, VisitDartIcon } from '../components/Icons.tsx';
-import { CRICKET_TARGETS, cricketTotals } from '../game/cricket.ts';
+import { ChevronIcon, CloseIcon, ExitIcon, PlusIcon, TrophyIcon } from '../components/Icons.tsx';
+import { cricketTotals } from '../game/cricket.ts';
 import type { CricketState } from '../game/cricket.ts';
 import { endCricket, enterCricketDart, nextCricketPlayer, rematchCricket, replaceCricketDart, startCricket, undoCricketDart, useCricket } from '../game/cricketStore.ts';
 import { dartLabel } from '../game/x01.ts';
@@ -23,7 +25,6 @@ import { useBoardVisible } from '../settings.ts';
 const SETUP_KEY = 'sipky.lastCricketSetup';
 const legsText = (legs: number) => legs === 0 ? 'Hra dokola' : legs === 1 ? 'Na 1 vítězný leg' : legs < 5 ? `Na ${legs} vítězné legy` : `Na ${legs} vítězných legů`;
 const playerCount = (n: number) => `${n} ${n === 1 ? 'hráč' : n < 5 ? 'hráči' : 'hráčů'}`;
-const decimal = (n: number) => n.toFixed(2).replace('.', ',');
 export default function CricketPage(actions: GameToolbarActions) {
   const { state } = useCricket();
   return state ? <CricketBoard state={state} {...actions} /> : <CricketSetup />;
@@ -74,12 +75,6 @@ function CricketSetup() {
       <button className="primary big" disabled={!chosen.length} onClick={start}>Začít hru</button></div>
   </div>;
 }
-function CricketMarks({ count }: { count: number }) {
-  return <svg className="cricket-marks" viewBox="0 0 48 48" role="img" aria-label={`${count} ${count === 1 ? 'zásah' : 'zásahy'}`}>
-    {!count && <path d="M20 24h8" opacity=".28" />}
-    {count >= 1 && <path d="M14 34l20-20" />}{count >= 2 && <path d="M14 14l20 20" />}{count >= 3 && <circle cx="24" cy="24" r="19" />}
-  </svg>;
-}
 function CricketBoard({ state, ...actions }: { state: CricketState } & GameToolbarActions) {
   const { game, completing, boardNotice, botPaused } = useCricket();
   const boardVisible = useBoardVisible();
@@ -106,14 +101,8 @@ function CricketBoard({ state, ...actions }: { state: CricketState } & GameToolb
       <div className="game-heading"><button className="icon-button game-exit" aria-label={finished ? 'Nová hra' : 'Konec hry'} onClick={() => finished ? endCricket() : setEnd(true)}><ExitIcon size={25} /></button>
         <div><h1>Cricket <span className="cricket-variant">s body</span></h1><p>{legsText(state.settings.legsToWin)} · {playerCount(state.order.length)} · leg {state.leg} · kolo {state.round}</p></div>
       </div>
-      <section className="visit-strip" aria-label="Aktuální hody" aria-live="polite">
-        {[0, 1, 2].map(i => <button key={i} className={`visit-slot ${darts[i] ? 'filled' : 'empty'}`} aria-label={`${i + 1}. šipka: ${darts[i] ? dartLabel(darts[i]) : 'neházeno'}`}
-          aria-pressed={manual && editIndex === i} disabled={finished || botTurn || !!completing || (!darts[i] && (i !== darts.length || state.visitResult.closed))} onClick={() => choose(i)}>
-          {darts[i] ? <strong key={dartLabel(darts[i])} className="dart-register">{dartLabel(darts[i])}</strong> : <VisitDartIcon />}
-          {manual && editIndex === i && <span className="visit-edit-icon"><PencilIcon size={15} /></span>}
-        </button>)}
-        <div className="visit-total" aria-label={`Kolo: ${marks} zásahů, ${points} bodů`}><strong>{marks}</strong>{points > 0 && <span>+{points} b.</span>}</div>
-      </section>
+      <CricketVisit darts={darts} marks={marks} points={points} selected={manual ? editIndex : undefined}
+        closed={state.visitResult.closed} onSelect={!finished && !botTurn && !completing ? choose : undefined} />
       <div className="game-head-actions"><GameToolbar {...actions} layoutOptions={false} statisticsOpen={stats} onStatistics={() => setStats(true)} /></div>
     </div>
     {boardNotice && <p role="status" className="cricket-notice">{boardNotice}</p>}
@@ -123,19 +112,7 @@ function CricketBoard({ state, ...actions }: { state: CricketState } & GameToolb
       <div className="winner-actions"><button className="primary" onClick={rematchCricket}>Odveta</button><button onClick={endCricket}>Nová hra</button></div>
     </section>}
     <div className={`cricket-workspace ${manual && !finished || boardVisible && !finished ? 'has-cricket-side' : ''}`}>
-      <div className="cricket-table-scroll card" tabIndex={0} role="region" aria-label="Tabulka Cricketu">
-        <table className="cricket-table" style={{ minWidth: 82 + state.order.length * 150 }}><thead><tr><th scope="col" className="cricket-target-heading"><span className="eyebrow">ČÍSLO</span></th>
-          {state.players.map((player, i) => { const totals = cricketTotals(state, i, state.leg); return <th key={player.id} scope="col" className={i === state.current && !finished ? 'cricket-active' : ''} aria-current={i === state.current && !finished ? 'true' : undefined}>
-            <PlayerName {...player} avatarSeed={player.id} avatarSize={32} />
-            <div className="cricket-score"><strong aria-label={`${player.name}: ${state.points[i]} bodů`}>{state.points[i]}</strong><span className="cricket-legs" title="Vyhrané legy" aria-label={`${state.legsWon[i]} vyhraných legů`}>{state.legsWon[i]}</span></div>
-            <div className="cricket-player-metrics"><span title="Počet hozených šipek v legu"><VisitDartIcon />{totals.darts}</span><span title="Průměr platných zásahů na tři šipky v legu">MPR {decimal(totals.mpr)}</span></div>
-          </th>; })}</tr></thead>
-          <tbody>{CRICKET_TARGETS.map((target, row) => { const closed = state.order.every(i => state.marks[i][row] === 3); return <tr key={target} className={closed ? 'cricket-target-closed' : ''}>
-            <th scope="row" title={closed ? 'Zavřeno všemi hráči – již neboduje' : undefined}>{target === 25 ? 'BULL' : target}</th>
-            {state.players.map((player, i) => <td key={player.id} className={i === state.current && !finished ? 'cricket-active' : ''}><CricketMarks count={state.marks[i][row]} /></td>)}
-          </tr>; })}</tbody>
-        </table>
-      </div>
+      <CricketScoreboard score={cricketScore(state)} />
       {manual && !finished ? <aside className="cricket-side" aria-label="Ruční zadání"><ThrowKeypad disabled={editIndex === undefined || !!completing} completing={!!completing} multiplier={multiplier} onMultiplier={setMultiplier} onHit={hit} /></aside>
         : boardVisible && !finished && <aside id="game-board-panel" className="cricket-side" aria-label="Živý terč"><Dartboard darts={darts} /></aside>}
     </div>

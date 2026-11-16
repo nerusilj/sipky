@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use tauri::Manager;
 use tauri_plugin_dialog::DialogExt;
 mod board_control;
+mod cast;
 mod player_speech;
 mod static_audio;
 mod updates;
@@ -185,9 +186,10 @@ pub fn run() {
     tauri::Builder::default()
         .manage(player_speech::PlayerSpeech::default())
         .manage(updates::UpdateInstall::default())
+        .manage(cast::CastState::default())
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![save_session, append_recording, load_players, save_players,
-            board_control::send_board_command,
+            board_control::send_board_command, cast::cast_discover, cast::cast_connect, cast::cast_disconnect, cast::cast_publish,
             player_speech::player_speech, static_audio::static_audio, updates::check_app_update, updates::install_app_update])
         .run(tauri::generate_context!())
         .expect("Aplikaci Šipky nelze spustit");

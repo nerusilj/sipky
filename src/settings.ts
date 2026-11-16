@@ -44,13 +44,13 @@ function write(key: string, value: string): void {
   try { localStorage.setItem(key, value); } catch { /* Nastavení se jen nezapamatuje. */ }
   listeners.forEach(listener => listener());
 }
-const subscribe = (listener: () => void) => { listeners.add(listener); return () => { listeners.delete(listener); }; };
+export const subscribeSettings = (listener: () => void) => { listeners.add(listener); return () => { listeners.delete(listener); }; };
 
 export function setGameView(value: GameView): void {
   gameView = value;
   write(GAME_VIEW_KEY, value);
 }
-export function useGameView(): GameView { return useSyncExternalStore(subscribe, () => gameView); }
+export function useGameView(): GameView { return useSyncExternalStore(subscribeSettings, () => gameView); }
 
 export function normalizeVenueName(value: string): string {
   return value.replace(/\s+/g, ' ').trim().slice(0, MAX_VENUE_NAME) || DEFAULT_VENUE_NAME;
@@ -74,10 +74,10 @@ export function setSoundEnabled(value: boolean): void {
   write(SOUND_KEY, String(value));
 }
 export function isSoundEnabled(): boolean { return soundEnabled; }
-export function useSoundEnabled(): boolean { return useSyncExternalStore(subscribe, isSoundEnabled); }
+export function useSoundEnabled(): boolean { return useSyncExternalStore(subscribeSettings, isSoundEnabled); }
 export function subscribeSoundEnabled(listener: (enabled: boolean) => void): () => void {
   let previous = soundEnabled;
-  return subscribe(() => {
+  return subscribeSettings(() => {
     if (previous !== soundEnabled) { previous = soundEnabled; listener(soundEnabled); }
   });
 }
@@ -90,10 +90,10 @@ export function setCallerVoice(value: VoiceId): void {
   write(VOICE_KEY, callerVoice);
 }
 export function getCallerVoice(): VoiceId { return callerVoice; }
-export function useCallerVoice(): VoiceId { return useSyncExternalStore(subscribe, () => callerVoice); }
+export function useCallerVoice(): VoiceId { return useSyncExternalStore(subscribeSettings, () => callerVoice); }
 export function subscribeCallerVoice(listener: (voice: VoiceId) => void): () => void {
   let previous = callerVoice;
-  return subscribe(() => { if (previous !== callerVoice) { previous = callerVoice; listener(callerVoice); } });
+  return subscribeSettings(() => { if (previous !== callerVoice) { previous = callerVoice; listener(callerVoice); } });
 }
 
 export function parseDisabledEffects(value: string | null): EffectId[] {
@@ -118,22 +118,26 @@ export function setConfettiEnabled(value: boolean): void {
   write(CONFETTI_KEY, String(value));
 }
 export function isConfettiActive(): boolean { return effectsEnabled && confettiEnabled; }
-export function useConfettiEnabled(): boolean { return useSyncExternalStore(subscribe, () => confettiEnabled); }
+export function useConfettiEnabled(): boolean { return useSyncExternalStore(subscribeSettings, () => confettiEnabled); }
 
 export function setShowDev(value: boolean): void {
   showDev = value;
   write(DEV_KEY, String(value));
 }
-export function useShowDev(): boolean { return useSyncExternalStore(subscribe, () => showDev); }
-export function useEffectsEnabled(): boolean { return useSyncExternalStore(subscribe, () => effectsEnabled); }
-export function useDisabledEffects(): readonly EffectId[] { return useSyncExternalStore(subscribe, () => disabledEffects); }
+export function useShowDev(): boolean { return useSyncExternalStore(subscribeSettings, () => showDev); }
+export function useEffectsEnabled(): boolean { return useSyncExternalStore(subscribeSettings, () => effectsEnabled); }
+export function useDisabledEffects(): readonly EffectId[] { return useSyncExternalStore(subscribeSettings, () => disabledEffects); }
 
-export function useVenueName(): string { return useSyncExternalStore(subscribe, () => venueName); }
-export function useCallerEnabled(): boolean { return useSyncExternalStore(subscribe, () => callerEnabled); }
+export function useVenueName(): string { return useSyncExternalStore(subscribeSettings, () => venueName); }
+export function useCallerEnabled(): boolean { return useSyncExternalStore(subscribeSettings, () => callerEnabled); }
 
 export function setAutodartsEnabled(value: boolean): void { autodartsEnabled = value; write(AUTODARTS_KEY, String(value)); }
 export function isAutodartsEnabled(): boolean { return autodartsEnabled; }
-export function useAutodartsEnabled(): boolean { return useSyncExternalStore(subscribe, isAutodartsEnabled); }
+export function useAutodartsEnabled(): boolean { return useSyncExternalStore(subscribeSettings, isAutodartsEnabled); }
 
 export function setBoardVisible(value: boolean): void { boardVisible = value; write(BOARD_VISIBLE_KEY, String(value)); }
-export function useBoardVisible(): boolean { return useSyncExternalStore(subscribe, () => autodartsEnabled && boardVisible); }
+export function useBoardVisible(): boolean { return useSyncExternalStore(subscribeSettings, () => autodartsEnabled && boardVisible); }
+
+export function getCastDisplaySettings() {
+  return { venue: venueName, boardVisible: autodartsEnabled && boardVisible, autodartsEnabled };
+}
