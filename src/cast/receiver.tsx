@@ -48,7 +48,7 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
   const autodarts = boardStatus && <AutodartsStatus status={boardStatus} />;
   if (!game || !snapshot) return <div className="tv-idle">
     {autodarts && <div className="tv-idle-status">{autodarts}</div>}
-    <h1>{snapshot?.venue || 'ŠIPKY'}</h1>
+    <h1>{snapshot?.venue || 'ŠIPKY TV'}</h1>
     <p>{snapshot ? 'Čekám na zahájení hry' : 'Čekám na připojení'}</p>
   </div>;
 
