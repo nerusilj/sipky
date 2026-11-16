@@ -183,8 +183,10 @@ function Receiver() {
     });
   }, []);
   return <>
-    <div className="tv-stage game-screen" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
-      <Scoreboard snapshot={snapshot} />
+    <div className={snapshot?.game ? 'tv-display' : 'tv-display tv-display--idle'}>
+      <div className="tv-stage game-screen" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
+        <Scoreboard snapshot={snapshot} />
+      </div>
     </div>
     <Confetti />
     <EffectVisual active={snapshot?.effect} />
