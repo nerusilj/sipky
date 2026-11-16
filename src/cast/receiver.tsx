@@ -106,7 +106,7 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
       {x01 ? !game.bull && !game.result && <X01Visit state={game.visit} darts={game.darts} readOnly />
         : <CricketVisit darts={game.darts} marks={game.marks} points={game.points} readOnly />}
       <div className="tv-header-status">
-        <div className="tv-venue">{snapshot.venue}</div>
+        <div className="tv-venue">ŠIPKY TV</div>
         {autodarts}
       </div>
     </div>
