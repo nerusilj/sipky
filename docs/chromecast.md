@@ -7,7 +7,7 @@
 3. Vyberte svoji televizi. Chromecast načte televizní obrazovku Šipek a zobrazí aktuální hru nebo čekání na zahájení.
 4. Po úspěšném připojení se televize zapamatuje. Při příštím spuštění můžete použít **Připojit k TV – název televize** nebo vybrat jiné zařízení. Přenos ukončíte tlačítkem **Odpojit TV**.
 
-Televizor vykresluje skóre X01, Cricket nebo rozhoz na střed. Volba **Živý terč** se promítne také na televizor. Rozložení X01 používá dlaždice pro všech osm hráčů.
+Televizor vykresluje skóre X01, Cricket nebo rozhoz na střed. Vpravo nahoře je při zapnuté integraci živý stav Autodarts. Volba **Živý terč** se promítne také na televizor. Rozložení X01 používá dlaždice pro všech osm hráčů.
 
 Receiver používá plochu **1920 × 1080, 16:9** a přizpůsobí ji ploše, kterou poskytne Chromecast. Velikost okna notebooku do tohoto výpočtu nevstupuje. Chromecast 3 podporuje výstup až 1080p. Rozlišení vykreslování HTML určuje firmware. Pokud receiver dostane plochu 1280 × 720, vykreslí stejný layout v měřítku 2/3. [Specifikace Chromecastu](https://support.google.com/chromecast/answer/3046409) · [Podporovaná média Google Cast](https://developers.google.com/cast/docs/media)
 

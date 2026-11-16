@@ -1,8 +1,7 @@
 import { isTauri } from '@tauri-apps/api/core';
-import { boardStatusDisplay } from '../autodarts/boardStatus.ts';
+import { gameBoardStatusDisplay } from '../autodarts/boardStatus.ts';
 import { boardConnection, useConnection } from '../connection.ts';
 import { useAutodartsEnabled } from '../settings.ts';
-import { STATE_LABELS } from './ConnectionPanel.tsx';
 import { ChevronIcon, CloseIcon, EjectIcon, KeyboardIcon, UndoIcon } from './Icons.tsx';
 
 export default function GameControls({ onUndo, canUndo, onKeyboard, keyboardOpen = false,
@@ -14,12 +13,10 @@ export default function GameControls({ onUndo, canUndo, onKeyboard, keyboardOpen
   const connection = useConnection();
   const autodartsEnabled = useAutodartsEnabled();
   const online = connection.state === 'connected';
-  const boardStatus = online && connection.boardStatus ? boardStatusDisplay(connection.boardStatus)
-    : { label: online ? 'Stav detekce neznámý' : STATE_LABELS[connection.state], tone: online || connection.state === 'disconnected' ? 'neutral' : 'yellow' };
-  const statusLabel = connection.commandPending === 'reset' ? 'Resetuji terč…' : boardStatus.label;
+  const { label: statusLabel, tone } = gameBoardStatusDisplay(connection, connection.commandPending === 'reset');
 
   return <div className="game-controls" role="toolbar" aria-label="Ovládání hry">
-    {autodartsEnabled && <div className="game-board-status" data-tone={boardStatus.tone}>
+    {autodartsEnabled && <div className="game-board-status" data-tone={tone}>
       <span className="game-board-label" role="status" title={statusLabel}>
         <span className="game-board-name">Autodarts</span>
         <strong>{statusLabel}</strong>

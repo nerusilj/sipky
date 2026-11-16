@@ -1,9 +1,6 @@
+import { STATE_LABELS } from '../autodarts/boardStatus.ts';
 import type { ConnectionState } from '../autodarts/types.ts';
 import Toggle from './Toggle.tsx';
-
-export const STATE_LABELS: Record<ConnectionState, string> = {
-  disconnected: 'Nepřipojeno', connecting: 'Připojování…', connected: 'Připojeno', reconnecting: 'Obnovování spojení…',
-};
 
 export default function ConnectionPanel({ enabled, onEnabled, address, state, onAddress, onConnect, onDisconnect }: {
   enabled: boolean; onEnabled: (value: boolean) => void; address: string; state: ConnectionState;

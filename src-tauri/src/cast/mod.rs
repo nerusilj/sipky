@@ -319,10 +319,23 @@ async fn launch<T: AsyncRead + AsyncWrite + Unpin>(
                     transport: transport.to_owned(),
                 });
             }
-            Some("LAUNCH_ERROR" | "INVALID_REQUEST") => return Err(
-                "Televize nemohla spustit Šipky. Ověřte dostupnost receiveru pro toto zařízení."
-                    .into(),
-            ),
+            Some(kind @ ("LAUNCH_ERROR" | "INVALID_REQUEST")) => {
+                let reason = payload["reason"].as_str().filter(|value| {
+                    !value.is_empty()
+                        && value.len() <= 64
+                        && value
+                            .bytes()
+                            .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
+                });
+                if kind == "LAUNCH_ERROR" && reason == Some("NOT_FOUND") {
+                    return Err("Televize nemá aplikaci Šipky dostupnou (NOT_FOUND). U testovací verze ověřte registraci zařízení v Google Cast Console.".into());
+                }
+                let detail = match reason {
+                    Some(reason) => format!("{kind}: {reason}"),
+                    None => kind.to_owned(),
+                };
+                return Err(format!("Televize nemohla spustit Šipky ({detail})."));
+            }
             _ => (),
         }
     }
@@ -470,6 +483,42 @@ mod tests {
             assert_eq!(stopped.payload().unwrap()["sessionId"], "match-tv");
             sender.await.unwrap();
         }).await.unwrap();
+    }
+
+    #[tokio::test]
+    async fn explains_when_the_tv_cannot_find_the_registered_app() {
+        timeout(Duration::from_secs(3), async {
+            let (sender_io, receiver_io) = duplex(4096);
+            let sender = tokio::spawn(async move {
+                launch(
+                    &mut Channel::new(sender_io, "sender-test".into()),
+                    "1234ABCD",
+                )
+                .await
+            });
+            let mut receiver = Channel::new(receiver_io, PLATFORM.into());
+            receiver.receive().await.unwrap();
+            receiver.receive().await.unwrap();
+            receiver
+                .send(
+                    "sender-test",
+                    NS_RECEIVER,
+                    json!({
+                        "type": "LAUNCH_ERROR", "reason": "NOT_FOUND", "requestId": 1
+                    }),
+                )
+                .await
+                .unwrap();
+            let error = sender
+                .await
+                .unwrap()
+                .err()
+                .expect("Launch should be rejected");
+            assert!(error.contains("NOT_FOUND"));
+            assert!(error.contains("Google Cast Console"));
+        })
+        .await
+        .unwrap();
     }
 
     #[test]

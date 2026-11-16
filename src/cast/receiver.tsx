@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import PlayerName from '../components/PlayerName.tsx';
+import type { BoardStatusDisplay } from '../autodarts/boardStatus.ts';
 import Dartboard from '../components/Dartboard.tsx';
 import BullOffArena, { BullOffResults } from '../components/BullOffArena.tsx';
 import { X01PlayerCard, X01Visit } from '../components/X01Scoreboard.tsx';
@@ -34,11 +35,21 @@ function Winner({ player }: { player: GamePlayer }) {
   </section>;
 }
 
+function AutodartsStatus({ status }: { status: BoardStatusDisplay }) {
+  return <div className="tv-autodarts card" role="status">
+    <span>Autodarts</span>
+    <strong className="board-detection-status" data-tone={status.tone}>{status.label}</strong>
+  </div>;
+}
+
 function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
   const game = snapshot?.game;
+  const boardStatus = snapshot?.autodartsEnabled ? snapshot.boardStatus : undefined;
+  const autodarts = boardStatus && <AutodartsStatus status={boardStatus} />;
   if (!game || !snapshot) return <div className="tv-idle">
-    <h1>{snapshot?.venue || 'Šipky'}</h1>
-    <p>{snapshot ? 'Čekám na zahájení hry' : 'Čekám na připojení Šipek'}</p>
+    {autodarts && <div className="tv-idle-status">{autodarts}</div>}
+    <h1>{snapshot?.venue || 'ŠIPKY'}</h1>
+    <p>{snapshot ? 'Čekám na zahájení hry' : 'Čekám na připojení'}</p>
   </div>;
 
   const x01 = game.mode === 'x01';
@@ -60,7 +71,10 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
       </div></div>
       {x01 ? !game.bull && !game.result && <X01Visit state={game.visit} darts={game.darts} readOnly />
         : <CricketVisit darts={game.darts} marks={game.marks} points={game.points} readOnly />}
-      <div className="tv-venue">{snapshot.venue}</div>
+      <div className="tv-header-status">
+        <div className="tv-venue">{snapshot.venue}</div>
+        {autodarts}
+      </div>
     </div>
     {x01 && game.result ? <BullOffResults state={game.result} />
       : x01 && game.bull ? <BullOffArena {...game.bull} autodartsEnabled={snapshot.autodartsEnabled} />

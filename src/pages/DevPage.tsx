@@ -4,7 +4,7 @@ import Toggle from '../components/Toggle.tsx';
 import EventDetails from '../components/EventDetails.tsx';
 import CallerPanel from '../components/CallerPanel.tsx';
 import Filters from '../components/Filters.tsx';
-import { STATE_LABELS } from '../components/ConnectionPanel.tsx';
+import { STATE_LABELS } from '../autodarts/boardStatus.ts';
 import { boardConnection, useConnection, useRecorder } from '../connection.ts';
 import { usePlayers } from '../players/players.ts';
 import { filterMessages, messageStore, MAX_MESSAGES } from '../inspector/messageStore.ts';

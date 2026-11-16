@@ -4,6 +4,8 @@ import { x01PlayerScore } from '../game/x01Presentation.ts';
 import type { X01State } from '../game/x01.ts';
 import type { Dart } from '../caller/visitTracker.ts';
 import type { BoardPhase } from '../game/boardInput.ts';
+import { BOARD_STATUS_TONES } from '../autodarts/boardStatus.ts';
+import type { BoardStatusDisplay } from '../autodarts/boardStatus.ts';
 
 export const CAST_NAMESPACE = 'urn:x-cast:cz.sipky.scoreboard.v1';
 export const CAST_PROTOCOL = 1;
@@ -58,6 +60,7 @@ export type CastSnapshot = {
   venue: string;
   boardVisible: boolean;
   autodartsEnabled: boolean;
+  boardStatus?: BoardStatusDisplay;
   game?: ReturnType<typeof x01Display> | ReturnType<typeof cricketDisplay>;
 };
 
@@ -74,6 +77,9 @@ export function readCastMessage(data: unknown): CastMessage | undefined {
   const snapshot = message.snapshot;
   if (!snapshot || typeof snapshot.venue !== 'string' || typeof snapshot.boardVisible !== 'boolean'
     || typeof snapshot.autodartsEnabled !== 'boolean') return;
+  const boardStatus = snapshot.boardStatus;
+  if (boardStatus !== undefined && (!boardStatus || typeof boardStatus.label !== 'string'
+    || !BOARD_STATUS_TONES.includes(boardStatus.tone))) return;
   const game = snapshot.game;
   if (game && (!game.settings || !Array.isArray(game.darts) || !Number.isInteger(game.leg) || !Number.isInteger(game.round)
     || (game.mode === 'x01' ? !Array.isArray(game.players) || !game.visit

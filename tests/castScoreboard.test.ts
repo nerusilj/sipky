@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { gameBoardStatusDisplay } from '../src/autodarts/boardStatus.ts';
 import { CAST_PROTOCOL, cricketDisplay, readCastMessage, x01Display } from '../src/cast/protocol.ts';
 import { createGame, deriveState, makeDart } from '../src/game/x01.ts';
 import { createCricket, deriveCricket } from '../src/game/cricket.ts';
@@ -17,6 +18,17 @@ test('Cast X01 promítne živý hod a opravu i v dlouhé hře do stejně velkéh
   assert.equal(live.players.length, 8);
   assert.equal(live.visit.history.length, 0);
   assert.ok(Buffer.byteLength(JSON.stringify(live)) < 8 * 1024);
+});
+
+test('Cast nese stejný stav Autodarts jako herní lišta i při obnovování spojení', () => {
+  const message = { v: CAST_PROTOCOL, type: 'state', seq: 1, snapshot: { venue: 'Šipky', boardVisible: false, autodartsEnabled: true } };
+  const send = (boardStatus: unknown) => readCastMessage({ ...message, snapshot: { ...message.snapshot, boardStatus } });
+  assert.ok(readCastMessage(message));
+  assert.deepEqual(send(gameBoardStatusDisplay({ state: 'connected', boardStatus: 'takeoutinprogress' }))?.type, 'state');
+  assert.deepEqual(gameBoardStatusDisplay({ state: 'connected', boardStatus: 'takeoutinprogress' }), { label: 'Vyjímání šipek', tone: 'yellow' });
+  assert.deepEqual(gameBoardStatusDisplay({ state: 'reconnecting', boardStatus: 'throw' }), { label: 'Obnovování spojení…', tone: 'yellow' });
+  assert.equal(gameBoardStatusDisplay({ state: 'connected', boardStatus: 'throw' }, true).label, 'Resetuji terč…');
+  assert.equal(send({ label: 'Vlastní stav', tone: 'unknown' }), undefined);
 });
 
 test('Cast Cricket promítne tabulku i neukončené kolo a používá verzovanou zprávu', () => {

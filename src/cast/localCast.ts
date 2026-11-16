@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { gameBoardStatusDisplay } from '../autodarts/boardStatus.ts';
+import { boardConnection } from '../connection.ts';
 import { getCricketSnapshot, subscribeCricket } from '../game/cricketStore.ts';
 import { getGameSnapshot, subscribeGame } from '../game/gameStore.ts';
 import { getCastDisplaySettings, subscribeSettings } from '../settings.ts';
@@ -53,10 +55,12 @@ export function useLocalCast() {
 
 function snapshot(): CastSnapshot {
   const display = getCastDisplaySettings();
+  const connection = boardConnection.get();
   const x01 = getGameSnapshot();
   const cricket = getCricketSnapshot();
   return {
     ...display,
+    boardStatus: display.autodartsEnabled ? gameBoardStatusDisplay(connection, connection.commandPending === 'reset') : undefined,
     game: x01.state ? x01Display(x01.state, !!x01.bullOffResultOpen, x01.boardPhase, !!x01.completing)
       : cricket.state ? cricketDisplay(cricket.state, cricket.game?.current) : undefined,
   };
@@ -69,6 +73,17 @@ function schedule() {
   queueMicrotask(() => {
     scheduled = false;
     void publish();
+  });
+}
+
+function subscribeBoardStatus() {
+  let previous = boardConnection.get();
+  return boardConnection.subscribe(() => {
+    const current = boardConnection.get();
+    const changed = current.state !== previous.state || current.boardStatus !== previous.boardStatus
+      || (current.commandPending === 'reset') !== (previous.commandPending === 'reset');
+    previous = current;
+    if (changed) schedule();
   });
 }
 
@@ -139,7 +154,7 @@ export async function connectTelevision(television: Television, certificate?: st
     const current = Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
     const json = JSON.stringify(snapshot());
     attempt = current;
-    stopPublishing = [subscribeGame(schedule), subscribeCricket(schedule), subscribeSettings(schedule)];
+    stopPublishing = [subscribeGame(schedule), subscribeCricket(schedule), subscribeSettings(schedule), subscribeBoardStatus()];
     const connected = await invoke<ConnectedTelevision>('cast_connect', {
       id: television.id, appId: APP_ID, attempt: current, snapshot: json, certificate,
     });
