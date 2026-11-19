@@ -1,5 +1,17 @@
 # Sestavení pro Xubuntu x86_64
 
+## Vydání 0.1.15 — 19. 11. 2026
+
+[Šipky 0.1.15](https://github.com/nerusilj/sipky/releases/tag/v0.1.15) jsou zveřejněné jako nejnovější stabilní vydání. Sestavil je [GitHub Actions](https://github.com/nerusilj/sipky/actions/runs/44593827227) na Ubuntu 24.04 z commitu `ca8e37b`, bez WSL. Zdroj je na tagu `v0.1.15` a větvi `codex/release-0.1.15`; hlavní vzdálená větev dosud tento commit neobsahuje.
+
+Toto vydání aktualizuje **všechny tři balíčky**: aplikaci 0.1.15, zvuky 1.0.2 a hlasatel 1.0.1. Model a hlasy Eliška/Martin jsou stejné; změnil se pracovní skript a obsah zvukového balíčku. Aktualizátor převezme nové doplňky podle zveřejněného manifestu. Pro ruční aktualizaci stáhněte tři DEB a spusťte ze stejného adresáře:
+
+```bash
+sudo apt install ./sipky_0.1.15_amd64.deb ./sipky-zvuky_1.0.2_all.deb ./sipky-hlasatel_1.0.1_amd64.deb
+```
+
+Linuxové CI ověřilo 233 Node testů, 13 Rust testů, frontend, obsah DEB a syntézu obou hlasů z rozbaleného balíčku. Stažené soubory v `outputs/linux/0.1.15` mají ověřené SHA-256, velikosti, metadata DEB a závislosti; důkaz je `github-release-verification.json`, stav `build-status.txt` je COMPLETE. Shooter je ve vydání úmyslně neaktivní s označením PŘIPRAVUJEME. Fyzická instalace, zvuk a terč na cílovém Xubuntu jsou následnou kontrolou.
+
 ## Vydávání od 0.1.8
 
 Na GitHubu vyvolá tag `vX.Y.Z` sestavení a publikaci linuxových DEB. Číslo tagu musí odpovídat `package.json`, konfiguraci Tauri a balíčku `sipky` v souborech Cargo. Vydání obsahuje nový DEB aplikace, kontrolní součty a odkazy na odpovídající zvuky a offline hlasatel. Nové verze doplňkových balíčků jsou přiložené jen při jejich vydání.

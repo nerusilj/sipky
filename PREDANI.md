@@ -2,9 +2,13 @@
 
 Aktualizováno 19. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
 
-## Příprava Linux release 0.1.15
+## Linux release 0.1.15 — zveřejněno 19. 11. 2026
 
-- Uživatel 19. 11. 2026 výslovně požádal o nové linuxové sestavení a zveřejnění v GitHub Releases. Verze zvýšena na 0.1.15, zvuky na 1.0.2 a hlasatel na 1.0.1, oba doplňky z nového tagu v0.1.15. Důvod: obsah `public/sounds` a `scripts/speech_engine.py` se liší od dosavadních doplňků. Hlasy a model se nemění. Shooter musí zůstat `available: false` s označením PŘIPRAVUJEME. Sestavení bude přes GitHub Actions, WSL není potřeba. **Tato položka zatím nepotvrzuje hotové ani zveřejněné vydání.**
+- [Šipky 0.1.15](https://github.com/nerusilj/sipky/releases/tag/v0.1.15) jsou zveřejněné a API `releases/latest` je potvrzuje jako nejnovější stabilní vydání. [GitHub Actions 44593827227](https://github.com/nerusilj/sipky/actions/runs/44593827227) úspěšně sestavil a publikoval všechny tři DEB na Ubuntu 24.04. **WSL se nepoužilo.**
+- Balíčky: `sipky_0.1.15_amd64.deb` **9 853 390 B**, `sipky-zvuky_1.0.2_all.deb` **26 952 522 B**, `sipky-hlasatel_1.0.1_amd64.deb` **434 871 114 B**. Zveřejněny také `linux-components.json` a `SHA256SUMS.txt`. Vše staženo do `outputs/linux/0.1.15`, velikosti a SHA-256 všech pěti souborů odpovídají metadatům GitHubu; DEB a manifest také zveřejněnému seznamu SHA256SUMS. Nezávisle přečten control všech DEB: správné Package, Version, Architecture a závislosti aplikace na nových doplňcích. Důkaz `outputs/linux/0.1.15/github-release-verification.json`, stav `build-status.txt` **COMPLETE**.
+- Linuxové CI: **233 Node testů, 13 Rust testů**, TypeScript, produkční frontend, kontrola obsahu a velikosti aplikace, shoda zvuků se zdroji a skutečná syntéza obou hlasů z rozbaleného nového DEB hlasatele. Místně před odesláním prošlo také 233 Node testů a 12 Rust testů ve Windows. Úplný log `.test-tmp/linux-release-44593827227.log`.
+- Vydání aktualizuje aplikaci **0.1.15**, zvuky **1.0.2** a hlasatel **1.0.1**. Nové verze doplňků jsou potřeba kvůli změně `public/sounds` a `scripts/speech_engine.py`; Eliška, Martin i hlasový model zůstávají stejné. Stávající linuxový aktualizátor si nové doplňky stáhne podle manifestu. Ruční instalace vyžaduje všechny tři nové DEB společně. Shooter zůstává **PŘIPRAVUJEME**, `available: false`; tato blokace je v ověřeném vydávacím commitu.
+- Zdroj vydání je commit **`ca8e37b`**, vzdálená větev **`codex/release-0.1.15`** a tag **`v0.1.15`**. Přímý push do `main` odmítla automatická kontrola; bezpečnou alternativou bylo vydání z oddělené větve. **Vzdálená `main` zůstává na `d34cf08`**, změny vydání do ní nejsou začleněné. Pokračovat ve stávající pracovní větvi, nepřepisovat práci čistým checkoutem. TV receiver se tímto vydáním znovu nenasazoval. Instalace na cílovém Xubuntu, slyšitelný výstup a fyzický terč zbývají ověřit při hraní.
 
 ## Linux release 0.1.14
 
