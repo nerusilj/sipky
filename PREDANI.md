@@ -2,6 +2,10 @@
 
 Aktualizováno 19. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
 
+## Oprava zvuků — příprava vydání 0.1.16
+
+- Uživatel 19. 11. 2026 požádal opravit zbytečnou aktualizaci zvuků a ponechat původní vydání komponenty. Aplikace zvýšena na 0.1.16; manifest znovu používá **zvuky 1.0.1 z v0.1.10** (26 843 588 B) a původní **hlasatel 1.0.0 z v0.1.8**. Dvě nepoužívané nahrávky Radkoviny a související generování/povolení se odstraňují. Také změna `speech_engine.py` byla pouze podporou rychlosti těchto nepoužívaných nahrávek; po jejím odstranění lze zachovat původní hlasatel. Radkovina má dál animaci a standardní hlášení 29. Nové vydání musí obsahovat jen nový DEB aplikace a metadata. Již nainstalované zvuky 1.0.2 / hlasatel 1.0.1 mohou zůstat kompatibilní; nevynucovat downgrade ani jejich nové stažení. Shooter musí zůstat PŘIPRAVUJEME. **Oprava zatím není zveřejněná.**
+
 ## Linux release 0.1.15 — zveřejněno 19. 11. 2026
 
 - [Šipky 0.1.15](https://github.com/nerusilj/sipky/releases/tag/v0.1.15) jsou zveřejněné a API `releases/latest` je potvrzuje jako nejnovější stabilní vydání. [GitHub Actions 44593827227](https://github.com/nerusilj/sipky/actions/runs/44593827227) úspěšně sestavil a publikoval všechny tři DEB na Ubuntu 24.04. **WSL se nepoužilo.**

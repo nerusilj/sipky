@@ -23,11 +23,11 @@ class SpeechEngine:
         self.styles = {voice: backend.load_voice_style([str(assets / 'voice_styles' / f'{style}.json')])
                        for voice, style in VOICES.items()}
 
-    def synthesize_wav(self, text, voice, wav, seed=501, language='cs', speed=SPEED):
+    def synthesize_wav(self, text, voice, wav, seed=501, language='cs'):
         if voice not in VOICES:
             raise ValueError('Neznámý hlas.')
         np.random.seed(seed)
-        audio, duration = self.tts(text, language, self.styles[voice], total_step=STEPS, speed=speed)
+        audio, duration = self.tts(text, language, self.styles[voice], total_step=STEPS, speed=SPEED)
         samples = audio[0, :round(float(duration[0]) * self.tts.sample_rate)]
         if (not np.isfinite(samples).all() or len(samples) < self.tts.sample_rate * .1
                 or len(samples) > self.tts.sample_rate * 15 or np.abs(samples).max() < .001):

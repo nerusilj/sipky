@@ -47,8 +47,7 @@ def main():
         tmp = path.with_suffix('.wav.tmp')
         try:
             with wave.open(str(tmp), 'wb') as wav:
-                engine.synthesize_wav(item['text'], item['voice'], wav, seed=item['seed'],
-                                      language=item.get('language', 'cs'), speed=item.get('speed', SPEED))
+                engine.synthesize_wav(item['text'], item['voice'], wav, seed=item['seed'], language=item.get('language', 'cs'))
             if not complete(tmp):
                 raise ValueError('Nahrávka není kompletní.')
             tmp.replace(path)

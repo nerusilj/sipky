@@ -4,7 +4,6 @@ import type { VoiceId } from './voices.ts';
 // Pevné herní hlášky; nahrávky v public/sounds/cs/<hlas>/fun/<id>.wav (scripts/generate-voice.mjs).
 export const PHRASES = {
   ambrozovina: 'Ambrožovka!',
-  radkovina: 'Radkovina!',
   gameon: 'Hra začíná!',
 } as const;
 
