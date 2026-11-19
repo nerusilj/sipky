@@ -5,9 +5,9 @@ import ConnectionPanel from '../components/ConnectionPanel.tsx';
 import Toggle from '../components/Toggle.tsx';
 import { ChevronDownIcon, PlayIcon } from '../components/Icons.tsx';
 import { boardConnection, useConnection } from '../connection.ts';
-import { DEFAULT_VENUE_NAME, MAX_VENUE_NAME, setCallerEnabled, setCallerVoice, setConfettiEnabled, setEffectEnabled, setEffectsEnabled,
-  setShowDev, setVenueName, useCallerEnabled, useCallerVoice, useConfettiEnabled, useDisabledEffects, useEffectsEnabled, useShowDev,
-  useVenueName, setSoundEnabled, useSoundEnabled, useAutodartsEnabled } from '../settings.ts';
+import { setCallerEnabled, setCallerVoice, setConfettiEnabled, setEffectEnabled, setEffectsEnabled, setShowDev, setSoundEnabled,
+  useAutodartsEnabled, useCallerEnabled, useCallerVoice, useConfettiEnabled, useDisabledEffects, useEffectsEnabled,
+  useShowDev, useSoundEnabled } from '../settings.ts';
 import { caller } from '../caller/caller.ts';
 import { EFFECT_IDS, EFFECTS } from '../effects/effectRules.ts';
 import { VOICES } from '../caller/voices.ts';
@@ -19,7 +19,6 @@ const VOICE_IDS = Object.keys(VOICES) as VoiceId[];
 export default function SettingsPage({ onGame }: { onGame?: () => void }) {
   const connection = useConnection();
   const autodartsEnabled = useAutodartsEnabled();
-  const venueName = useVenueName();
   const callerEnabled = useCallerEnabled();
   const soundEnabled = useSoundEnabled();
   const callerVoice = useCallerVoice();
@@ -29,13 +28,11 @@ export default function SettingsPage({ onGame }: { onGame?: () => void }) {
   const confettiEnabled = useConfettiEnabled();
   const showDev = useShowDev();
   const [address, setAddress] = useState(connection.address);
-  const [venueDraft, setVenueDraft] = useState(venueName);
   const [notice, setNotice] = useState('');
   function connect() {
     try { boardConnection.connect(address); setNotice(''); }
     catch (error) { setNotice(error instanceof Error ? error.message : 'Neplatná adresa terče.'); }
   }
-  function saveVenue() { setVenueDraft(setVenueName(venueDraft)); }
   return <div className="page settings-page">
     <div className="page-heading"><div><h1>Nastavení</h1><p>Zvuk, efekty a připojení k terči.</p></div>
       {onGame && <button className="primary" onClick={onGame}>Zpět do hry</button>}</div>
@@ -74,19 +71,6 @@ export default function SettingsPage({ onGame }: { onGame?: () => void }) {
         </li>
       </ul>
     </section>
-    <details className="settings-disclosure card"><summary><span>Obecné</span><ChevronDownIcon size={20} /></summary><div className="settings-disclosure-body">
-    <section className="settings-card card venue-card" aria-label="Horní lišta">
-      <div className="venue-name">
-        <span className="eyebrow">PODNIK</span>
-        <h2 id="venue-title">Název v horní liště</h2>
-        <div className="settings-row">
-          <input value={venueDraft} maxLength={MAX_VENUE_NAME} placeholder={DEFAULT_VENUE_NAME} aria-labelledby="venue-title"
-            onChange={event => setVenueDraft(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') saveVenue(); }} />
-          <button className="primary" onClick={saveVenue} disabled={venueDraft.trim() === venueName}>Uložit</button>
-        </div>
-      </div>
-    </section>
-    </div></details>
     <details className="settings-disclosure card"><summary><span>Pokročilé a informace o aplikaci</span><ChevronDownIcon size={20} /></summary><div className="settings-disclosure-body">
     <section className="settings-card card" aria-labelledby="dev-title">
       <div className="caller-head">
@@ -95,7 +79,7 @@ export default function SettingsPage({ onGame }: { onGame?: () => void }) {
       </div>
       <p className="small muted">{autodartsEnabled ? 'Inspektor zpráv z terče, záznam na disk a kontrola hlášení a efektů.' : 'Kontrola hlášení a efektů.'}</p>
     </section>
-      <div className="app-information"><strong>Šipky · verze {packageInfo.version}</strong><p>Hlasy: {VOICE_IDS.map(id => VOICES[id].credit).join(' · ')}.</p></div>
+      <div className="app-information"><strong>Verze {packageInfo.version}</strong><p>Hlasy: {VOICE_IDS.map(id => VOICES[id].credit).join(' · ')}.</p></div>
     </div></details>
     {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Zavřít oznámení">×</button></div>}
   </div>;

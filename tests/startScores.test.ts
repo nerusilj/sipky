@@ -34,6 +34,14 @@ test('počáteční skóre se pamatuje, starší sestava má výchozích 501', (
     assert.equal(loadLastSetup().startScore, startScore);
   }
   assert.equal(parseLastSetup('{"playerIds":["a"]}').startScore, 501);
+  assert.equal(loadLastSetup().checkoutSetupEnabled, true);
+  saveLastSetup({ ...DEFAULT_SETUP, checkoutSetupEnabled: false });
+  assert.equal(loadLastSetup().checkoutSetupEnabled, false);
+  values.delete('sipky.lastGameSetup');
+  values.set('sipky.checkoutSetupEnabled', 'false');
+  assert.equal(loadLastSetup().checkoutSetupEnabled, false);
+  saveLastSetup(DEFAULT_SETUP);
+  assert.equal(loadLastSetup().checkoutSetupEnabled, true);
   for (const value of [0, 100, 180, 500, 801, 901, 1001, 1101, -301, '701', null, 301.5]) {
     assert.equal(isStartScore(value), false);
     assert.equal(parseLastSetup(JSON.stringify({ startScore: value })).startScore, 501);

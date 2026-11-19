@@ -46,6 +46,7 @@ function GameSetup() {
   const [selected, setSelected] = useState<string[]>(last.playerIds);
   const [legsToWin, setLegsToWin] = useState(last.legsToWin);
   const [doubleOut, setDoubleOut] = useState(last.doubleOut);
+  const [checkoutSetupEnabled, setCheckoutSetupEnabled] = useState(last.checkoutSetupEnabled);
   const [randomOrder, setRandomOrder] = useState(last.randomOrder);
   const [legOrder, setLegOrder] = useState<NextLegOrder>(last.nextLegOrder);
   const [maxRounds, setMaxRounds] = useState(last.maxRounds);
@@ -69,10 +70,10 @@ function GameSetup() {
   const maxFinishers = Math.max(1, chosen.length - 1);
   const finishers = Math.min(minFinishers, maxFinishers);
   function start() {
-    saveLastSetup({ startScore: score, playerIds: chosen.map(player => player.id), randomOrder, legsToWin, doubleOut, nextLegOrder: legOrder, maxRounds, minFinishers });
+    saveLastSetup({ startScore: score, playerIds: chosen.map(player => player.id), randomOrder, legsToWin, doubleOut, nextLegOrder: legOrder, maxRounds, minFinishers, checkoutSetupEnabled });
     const order = randomOrder ? shuffle(chosen) : chosen;
-    if (order.length) startGame({ startScore: score, doubleOut, legsToWin, nextLegOrder: legOrder, maxRounds, minFinishers: finishers } satisfies X01Settings,
-      order.map(({ id, name, color, avatarId, bot }) => ({ id, name, color, avatarId, bot })));
+    if (order.length) startGame({ startScore: score, doubleOut, legsToWin, nextLegOrder: legOrder, maxRounds, minFinishers: finishers, checkoutSetupEnabled } satisfies X01Settings,
+      order.map(({ id, name, color, avatarId, avatarColor, bot, preferredDouble }) => ({ id, name, color, avatarId, avatarColor, bot, preferredDouble })));
   }
   return <div className="page">
     <div className="page-heading"><div><h1>Nová hra X01</h1><p>Vyberte počáteční skóre, hráče a pravidla.</p></div></div>
@@ -129,7 +130,10 @@ function GameSetup() {
           <SegmentedControl label="Další leg začíná" value={legOrder} onChange={setLegOrder}
             options={[{ value: 'loserFirst', label: 'Od posledního' }, { value: 'rotate', label: 'Střídání' }]} />
           <span className="small">{legOrder === 'loserFirst' ? 'První hází ten, komu zbylo nejvíc bodů; vítěz legu hází poslední.' : 'Pořadí zůstává, začíná vždy další hráč.'}</span></div>
-        <Toggle checked={doubleOut} onChange={setDoubleOut}>Double Out (zavřít doublem nebo bullem)</Toggle>
+        <div className="rule-group">
+          <Toggle checked={doubleOut} onChange={setDoubleOut}>Double Out (zavřít doublem nebo bullem)</Toggle>
+          <Toggle checked={doubleOut && checkoutSetupEnabled} disabled={!doubleOut} onChange={setCheckoutSetupEnabled}>Příprava na zavření</Toggle>
+        </div>
       </div>
     </details>
     <div className="setup-start">
@@ -143,7 +147,7 @@ function GameSetup() {
 function SelectedGamePlayer({ player, order, onRemove }: { player: GamePlayer; order?: number; onRemove: () => void }) {
   return <div className="setup-member">
     {order !== undefined && <span className="setup-member-order" aria-label={`Pořadí ve hře: ${order}`}>{order}.</span>}
-    <PlayerName name={player.name} color={player.color} avatarSeed={player.id} avatarId={player.avatarId} />
+    <PlayerName {...player} avatarSeed={player.id} />
     <button className="icon-button setup-remove-player" title={`Odebrat hráče ${player.name} ze hry`}
       aria-label={`Odebrat hráče ${player.name} ze hry`} onClick={onRemove}><CloseIcon size={18} /></button>
   </div>;
@@ -347,7 +351,7 @@ function StatisticsDialog({ state, onClose }: { state: X01State; onClose: () => 
     <div className="statistics-heading"><div><span className="eyebrow">ZÁPAS {state.settings.startScore}</span><h2 id="statistics-title">Statistiky hry</h2></div>
       <button className="icon-button" aria-label="Zavřít statistiky" title="Zavřít statistiky" onClick={close}><CloseIcon size={26} /></button></div>
     <div className="statistics-summary card"><table><thead><tr><th>Hráč</th><th>Legy</th><th>Body</th><th>Šipky</th><th>Průměr na 3</th></tr></thead>
-      <tbody>{state.players.map((player, i) => <tr key={player.id}><td><PlayerName name={player.name} color={player.color} avatarSeed={player.id} avatarId={player.avatarId} /></td><td>{playerDisplayedLegsWon(state, i)}</td>
+      <tbody>{state.players.map((player, i) => <tr key={player.id}><td><PlayerName {...player} avatarSeed={player.id} /></td><td>{playerDisplayedLegsWon(state, i)}</td>
         <td>{playerTotals(state, i).points}</td><td>{playerTotals(state, i).darts}</td><td>{threeDartAverage(state, i).toFixed(1).replace('.', ',')}</td></tr>)}</tbody></table></div>
     {state.history.length ? <History state={state} /> : <p className="muted">Zatím nebylo dokončeno žádné kolo.</p>}
   </dialog>;
@@ -369,7 +373,7 @@ function History({ state }: { state: X01State }) {
     <div className="history-heading"><h2>Průběh hry</h2><label>Leg <select aria-label="Zobrazený leg" value={leg} onChange={event => setLeg(Number(event.target.value))}>
       {legs.map(n => <option key={n} value={n}>{n}</option>)}</select></label></div>
     {!rounds.length && <p className="muted small">V tomto legu zatím není dokončené kolo.</p>}
-    <table><thead><tr><th>Kolo</th>{state.players.map(player => <th key={player.id}><PlayerName name={player.name} color={player.color} avatarSeed={player.id} avatarId={player.avatarId} /></th>)}</tr></thead>
+    <table><thead><tr><th>Kolo</th>{state.players.map(player => <th key={player.id}><PlayerName {...player} avatarSeed={player.id} /></th>)}</tr></thead>
       <tbody>{rounds.map(round => <tr key={round.number}><td>{round.number}</td>
         {state.players.map((_, p) => { const visit = round.visits.find(v => v.player === p); return <td key={p}>{visit
           ? <><strong className={visit.bust ? 'bust' : visit.checkout ? 'checkout-hit' : ''}>{visit.bust ? 'BUST' : visit.scored}</strong>
@@ -380,7 +384,7 @@ function History({ state }: { state: X01State }) {
 function WinnerPanel({ state, onNewGame }: { state: X01State; onNewGame: () => void }) {
   const winner = state.players[state.winner!];
   return <section className="winner-panel card" role="status" aria-label="Výsledek zápasu">
-    <div className="winner-heading"><span className="winner-trophy"><TrophyIcon size={30} /></span><div><span className="eyebrow">VÍTĚZ ZÁPASU</span><h2><PlayerName name={winner.name} color={winner.color} avatarSeed={winner.id} avatarId={winner.avatarId} avatarSize={40} /></h2></div></div>
+    <div className="winner-heading"><span className="winner-trophy"><TrophyIcon size={30} /></span><div><span className="eyebrow">VÍTĚZ ZÁPASU</span><h2><PlayerName {...winner} avatarSeed={winner.id} avatarSize={40} /></h2></div></div>
     <div className="winner-results">{[state.winner!, ...state.order.filter(index => index !== state.winner)].map(i => <div className="winner-result" key={state.players[i].id}>
       <PlayerName name={state.players[i].name} /><strong>{state.legsWon[i]}<small>{legCount(state.legsWon[i]).replace(/^\d+ /, '')}</small></strong><span>Ø {threeDartAverage(state, i).toFixed(1).replace('.', ',')}</span>
     </div>)}</div>

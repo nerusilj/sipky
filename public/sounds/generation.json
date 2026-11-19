@@ -2200,6 +2200,20 @@
       "voice": "martin",
       "seed": 501,
       "output": "public/sounds/cs/martin/fun/gameon.wav"
+    },
+    "public/sounds/cs/eliska/fun/radkovina.wav": {
+      "text": "Radkovina!",
+      "voice": "eliska",
+      "seed": 731,
+      "speed": 0.88,
+      "output": "public/sounds/cs/eliska/fun/radkovina.wav"
+    },
+    "public/sounds/cs/martin/fun/radkovina.wav": {
+      "text": "Radkovina!",
+      "voice": "martin",
+      "seed": 731,
+      "speed": 0.88,
+      "output": "public/sounds/cs/martin/fun/radkovina.wav"
     }
   }
 }

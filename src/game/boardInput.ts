@@ -4,7 +4,7 @@ import { commitVisit, deriveState, setVisit } from './x01.ts';
 import type { Dart, X01Game } from './x01.ts';
 
 export type BoardPhase = 'ready' | 'throwing' | 'takeout' | 'blocked' | 'manual';
-interface BoardFrame { darts: Dart[]; takingOut: boolean }
+export interface BoardFrame { darts: Dart[]; takingOut: boolean }
 
 function samePhysicalDart(a: Dart, b: Dart): boolean {
   if (a.coords && b.coords) return a.coords.x === b.coords.x && a.coords.y === b.coords.y;
@@ -13,7 +13,7 @@ function samePhysicalDart(a: Dart, b: Dart): boolean {
 
 // Board Manager posílá celý stav. Nula bez pole throws znamená prázdný terč.
 // Kalibrace / zastavené zařízení nejsou dokončením kola.
-function readFrame(payload: unknown): BoardFrame | undefined {
+export function readBoardFrame(payload: unknown): BoardFrame | undefined {
   const envelope = payload as { type?: unknown; data?: unknown } | null;
   if (envelope?.type !== 'state' || !envelope.data || typeof envelope.data !== 'object') return;
   const data = envelope.data as Record<string, unknown>;
@@ -110,7 +110,7 @@ export class BoardGameInput<Game extends { current: Dart[] } = X01Game> {
         return { game, committed: false };
       }
     }
-    const frame = readFrame(payload);
+    const frame = readBoardFrame(payload);
     if (!frame) return { game, committed: false };
     this.notice = undefined;
     if (this.waitForEmpty) {

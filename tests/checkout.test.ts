@@ -1,9 +1,57 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { suggestCheckout } from '../src/game/checkout.ts';
-import { dartLabel, makeDart } from '../src/game/x01.ts';
+import { suggestCheckout, suggestCheckoutSetup } from '../src/game/checkout.ts';
+import { createGame, dartLabel, deriveState, makeDart } from '../src/game/x01.ts';
+import { x01Display } from '../src/cast/protocol.ts';
 
 const names = (score: number, darts = 3) => suggestCheckout(score, darts)?.map(dartLabel).join(' ');
+
+test('příprava se zobrazí jen když lze zbývajícími šipkami nechat zavíratelný zbytek', () => {
+  const setup = suggestCheckoutSetup(189, 1);
+  assert.deepEqual(setup, { route: [makeDart(19, 1)], leave: 170 });
+  assert.deepEqual(suggestCheckoutSetup(350, 3), { route: Array(3).fill(makeDart(20, 3)), leave: 170 });
+  assert.equal(suggestCheckoutSetup(351, 3), undefined);
+  assert.equal(suggestCheckoutSetup(231, 1), undefined);
+  assert.equal(suggestCheckoutSetup(189, 0), undefined);
+  assert.equal(suggestCheckoutSetup(170, 3), undefined);
+  assert.ok(names(suggestCheckoutSetup(169, 3)!.leave));
+  assert.equal(suggestCheckoutSetup(92, 1, 16)?.leave, 32);
+});
+
+test('vypnutí přípravy ovlivní podklady pro TV a běžný dohoz má přednost', () => {
+  const game = createGame({ startScore: 301, doubleOut: true, legsToWin: 1 }, [
+    { id: 'a', name: 'Jana', color: '#ff7a1f' },
+  ]);
+  const state = deriveState({ ...game, current: [makeDart(20, 3), makeDart(18, 3)] });
+  assert.equal(x01Display(state, false).players[0].checkoutSetup?.leave, 167);
+  const withoutSetup = { ...game, settings: { ...game.settings, checkoutSetupEnabled: false } };
+  assert.equal(x01Display(deriveState({ ...withoutSetup, current: state.visit }), false).players[0].checkoutSetup, undefined);
+  const finish = deriveState({ ...withoutSetup, visits: [[makeDart(20, 3), makeDart(20, 3), makeDart(20, 3)]], current: [] });
+  assert.ok(x01Display(finish, false).players[0].checkout);
+  assert.equal(x01Display(finish, false).players[0].checkoutSetup, undefined);
+});
+
+test('oblíbený double změní dopočet bez prodlužování běžné cesty', () => {
+  const preferred = (score: number, darts: number, double: number) => suggestCheckout(score, darts, double)?.map(dartLabel).join(' ');
+  assert.equal(preferred(80, 3, 16), 'T16 D16');
+  assert.equal(preferred(80, 2, 20), 'D20 D20');
+  assert.equal(preferred(110, 3, 25), 'T20 Bull');
+  assert.equal(preferred(80, 3, 18), names(80));
+  assert.equal(preferred(40, 3, 16), 'D20');
+  assert.equal(preferred(80, 1, 16), undefined);
+});
+
+test('živý dopočet v X01 a na TV používá preferenci právě aktivního hráče', () => {
+  const game = createGame({ startScore: 101, doubleOut: true, legsToWin: 1 }, [
+    { id: 'a', name: 'Jana', color: '#ff7a1f', preferredDouble: 16 },
+    { id: 'b', name: 'Petr', color: '#3fcfbf' },
+  ]);
+  const current = [makeDart(7, 3)];
+  const jana = x01Display(deriveState({ ...game, current }), false);
+  const petr = x01Display(deriveState({ ...game, visits: [[makeDart(0, 0)]], current }), false);
+  assert.equal(jana.players.find(player => player.active)?.checkout?.map(dartLabel).join(' '), 'T16 D16');
+  assert.equal(petr.players.find(player => player.active)?.checkout?.map(dartLabel).join(' '), 'T20 D10');
+});
 
 test('běžné přípravy mají přednost před neobvyklým triplem na oblíbený double', () => {
   for (const darts of [2, 3]) {

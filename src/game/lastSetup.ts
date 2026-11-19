@@ -8,20 +8,24 @@ export interface LastSetup {
   startScore: StartScore;
   playerIds: string[]; randomOrder: boolean; legsToWin: number; doubleOut: boolean; nextLegOrder: NextLegOrder;
   maxRounds: number; minFinishers: number;
+  checkoutSetupEnabled: boolean;
 }
 
 const KEY = 'sipky.lastGameSetup';
 export const ROUND_LIMITS = [NO_ROUND_LIMIT, 10, 15, 20, 30];
 export const DEFAULT_SETUP: LastSetup = {
   startScore: 501,
+  checkoutSetupEnabled: true,
   playerIds: [], randomOrder: true, legsToWin: 1, doubleOut: true, nextLegOrder: DEFAULT_NEXT_LEG_ORDER, maxRounds: NO_ROUND_LIMIT, minFinishers: 1,
 };
 
-export function parseLastSetup(json: string | null): LastSetup {
+export function parseLastSetup(json: string | null, checkoutSetupEnabled = DEFAULT_SETUP.checkoutSetupEnabled): LastSetup {
+  const defaults = { ...DEFAULT_SETUP, checkoutSetupEnabled };
   try {
     const value = JSON.parse(json ?? 'null') as Partial<LastSetup> | null;
-    if (!value || typeof value !== 'object') return DEFAULT_SETUP;
+    if (!value || typeof value !== 'object') return defaults;
     return {
+      checkoutSetupEnabled: typeof value.checkoutSetupEnabled === 'boolean' ? value.checkoutSetupEnabled : checkoutSetupEnabled,
       startScore: isStartScore(value.startScore) ? value.startScore : DEFAULT_SETUP.startScore,
       playerIds: Array.isArray(value.playerIds) ? [...new Set(value.playerIds.filter((id): id is string => typeof id === 'string'))] : [],
       randomOrder: typeof value.randomOrder === 'boolean' ? value.randomOrder : DEFAULT_SETUP.randomOrder,
@@ -32,11 +36,13 @@ export function parseLastSetup(json: string | null): LastSetup {
       maxRounds: ROUND_LIMITS.includes(value.maxRounds as number) ? value.maxRounds! : DEFAULT_SETUP.maxRounds,
       minFinishers: Number.isInteger(value.minFinishers) && value.minFinishers! >= 1 && value.minFinishers! <= 7 ? value.minFinishers! : DEFAULT_SETUP.minFinishers,
     };
-  } catch { return DEFAULT_SETUP; }
+  } catch { return defaults; }
 }
 
 export function loadLastSetup(): LastSetup {
-  try { return parseLastSetup(localStorage.getItem(KEY)); } catch { return DEFAULT_SETUP; }
+  try {
+    return parseLastSetup(localStorage.getItem(KEY), localStorage.getItem('sipky.checkoutSetupEnabled') !== 'false');
+  } catch { return DEFAULT_SETUP; }
 }
 
 export function saveLastSetup(setup: LastSetup): void {

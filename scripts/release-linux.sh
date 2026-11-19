@@ -15,7 +15,13 @@ work=$(mktemp -d)
 trap 'rm -rf -- "$work"' EXIT
 deps=(pkexec ca-certificates libssl3t64)
 packages=()
-printf '## Instalace a aktualizace na Xubuntu x86_64\n\n' > "$out/INSTALACE.md"
+if [[ -f "docs/releases/$version.md" ]]; then
+  cat "docs/releases/$version.md" > "$out/INSTALACE.md"
+  printf '\n' >> "$out/INSTALACE.md"
+else
+  : > "$out/INSTALACE.md"
+fi
+printf '## Instalace a aktualizace na Xubuntu x86_64\n\n' >> "$out/INSTALACE.md"
 printf 'Při prvním přechodu z 0.1.7 stáhni všechny tři uvedené balíčky. Při dalších aktualizacích stačí nový balíček aplikace a případné chybějící nebo novější závislosti.\n\n' >> "$out/INSTALACE.md"
 
 for component in zvuky hlasatel; do

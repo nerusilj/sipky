@@ -17,9 +17,10 @@ const portraits: Partial<Record<AvatarId, { hair?: number; back?: boolean; beard
 };
 const palettes = [['#354953','#d7c5b3','#28303a','#7f99a3'],['#4a4540','#d4bda6','#3a302c','#a08e7e'],['#454858','#d5c8c0','#30313b','#9394aa'],['#3b4e47','#c5b8a3','#2a3632','#7e9989']];
 
-export default function AvatarArt({ avatarId, name = '', robotColor }: { avatarId: AvatarId; name?: string; robotColor?: string }) {
+export default function AvatarArt({ avatarId, name = '', color, robotColor }: { avatarId: AvatarId; name?: string; color?: string; robotColor?: string }) {
   if (avatarId === 'initials') return <svg viewBox="0 0 64 64" aria-hidden="true">
     <path d="M0 0h64v64H0Z" fill="#303b46" />
+    {color && <path d="M0 0h64v64H0Z" fill={color} opacity=".36" />}
     <text x="32" y="32" textAnchor="middle" dominantBaseline="central" fill="#eef2f6" fontFamily="Arial, sans-serif" fontSize="24" fontWeight="700">{name.trim() ? initials(name) : 'AB'}</text>
   </svg>;
   const p = portraits[avatarId];
@@ -70,7 +71,7 @@ export default function AvatarArt({ avatarId, name = '', robotColor }: { avatarI
     case 'fox': bg='#51463e'; art=<><path d="M9 64c1-16 11-20 23-20s22 4 23 20" fill="#b58161"/><path d="m14 29 1-23 16 16h2L49 6l1 23c4 20-10 28-18 28S10 49 14 29Z" fill="#c9956e"/><path d="m19 22 1-9 8 10m17-1-1-9-8 10" fill="#755446"/><path d="M15 31c9 1 14 8 17 15 3-7 8-14 17-15 0 19-13 24-17 24s-17-5-17-24Z" fill="#e3d5bb"/><path d="M22 31h.1M42 31h.1" stroke="#3e342e" strokeWidth="3.7" strokeLinecap="round"/><path d="m27 45 5 5 5-5Z" fill="#4a3a33"/></>; break;
     case 'owl': bg='#454b43'; art=<><path d="m13 17 1-12 13 8h10l13-8 1 12c8 12 6 34-4 44H17C7 51 5 29 13 17Z" fill="#a29c7d"/><path d="M17 41c2 15 28 15 30 0v20H17V41Z" fill="#c9c7a4"/><circle cx="23" cy="28" r="13" fill="#dedbc0"/><circle cx="41" cy="28" r="13" fill="#dedbc0"/><circle cx="23" cy="28" r="7" fill="#6b7660"/><circle cx="41" cy="28" r="7" fill="#6b7660"/><circle cx="24" cy="28" r="3" fill="#333f36"/><circle cx="40" cy="28" r="3" fill="#333f36"/><path d="m27 38 5 8 5-8Z" fill="#9c7c51"/><path d="m23 50 4 4 4-4m3 0 4 4 4-4" stroke="#92977a" strokeWidth="1.8" fill="none"/></>; break;
     case 'viking': bg='#454a53'; art=<><path d="M8 64c1-14 11-20 24-20s23 6 24 20" fill="#7a858d"/><path d="m13 24-8-6V5c4 9 9 9 16 11m30 8 8-6V5c-4 9-9 9-16 11" fill="#cfccb5"/><rect x="18" y="20" width="28" height="31" rx="12" fill="#d7bca0"/><path d="M17 40q15 5 30 0c0 12-8 22-15 24-7-2-15-12-15-24Z" fill="#a98967"/><path d="M29 40q3-4 6 0l5 5-8-2-8 2 5-5Z" fill="#725a45"/><path d="M25 32h.1M39 32h.1" stroke="#3b3a3b" strokeWidth="2.8" strokeLinecap="round"/><path d="M14 27v-5c0-23 36-23 36 0v5H14Z" fill="#9aa6ad"/><path d="M14 25h36M32 8v17" stroke="#d2d8d4" strokeWidth="4"/><circle cx="21" cy="25" r="1.3" fill="#667783"/><circle cx="43" cy="25" r="1.3" fill="#667783"/></>; break;
-    default: art=<><circle cx="32" cy="24" r="10" fill="#a4aebb"/><path d="M13 58v-6c0-23 38-23 38 0v6H13Z" fill="#a4aebb"/></>;
+    default: art=<><circle cx="32" cy="24" r="10" fill="#a4aebb"/><path d="M13 58v-6c0-23 38-23 38 0v6H13Z" fill={color ?? '#a4aebb'}/></>;
   }
   return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M0 0h64v64H0Z" fill={bg}/>{art}</svg>;
 }

@@ -4,6 +4,18 @@ import { addPlayer, initials, MAX_NAME_LENGTH, nameError, nextColor, parsePlayer
 
 const now = new Date('2026-10-04T12:00:00Z');
 
+test('oblíbený double se uloží, přežije přejmenování a lze ho změnit nebo odebrat', () => {
+  const created = addPlayer([], 'Jana', 'a', now, 'neutral', 16);
+  const loaded = parsePlayers(JSON.stringify(created));
+  assert.equal(loaded[0].preferredDouble, 16);
+  const renamed = updatePlayer(loaded, 'a', 'Jana N.');
+  assert.equal(renamed[0].preferredDouble, 16);
+  const changed = updatePlayer(renamed, 'a', 'Jana N.', undefined, 25);
+  assert.equal(parsePlayers(JSON.stringify(changed))[0].preferredDouble, 25);
+  assert.equal(updatePlayer(changed, 'a', 'Jana N.', undefined, null)[0].preferredDouble, undefined);
+  assert.equal(parsePlayers(JSON.stringify([{ ...created[0], preferredDouble: 21 }]))[0].preferredDouble, undefined);
+});
+
 test('přidání hráče: jméno se očistí, dostane volnou barvu, duplicitu odmítne bez ohledu na velikost a diakritiku', () => {
   let list = addPlayer([], '  Jarda   Novák ', 'a', now);
   assert.deepEqual(list[0], { id: 'a', name: 'Jarda Novák', color: PLAYER_COLORS[0], createdAt: '2026-10-04T12:00:00.000Z' });
@@ -30,6 +42,21 @@ test('barvy se střídají, iniciály z jména', () => {
   assert.equal(initials('Jarda Novák'), 'JN');
   assert.equal(initials('Miša'), 'MI');
   assert.equal(initials('žofie'), 'ŽO');
+});
+
+test('avatar je výchozím stavem bez barvy a vlastní odstín lze uložit i odebrat', () => {
+  const defaults = addPlayer([], 'Jana', 'a', now, 'neutral');
+  assert.equal(parsePlayers(JSON.stringify(defaults))[0].avatarColor, undefined);
+  const created = addPlayer([], 'Jana', 'a', now, 'neutral', 16, PLAYER_COLORS[3]);
+  assert.equal(created[0].color, defaults[0].color);
+  assert.equal(parsePlayers(JSON.stringify(created))[0].avatarColor, PLAYER_COLORS[3]);
+  const changed = updatePlayer(created, 'a', 'Jana', 'initials', undefined, PLAYER_COLORS[4]);
+  assert.equal(changed[0].preferredDouble, 16);
+  assert.equal(parsePlayers(JSON.stringify(changed))[0].avatarColor, PLAYER_COLORS[4]);
+  assert.equal(updatePlayer(changed, 'a', 'Jana', 'robot')[0].avatarColor, PLAYER_COLORS[4]);
+  const cleared = updatePlayer(changed, 'a', 'Jana', undefined, undefined, null);
+  assert.equal(parsePlayers(JSON.stringify(cleared))[0].avatarColor, undefined);
+  assert.throws(() => updatePlayer(changed, 'a', 'Jana', undefined, undefined, 'neplatná'), /Neplatná barva/);
 });
 
 test('načtení souboru přeskočí neplatné položky a duplicitní id', () => {

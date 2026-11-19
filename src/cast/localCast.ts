@@ -5,8 +5,9 @@ import { gameBoardStatusDisplay } from '../autodarts/boardStatus.ts';
 import { boardConnection } from '../connection.ts';
 import { getCricketSnapshot, subscribeCricket } from '../game/cricketStore.ts';
 import { getGameSnapshot, subscribeGame } from '../game/gameStore.ts';
+import { getShooterSnapshot, subscribeShooter } from '../game/shooterStore.ts';
 import { getCastDisplaySettings, subscribeSettings } from '../settings.ts';
-import { cricketDisplay, x01Display } from './protocol.ts';
+import { cricketDisplay, shooterDisplay, x01Display } from './protocol.ts';
 import type { CastSnapshot } from './protocol.ts';
 import { onCelebrate } from '../effects/confetti.ts';
 import { getActiveEffect, subscribeEffect } from '../effects/effects.ts';
@@ -63,6 +64,7 @@ function snapshot(): CastSnapshot {
   const connection = boardConnection.get();
   const x01 = getGameSnapshot();
   const cricket = getCricketSnapshot();
+  const shooter = getShooterSnapshot();
   const activeEffect = getActiveEffect();
   return {
     ...display,
@@ -72,7 +74,8 @@ function snapshot(): CastSnapshot {
     celebration,
     boardStatus: display.autodartsEnabled ? gameBoardStatusDisplay(connection, connection.commandPending === 'reset') : undefined,
     game: x01.state ? x01Display(x01.state, !!x01.bullOffResultOpen, x01.boardPhase, !!x01.completing)
-      : cricket.state ? cricketDisplay(cricket.state, cricket.game?.current) : undefined,
+      : cricket.state ? cricketDisplay(cricket.state, cricket.game?.current)
+      : shooter.state ? shooterDisplay(shooter.state, shooter.clock) : undefined,
   };
 }
 
@@ -150,10 +153,6 @@ export async function findTelevisions(reuse = false) {
   }
 }
 
-export function hideTelevisions() {
-  update({ devices: undefined, error: undefined });
-}
-
 export async function connectTelevision(television: Television, certificate?: string) {
   if (ui.busy || ui.connected) return;
   if (!/^[0-9A-F]{8}$/.test(APP_ID)) {
@@ -168,7 +167,7 @@ export async function connectTelevision(television: Television, certificate?: st
     const json = JSON.stringify(snapshot());
     attempt = current;
     stopPublishing = [
-      subscribeGame(schedule), subscribeCricket(schedule), subscribeSettings(schedule), subscribeBoardStatus(),
+      subscribeGame(schedule), subscribeCricket(schedule), subscribeShooter(schedule), subscribeSettings(schedule), subscribeBoardStatus(),
       subscribeEffect(() => {
         // I snímek po skončení animace musí TV předat poslední spuštěný efekt.
         lastEffect = getActiveEffect() ?? lastEffect;

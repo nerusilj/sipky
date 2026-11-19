@@ -2,7 +2,7 @@ import { dartLabel } from '../game/x01.ts';
 import type { Dart } from '../game/x01.ts';
 import { BOARD_NUMBERS, impactPoint, polar, ringSector, segmentHighlight } from '../game/dartboardGeometry.ts';
 
-export default function Dartboard({ darts }: { darts: readonly Dart[] }) {
+export default function Dartboard({ darts, target }: { darts: readonly Dart[]; target?: number }) {
   const shown = darts.slice(0, 3);
   return <div className="live-dartboard">
     <svg className="live-dartboard-svg" viewBox="-212 -212 424 424" role="img" aria-label="Šipkový terč se zásahy aktuálního kola">
@@ -15,6 +15,9 @@ export default function Dartboard({ darts }: { darts: readonly Dart[] }) {
         <path d={ringSector(162, 170, index * 18)} fill={index % 2 ? '#2b7456' : '#bd343a'} />
       </g>)}
       <circle r="15.9" fill="#2b7456" /><circle r="6.35" fill="#bd343a" />
+      {target !== undefined && BOARD_NUMBERS.includes(target as typeof BOARD_NUMBERS[number]) && <path
+        d={ringSector(15.9, 170, BOARD_NUMBERS.indexOf(target as typeof BOARD_NUMBERS[number]) * 18)}
+        fill="#ee5836" fillOpacity=".52" stroke="#ffbd9c" strokeWidth="2" aria-label={`Cíl ${target}`} />}
       <g fill="none" stroke="#d0d0bd" strokeWidth=".65">
         {[6.35, 15.9, 99, 107, 162, 170].map(radius => <circle key={radius} r={radius} />)}
         {BOARD_NUMBERS.map((_, index) => { const a = polar(15.9, index * 18 + 9), b = polar(170, index * 18 + 9);

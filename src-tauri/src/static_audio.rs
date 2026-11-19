@@ -6,7 +6,7 @@ fn sound_path(url: &str) -> Result<PathBuf, String> {
         ["", "sounds", "game", file] => matches!(*file, "bust.wav" | "miss.wav" | "applause.wav"),
         ["", "sounds", "cs", voice, kind, file] if matches!(*voice, "eliska" | "martin") => {
             match *kind {
-                "fun" => matches!(*file, "ambrozovina.wav" | "gameon.wav"),
+                "fun" => matches!(*file, "ambrozovina.wav" | "radkovina.wav" | "gameon.wav"),
                 "score" => file.strip_suffix(".wav").and_then(|n| n.parse::<u16>().ok())
                     .is_some_and(|n| n <= 180 && *file == format!("{n}.wav")),
                 _ => false,
@@ -64,7 +64,7 @@ mod tests {
             for n in 0..=180 {
                 assert!(read_sound(&base, &format!("/sounds/cs/{voice}/score/{n}.wav")).is_ok());
             }
-            for phrase in ["ambrozovina", "gameon"] {
+            for phrase in ["ambrozovina", "radkovina", "gameon"] {
                 assert!(read_sound(&base, &format!("/sounds/cs/{voice}/fun/{phrase}.wav")).is_ok());
             }
         }

@@ -7,6 +7,8 @@ import Dartboard from '../components/Dartboard.tsx';
 import BullOffArena, { BullOffResults } from '../components/BullOffArena.tsx';
 import { X01PlayerCard, X01Visit } from '../components/X01Scoreboard.tsx';
 import { CricketScoreboard, CricketVisit } from '../components/CricketScoreboard.tsx';
+import { ShooterPlayers, ShooterTarget, ShooterVisit } from '../components/ShooterScoreboard.tsx';
+import { shooterLengthText } from '../game/shooterPresentation.ts';
 import { TrophyIcon } from '../components/Icons.tsx';
 import { legsText } from '../game/x01Presentation.ts';
 import { gamePanelLayout } from '../game/panelLayout.ts';
@@ -21,6 +23,7 @@ import type { CastSnapshot } from './protocol.ts';
 import tvWordmark from './tv-wordmark.png';
 import '../styles.css';
 import './receiver.css';
+import '../shooter.css';
 
 interface ReceiverContext {
   addCustomMessageListener(namespace: string, listener: (event: { data: unknown; senderId: string }) => void): void;
@@ -101,6 +104,15 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
     <h1><TvBrand /></h1>
     <p>{snapshot ? 'Čekám na zahájení hry' : 'Čekám na připojení'}</p>
   </div>;
+
+  if (game.mode === 'shooter') return <main className="page game tv-game shooter-game">
+    <div className="game-head"><div className="game-heading"><div><h1>Shooter</h1><p>{shooterLengthText(game.settings)} · kolo {game.round}</p></div></div>
+      <ShooterVisit score={game.score} /><div className="tv-header-status"><TvBrand />{autodarts}</div>
+    </div>
+    {game.score.finished && <section className="shooter-result card"><TrophyIcon size={32} /><div><span className="eyebrow">{game.score.winners.length > 1 ? 'SPOLEČNÍ VÍTĚZOVÉ' : 'VÍTĚZ HRY'}</span>
+      <h2>{game.score.winners.map(i => game.score.players[i].name).join(' · ')}</h2></div></section>}
+    <div className="shooter-workspace"><ShooterPlayers score={game.score} /><ShooterTarget score={game.score} clock={game.clock} /></div>
+  </main>;
 
   const x01 = game.mode === 'x01';
   const title = x01 ? game.result ? 'Výsledek rozhozu' : game.bull ? 'Rozhoz na střed'

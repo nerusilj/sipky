@@ -1,10 +1,32 @@
 import { isAvatarId, readAvatarId } from './avatars.ts';
 import type { AvatarId } from './avatars.ts';
 // Profily hráčů. Čisté funkce bez ukládání, starší soubory zůstávají kompatibilní.
-export interface Player { id: string; name: string; color: string; createdAt: string; avatarId?: AvatarId }
+export interface Player { id: string; name: string; color: string; createdAt: string; avatarId?: AvatarId; avatarColor?: string; preferredDouble?: number }
+
+export const FINISHING_DOUBLES = [...Array.from({ length: 20 }, (_, i) => i + 1), 25];
+
+function isFinishingDouble(value: unknown): value is number {
+  return typeof value === 'number' && FINISHING_DOUBLES.includes(value);
+}
 
 export const MAX_NAME_LENGTH = 24;
-export const PLAYER_COLORS = ['#ff7a1f', '#3fcfbf', '#5fb4ff', '#a68cf0', '#5fd497', '#ff6a50', '#ffd25a', '#ff8fb8', '#8fd3ff', '#c9a27a'];
+export const PLAYER_PALETTE = [
+  { color: '#ff7a1f', name: 'Oranžová' },
+  { color: '#3fcfbf', name: 'Tyrkysová' },
+  { color: '#5fb4ff', name: 'Modrá' },
+  { color: '#a68cf0', name: 'Fialová' },
+  { color: '#5fd497', name: 'Zelená' },
+  { color: '#ff6a50', name: 'Korálová' },
+  { color: '#ffd25a', name: 'Žlutá' },
+  { color: '#ff8fb8', name: 'Růžová' },
+  { color: '#8fd3ff', name: 'Světle modrá' },
+  { color: '#c9a27a', name: 'Béžová' },
+];
+export const PLAYER_COLORS = PLAYER_PALETTE.map(({ color }) => color);
+
+function isPlayerColor(value: unknown): value is string {
+  return typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
+}
 
 export function normalizeName(name: string): string {
   return name.replace(/\s+/g, ' ').trim();
@@ -34,11 +56,18 @@ export function initials(name: string): string {
   return letters.toLocaleUpperCase('cs');
 }
 
-export function addPlayer(players: readonly Player[], name: string, id: string, now = new Date(), avatarId?: AvatarId): Player[] {
+export function addPlayer(players: readonly Player[], name: string, id: string, now = new Date(), avatarId?: AvatarId, preferredDouble?: number, avatarColor?: string): Player[] {
   const error = nameError(players, name);
   if (error) throw new Error(error);
   if (avatarId !== undefined && !isAvatarId(avatarId)) throw new Error('Neplatný avatar.');
-  return [...players, { ...(avatarId ? { avatarId } : {}), id, name: normalizeName(name), color: nextColor(players), createdAt: now.toISOString() }];
+  if (preferredDouble !== undefined && !isFinishingDouble(preferredDouble)) throw new Error('Neplatný oblíbený double.');
+  if (avatarColor !== undefined && !isPlayerColor(avatarColor)) throw new Error('Neplatná barva avatara.');
+  return [...players, {
+    ...(avatarId ? { avatarId } : {}),
+    ...(avatarColor !== undefined ? { avatarColor } : {}),
+    ...(preferredDouble !== undefined ? { preferredDouble } : {}),
+    id, name: normalizeName(name), color: nextColor(players), createdAt: now.toISOString(),
+  }];
 }
 
 export function renamePlayer(players: readonly Player[], id: string, name: string): Player[] {
@@ -47,9 +76,19 @@ export function renamePlayer(players: readonly Player[], id: string, name: strin
   return players.map(player => player.id === id ? { ...player, name: normalizeName(name) } : player);
 }
 
-export function updatePlayer(players: readonly Player[], id: string, name: string, avatarId?: AvatarId): Player[] {
+export function updatePlayer(players: readonly Player[], id: string, name: string, avatarId?: AvatarId, preferredDouble?: number | null, avatarColor?: string | null): Player[] {
   if (avatarId !== undefined && !isAvatarId(avatarId)) throw new Error('Neplatný avatar.');
-  return renamePlayer(players, id, name).map(player => player.id === id && avatarId !== undefined ? { ...player, avatarId } : player);
+  if (preferredDouble != null && !isFinishingDouble(preferredDouble)) throw new Error('Neplatný oblíbený double.');
+  if (avatarColor != null && !isPlayerColor(avatarColor)) throw new Error('Neplatná barva avatara.');
+  return renamePlayer(players, id, name).map(player => {
+    if (player.id !== id) return player;
+    if (avatarId !== undefined) player.avatarId = avatarId;
+    if (avatarColor === null) delete player.avatarColor;
+    else if (avatarColor !== undefined) player.avatarColor = avatarColor;
+    if (preferredDouble === null) delete player.preferredDouble;
+    else if (preferredDouble !== undefined) player.preferredDouble = preferredDouble;
+    return player;
+  });
 }
 
 export function removePlayer(players: readonly Player[], id: string): Player[] {
@@ -68,8 +107,10 @@ export function parsePlayers(json: string): Player[] {
     seen.add(p.id);
     return [{
       ...(readAvatarId(p.avatarId) ? { avatarId: readAvatarId(p.avatarId) } : {}),
+      ...(isPlayerColor(p.avatarColor) ? { avatarColor: p.avatarColor } : {}),
+      ...(isFinishingDouble(p.preferredDouble) ? { preferredDouble: p.preferredDouble } : {}),
       id: p.id, name: normalizeName(p.name).slice(0, MAX_NAME_LENGTH),
-      color: typeof p.color === 'string' && /^#[0-9a-f]{6}$/i.test(p.color) ? p.color : PLAYER_COLORS[0],
+      color: isPlayerColor(p.color) ? p.color : PLAYER_COLORS[0],
       createdAt: typeof p.createdAt === 'string' ? p.createdAt : new Date(0).toISOString(),
     }];
   });

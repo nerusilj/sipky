@@ -29,7 +29,8 @@ const items = (args.voice ? [args.voice] : Object.keys(VOICES)).flatMap(voice =>
     text: scoreAnnouncement(n), voice, seed: n + 501, output: `public/sounds/cs/${voice}/score/${n}.wav`,
   }))),
   ...(args.only === 'score' ? [] : Object.entries(PHRASES).map(([id, text]) => ({
-    text, voice, seed: 501, output: `public/sounds/cs/${voice}/fun/${id}.wav`,
+    text, voice, ...(id === 'radkovina' ? { seed: 731, speed: 0.88 } : { seed: 501 }),
+    output: `public/sounds/cs/${voice}/fun/${id}.wav`,
   }))),
 ]);
 mkdirSync(join(root, '.test-tmp'), { recursive: true });

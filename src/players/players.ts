@@ -42,16 +42,16 @@ function commit(players: Player[]): void {
 }
 
 // Vyhodí chybu s českou hláškou, když jméno nejde použít.
-export function createPlayer(name: string, avatarId: AvatarId = 'neutral'): Player {
-  const players = addPlayer(snapshot.players, name, crypto.randomUUID(), new Date(), avatarId);
+export function createPlayer(name: string, avatarId: AvatarId = 'neutral', preferredDouble?: number, avatarColor?: string): Player {
+  const players = addPlayer(snapshot.players, name, crypto.randomUUID(), new Date(), avatarId, preferredDouble, avatarColor);
   commit(players);
   return players[players.length - 1];
 }
 export function changePlayerName(id: string, name: string): void {
   commit(renamePlayer(snapshot.players, id, name));
 }
-export function changePlayerProfile(id: string, name: string, avatarId?: AvatarId): void {
-  commit(updatePlayer(snapshot.players, id, name, avatarId));
+export function changePlayerProfile(id: string, name: string, avatarId?: AvatarId, preferredDouble?: number | null, avatarColor?: string | null): void {
+  commit(updatePlayer(snapshot.players, id, name, avatarId, preferredDouble, avatarColor));
 }
 export function deletePlayer(id: string): void {
   commit(removePlayer(snapshot.players, id));

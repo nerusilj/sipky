@@ -22,6 +22,7 @@ export default function GamePlayerDialog({ selected, limit, onAdd, onClose }: {
   const [notice, setNotice] = useState('');
   const [createError, setCreateError] = useState('');
   const [avatarId, setAvatarId] = useState<AvatarId>('neutral');
+  const [color, setColor] = useState<string>();
   const name = normalizeName(query);
   const full = selected.length >= limit;
   const matches = [...players].filter(player => searchKey(player.name).includes(searchKey(query)))
@@ -40,6 +41,7 @@ export default function GamePlayerDialog({ selected, limit, onAdd, onClose }: {
     onAdd(player.id);
     setQuery('');
     setAvatarId('neutral');
+    setColor(undefined);
     setCreateError('');
     setNotice(`Hráč ${player.name} byl přidán do hry.`);
     search.current?.focus();
@@ -47,7 +49,7 @@ export default function GamePlayerDialog({ selected, limit, onAdd, onClose }: {
   function create() {
     if (full || readOnly || !canCreate) return;
     try {
-      const player = createPlayer(name, avatarId);
+      const player = createPlayer(name, avatarId, undefined, color);
       add(player);
     } catch (error) { setCreateError(error instanceof Error ? error.message : String(error)); }
   }
@@ -79,7 +81,7 @@ export default function GamePlayerDialog({ selected, limit, onAdd, onClose }: {
         {matches.length > 0 && <ul aria-label="Seznam hráčů">{matches.map(player => {
           const added = selected.includes(player.id);
           return <li key={player.id} className={added ? 'is-added' : ''}>
-            <PlayerName name={player.name} color={player.color} avatarSeed={player.id} avatarId={player.avatarId} avatarSize={48} />
+            <PlayerName {...player} avatarSeed={player.id} avatarSize={48} />
             <button className={added ? 'player-picker-added' : 'primary'} disabled={added || full}
               aria-label={added ? `${player.name} je ve hře` : `Přidat hráče ${player.name}`} onClick={() => add(player)}>
               {added ? <><CheckIcon size={18} />Ve hře</> : <><PlusIcon size={18} />Přidat</>}
@@ -88,9 +90,9 @@ export default function GamePlayerDialog({ selected, limit, onAdd, onClose }: {
         })}</ul>}
         {!matches.length && <p className="player-picker-empty">{name ? 'Žádný hráč neodpovídá hledání.' : 'Zatím tu nejsou žádní hráči. Napište jméno a vytvořte prvního.'}</p>}
         {canCreate && <div className="player-picker-new">
-          <div className="player-picker-create"><div className="new-player-identity"><PlayerAvatar player={{ name, color: '#86b9d6', avatarId }} size={54} /><div><strong>{name}</strong><span>Nový hráč</span></div></div>
+          <div className="player-picker-create"><div className="new-player-identity"><PlayerAvatar player={{ name, avatarColor: color, avatarId }} size={54} /><div><strong>{name}</strong><span>Nový hráč</span></div></div>
             <button className="primary" disabled={readOnly || full} onClick={create}><PlusIcon size={18} />Vytvořit a přidat</button></div>
-          <AvatarPicker name={name} value={avatarId} onChange={setAvatarId} disabled={readOnly || full} />
+          <AvatarPicker name={name} value={avatarId} onChange={setAvatarId} color={color} onColorChange={setColor} disabled={readOnly || full} />
         </div>}
       </>}
       </>}

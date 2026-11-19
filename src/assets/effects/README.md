@@ -13,3 +13,10 @@ nástrojem OpenAI imagegen podle schválené varianty PIVNÍ SKLO:
 Přesná zadání i režim generování jsou v `NUMBER-PROMPTS.json`.
 Plnění odspodu a drobné pohybující se bublinky vykresluje aplikace.
 Nahrávku hlášky efekt nemá; běžný hlasatel oznámí součet 29.
+
+Archiv původního návrhu Radkoviny (v aktuálním efektu ani buildech se nepoužívá):
+
+- `radkovina-beer-mug.png` — 1024 × 1536, orosený skleněný půllitr s ležákem a jemnou pěnou.
+- `radkovina-coaster.png` — 1254 × 1254, tenký savý papírový podtácek bez potisku.
+
+Zadání těchto původních podkladů zůstávají v `PROMPTS.md`.

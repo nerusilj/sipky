@@ -10,11 +10,13 @@ import { boardStartStopAction, boardStatusDisplay, STATE_LABELS } from '../autod
 import type { useAppUpdate } from '../appUpdate.ts';
 import AppUpdatePanel from '../components/AppUpdatePanel.tsx';
 import HomeCast from '../components/HomeCast.tsx';
+import HomeStatus from '../components/HomeStatus.tsx';
 import { useAutodartsEnabled } from '../settings.ts';
 
 const MODES = [
   { id: 'x01', title: 'X01', subtitle: 'Odpočítávání do nuly', available: true },
   { id: 'cricket', title: 'Cricket', subtitle: 'Zavírání čísel a bodování', available: true },
+  { id: 'shooter', title: 'Shooter', subtitle: 'Zasáhni vylosované číslo', available: false },
 ] as const;
 
 const BOARD_COMMANDS = {
@@ -60,9 +62,11 @@ export default function HomePage({ onPlay, update, gameRunning }: {
         {!mode.available && <span className="mode-soon">PŘIPRAVUJEME</span>}<span className="mode-chevron"><ChevronIcon size={18} /></span>
       </button>)}
     </div>
+    <div className="home-status-panels">
     {autodartsEnabled && <section className="home-connection card" aria-label="Autodarts">
       <div className="home-board-row">
-        <div className="home-board-info"><strong>Autodarts</strong><span className={`status-line ${online ? 'online' : ''}`}><span className={`dot ${online ? '' : 'amber-dot'}`} />{STATE_LABELS[connection.state]}</span>
+        <div className="home-board-info"><strong>Autodarts</strong>
+          <HomeStatus tone={online ? 'positive' : connection.state === 'disconnected' ? 'neutral' : 'pending'}>{STATE_LABELS[connection.state]}</HomeStatus>
           {online && <span className="home-board-version">
             {version ? <><span title="Verze Board Manageru">{version}</span>
               <span className={`badge ${supported ? 'board-version-supported' : 'amber'}`}>{supported ? 'Podporovaná verze' : 'Podpora neověřena'}</span></>
@@ -88,14 +92,13 @@ export default function HomePage({ onPlay, update, gameRunning }: {
         {connection.commandPending ? `Odesílám ${BOARD_COMMANDS[connection.commandPending].label}…`
           : commandResult && (commandResult.error ?? `Autodarts přijal příkaz ${BOARD_COMMANDS[commandResult.action].label}.`)}
       </div>
-      <div id={detailsId} hidden={!detailsOpen}>
-        <div className="status-card">
+      <div id={detailsId} hidden={!detailsOpen} className="home-panel-details">
+        <div className="status-card home-detail-row">
           <div>
             <dl>
-              <dt>Board</dt><dd><code>{connection.address}</code></dd>
+              <dt>Adresa terče</dt><dd><code>{connection.address}</code></dd>
               <dt>Verze Board Manageru</dt><dd>{version ?? (online ? versionStatus : '—')}</dd>
               <dt>Ověřené verze</dt><dd>{VERIFIED_BOARD_VERSIONS.join(' · ')}</dd>
-              <dt>Stav</dt><dd>{online ? 'Online' : 'Offline'}</dd>
               <dt>Stav detekce</dt><dd>{connection.boardStatus ?? '—'}</dd>
               <dt>Poslední událost</dt><dd>{sinceText(connection.lastMessageAt, now)}</dd>
             </dl>
@@ -106,5 +109,6 @@ export default function HomePage({ onPlay, update, gameRunning }: {
     </section>}
     {isTauri() && <HomeCast disabled={update.installing} />}
     <AppUpdatePanel update={update} gameRunning={gameRunning} />
+    </div>
   </div>;
 }

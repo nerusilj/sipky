@@ -1,6 +1,6 @@
-# Šipky · v0.1.9
+# Šipky · v0.1.15
 
-Lokální šipkařská aplikace pro naši hospodu. Spustitelný soubor je `sipky` (Windows `sipky.exe`). Repozitář obsahuje zdroje, testy a návody k sestavení. Instalační balíčky a přenositelný hlasový runtime vznikají místně.
+Lokální šipkařská aplikace pro naši hospodu. Spustitelný soubor je `sipky` (Windows `sipky.exe`). Repozitář obsahuje zdroje, testy a návody k sestavení. Linuxové DEB aplikace, zvuků a hlasatele sestavuje a zveřejňuje GitHub Actions při označení vydání tagem.
 
 Lokální aplikace v Tauri 2, Reactu, TypeScriptu a Vite. Rozhraní je česky, tmavé s tlumeným modrým akcentem. Obsahuje X01, klasický Cricket s body, správu hráčů a inspektor událostí terče.
 

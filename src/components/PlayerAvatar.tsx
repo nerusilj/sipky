@@ -25,9 +25,9 @@ const hairShapes = [
   'M20 28V23a12 12 0 0 1 24 0v6l-4-6-3-4-13 4-4 5Z',
 ];
 
-export default function PlayerAvatar({ player, size = 44 }: { player: Pick<Player, 'name' | 'color'> & Partial<Pick<Player, 'id' | 'avatarId'>>; size?: number }) {
+export default function PlayerAvatar({ player, size = 44 }: { player: Pick<Player, 'name'> & Partial<Pick<Player, 'id' | 'avatarId' | 'avatarColor'>>; size?: number }) {
   const avatarId = readAvatarId(player.avatarId);
-  if (avatarId) return <span className="player-avatar portrait-avatar" aria-hidden="true" style={{ width: size, height: size }}><AvatarArt avatarId={avatarId} name={player.name} robotColor={botAvatarColor(player.id)} /></span>;
+  if (avatarId) return <span className="player-avatar portrait-avatar" aria-hidden="true" style={{ width: size, height: size }}><AvatarArt avatarId={avatarId} name={player.name} color={player.avatarColor} robotColor={botAvatarColor(player.id)} /></span>;
   const hash = avatarHash(player.id ?? player.name.normalize('NFC').toLocaleLowerCase('cs'));
   const [background, skin, hair, shirt] = palettes[hash % palettes.length];
   const style = (hash >>> 5) % 8;

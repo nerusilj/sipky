@@ -23,8 +23,8 @@ let gameView: GameView = storedGameView === 'rows' || storedGameView === 'focus'
 export const DEFAULT_VENUE_NAME = 'HOLICE';
 export const MAX_VENUE_NAME = 32;
 
-// Vzhled horní lišty; mění se v Nastavení a pamatuje si ho localStorage.
-let venueName = normalizeVenueName(read(VENUE_KEY) ?? '');
+// Cast protokol v1 očekává název místa i u dříve uložených nastavení.
+const venueName = normalizeVenueName(read(VENUE_KEY) ?? '');
 // Hlasatel je ve výchozím stavu zapnutý.
 let callerEnabled = read(CALLER_KEY) !== 'false';
 let soundEnabled = read(SOUND_KEY) !== 'false';
@@ -54,12 +54,6 @@ export function useGameView(): GameView { return useSyncExternalStore(subscribeS
 
 export function normalizeVenueName(value: string): string {
   return value.replace(/\s+/g, ' ').trim().slice(0, MAX_VENUE_NAME) || DEFAULT_VENUE_NAME;
-}
-
-export function setVenueName(value: string): string {
-  venueName = normalizeVenueName(value);
-  write(VENUE_KEY, venueName);
-  return venueName;
 }
 
 export function setCallerEnabled(value: boolean): void {
@@ -128,7 +122,6 @@ export function useShowDev(): boolean { return useSyncExternalStore(subscribeSet
 export function useEffectsEnabled(): boolean { return useSyncExternalStore(subscribeSettings, () => effectsEnabled); }
 export function useDisabledEffects(): readonly EffectId[] { return useSyncExternalStore(subscribeSettings, () => disabledEffects); }
 
-export function useVenueName(): string { return useSyncExternalStore(subscribeSettings, () => venueName); }
 export function useCallerEnabled(): boolean { return useSyncExternalStore(subscribeSettings, () => callerEnabled); }
 
 export function setAutodartsEnabled(value: boolean): void { autodartsEnabled = value; write(AUTODARTS_KEY, String(value)); }

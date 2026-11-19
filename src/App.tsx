@@ -6,12 +6,16 @@ import { WindowCloseGuard } from './windowClose.ts';
 import type { ComponentType } from 'react';
 import Confetti from './components/Confetti.tsx';
 import EffectOverlay from './components/EffectOverlay.tsx';
-import { BoardConnectionIcon, DartIcon, DevIcon, FullscreenIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
-import { boardConnection, useConnectionState } from './connection.ts';
-import { useAutodartsEnabled, useShowDev, useVenueName } from './settings.ts';
+import { DartIcon, DevIcon, FullscreenIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
+import { boardConnection } from './connection.ts';
+import { useShowDev } from './settings.ts';
+import flightMotif from './cast/tv-idle-motif.png';
+import sipkyWordmark from './cast/tv-wordmark.png';
 import DevPage from './pages/DevPage.tsx';
 import GamePage from './pages/GamePage.tsx';
 import CricketPage from './pages/CricketPage.tsx';
+import ShooterPage from './pages/ShooterPage.tsx';
+import { useShooterGame } from './game/shooterStore.ts';
 import { useCricket } from './game/cricketStore.ts';
 import { endAnyGame, isAnyGameRunning } from './game/activeGame.ts';
 import type { GameMode } from './game/activeGame.ts';
@@ -39,16 +43,14 @@ export default function App() {
   const closeGuard = useRef<WindowCloseGuard | undefined>(undefined);
   const update = useAppUpdate();
   const { installingRef } = update;
-  const online = useConnectionState() === 'connected';
-  const autodartsEnabled = useAutodartsEnabled();
-  const venueName = useVenueName();
   const showDev = useShowDev();
   const nav = NAV.filter(item => item.id !== 'dev' || showDev);
   // Po skrytí sekce DEV se z ní odejde na Domů.
   const current: Section = section === 'dev' && !showDev ? 'home' : section;
   const { game } = useGame();
   const { game: cricket } = useCricket();
-  const hasGame = !!game || !!cricket;
+  const shooter = useShooterGame();
+  const hasGame = !!game || !!cricket || !!shooter;
   const gameScreen = current === 'game' && hasGame;
   const fullscreen = useGameFullscreen(gameScreen);
 
@@ -95,13 +97,12 @@ export default function App() {
 
   return <div className={`shell ${gameScreen ? 'game-screen' : ''}`}>
     {!gameScreen && <><header className="topbar">
-      <div className="brand"><span className="brand-emblem" aria-hidden="true"><BoardConnectionIcon size={30} /></span><div className="brand-copy"><span className="brand-product">ŠIPKY</span><strong>{venueName}</strong></div></div>
-      {autodartsEnabled && <div className="topbar-status">
-        <span className={`dot ${online ? '' : 'amber-dot'}`}></span>
-        <strong className={online ? 'online' : ''}>{online ? 'Autodarts připojeno' : 'Autodarts nepřipojeno'}</strong>
-      </div>}
+      <div className="brand">
+        <img className="brand-flight" src={flightMotif} alt="" />
+        <img className="brand-wordmark" src={sipkyWordmark} alt="Šipky" />
+      </div>
       <button className={`icon-button topbar-settings ${current === 'settings' ? 'active' : ''}`} disabled={update.installing} onClick={() => setSection('settings')} aria-label="Nastavení" title="Nastavení"
-        aria-current={current === 'settings' ? 'page' : undefined}><SettingsIcon size={20} /><span>Nastavení</span></button>
+        aria-current={current === 'settings' ? 'page' : undefined}><SettingsIcon size={20} /></button>
     </header>
     <nav className="sidebar" aria-label="Hlavní navigace">
       {nav.map(({ id, label, Icon }) => <button key={id} className={`nav-item ${current === id ? 'active' : ''} ${id === 'dev' ? 'nav-dev' : ''}`}
@@ -109,7 +110,7 @@ export default function App() {
     </nav></>}
     <main className="content">
       {current === 'home' && <HomePage onPlay={newGame} update={update} gameRunning={isAnyGameRunning()} />}
-      {current === 'game' && (mode === 'cricket' ? <CricketPage {...gameActions} /> : <GamePage {...gameActions} />)}
+      {current === 'game' && (mode === 'shooter' ? <ShooterPage {...gameActions} /> : mode === 'cricket' ? <CricketPage {...gameActions} /> : <GamePage {...gameActions} />)}
       {current === 'players' && <PlayersPage />}
       {current === 'settings' && <SettingsPage onGame={hasGame ? () => setSection('game') : undefined} />}
       {current === 'dev' && <DevPage onSettings={() => setSection('settings')} />}

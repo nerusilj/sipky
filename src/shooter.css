@@ -1,0 +1,66 @@
+/* Shooter sdílí klávesnici, terč a herní lišty s X01/Cricketem. */
+.shooter-rules{display:grid;gap:18px;padding:24px 28px}
+.shooter-rules h2{margin:0;font-size:19px}
+.shooter-rules .rule-group{display:grid;grid-template-columns:140px minmax(0,450px);align-items:center;gap:18px}
+.shooter-rules p{max-width:850px;margin:0;line-height:1.6}
+.shooter-rule-note{color:#f7b293}
+.shooter-workspace{display:grid;grid-template-columns:minmax(220px,290px) minmax(0,1fr);gap:20px;flex:1 1 0;min-height:0;overflow:auto;align-items:stretch}
+.shooter-with-keypad{grid-template-columns:minmax(190px,250px) minmax(0,1fr) minmax(280px,360px)}
+.shooter-players{display:grid;grid-auto-rows:minmax(74px,1fr);gap:9px;min-width:0;align-content:start}
+.shooter-player{display:grid;grid-template-columns:minmax(0,1fr) auto;align-content:center;gap:3px 12px;padding:10px 16px;min-width:0;min-height:0;border:1px solid var(--line)}
+.shooter-player .player-tag{min-width:0;max-width:100%}
+.shooter-player-points{grid-column:2;grid-row:1/3;display:grid;text-align:right;font-size:36px;line-height:1;font-variant-numeric:tabular-nums}
+.shooter-player-points small{font-size:10px;font-weight:500;color:var(--muted);margin-top:4px}
+.shooter-player-metrics{grid-column:1;min-width:0;font-size:11px;color:var(--muted)}
+.shooter-active{border-color:#ee5836;background:linear-gradient(115deg,#ee583626,transparent 85%)}
+.shooter-active .shooter-player-points{color:#ff8e6c}
+.shooter-winner{border-color:#24cb82}
+.shooter-target{position:relative;display:grid;grid-template-columns:minmax(190px,1fr) minmax(180px,1.15fr);grid-template-rows:minmax(0,1fr) auto;align-items:center;gap:12px 24px;padding:24px 32px;min-height:260px;overflow:hidden;border:1px solid #ee58364d;background:radial-gradient(ellipse at 30% 30%,#ee583615,transparent 65%),var(--panel,#151a23)}
+.shooter-target-number{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;min-width:0}
+.shooter-target--no-board{grid-template-columns:1fr}
+.shooter-target-number>.eyebrow{color:#ff9d7e;letter-spacing:.22em;font-size:12px}
+.shooter-target-number>strong{font-size:clamp(80px,13vw,210px);font-weight:750;line-height:1;letter-spacing:-.065em;color:#fff;font-variant-numeric:tabular-nums}
+.shooter-target-number>span:last-child{max-width:230px;font-size:13px;line-height:1.6;color:var(--muted)}
+.shooter-target-board{width:100%;max-width:460px;justify-self:center;min-width:0}
+.shooter-target-board .live-dartboard{width:100%;height:auto}
+.shooter-target-board .live-dartboard-svg{display:block;width:100%;height:auto;max-height:min(50vh,500px)}
+.shooter-clock{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding-top:14px;border-top:1px solid #ffffff0c;min-height:45px;text-align:center;color:var(--muted);font-size:13px}
+.shooter-clock>strong{font-size:30px;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+.shooter-clock>strong small{font-size:15px}
+.shooter-clock progress{flex:0 0 100%;width:100%;height:5px;appearance:none;border:0;border-radius:8px;background:#ffffff12;accent-color:#ee5836}
+.shooter-clock progress::-webkit-progress-bar{background:#ffffff12;border-radius:8px}
+.shooter-clock progress::-webkit-progress-value{background:#ee5836;border-radius:8px}
+.shooter-expired{border-color:#ff736a}
+.shooter-expired .shooter-clock{color:#ff9b92}
+.shooter-visit .visit-slot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative}
+.shooter-visit .visit-slot small{font-size:9px;letter-spacing:.08em;color:var(--muted)}
+.game-screen .game-head .shooter-visit .visit-slot strong{font-size:22px;line-height:1.1}
+.shooter-hit-result{position:absolute;right:5px;bottom:5px;font-size:10px;color:var(--muted)}
+.shooter-hit .shooter-hit-result,.shooter-hit strong{color:#24cb82}
+.shooter-visit .visit-slot:disabled{opacity:1;cursor:default}
+.shooter-visit .visit-slot[aria-pressed=true]{box-shadow:inset 0 -3px #ee5836}
+.shooter-keypad{display:flex;align-items:center;min-width:0}
+.shooter-keypad>.keypad-surface{width:100%;max-width:none}
+.shooter-clock-actions{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:12px;flex:none;font-size:12px;color:var(--muted)}
+.shooter-clock-actions button{min-height:42px;min-width:160px}
+.shooter-result{display:flex;align-items:center;gap:18px;padding:16px 24px;margin-bottom:16px;flex:none}
+.shooter-result>svg{color:#f4c574;flex:none}
+.shooter-result h2{margin:4px 0 0;font-size:23px}
+.shooter-result .winner-actions{margin-left:auto;display:flex;gap:8px}
+.tv-stage .shooter-workspace{grid-template-columns:340px minmax(0,1fr);gap:28px}
+.tv-stage .shooter-target{padding:32px 44px;grid-template-columns:minmax(0,1fr) minmax(360px,1fr)}
+.tv-stage .shooter-target-number>strong{font-size:260px}
+.tv-stage .shooter-target-number>span:last-child{font-size:20px;max-width:300px}
+.tv-stage .shooter-target-number>.eyebrow{font-size:18px}
+.tv-stage .shooter-target-board{max-width:620px}
+.tv-stage .shooter-target-board .live-dartboard-svg{max-height:640px}
+.tv-stage .shooter-player{padding:12px 20px}
+.tv-stage .shooter-player-points{font-size:44px}
+.tv-stage .shooter-player-metrics{font-size:15px}
+.tv-stage .shooter-clock{font-size:22px;min-height:65px}
+.tv-stage .shooter-clock>strong{font-size:42px}
+.tv-stage .game-head .shooter-visit .visit-slot strong{font-size:32px}
+.tv-stage .shooter-visit .visit-slot small{font-size:13px}
+.tv-stage .shooter-hit-result{font-size:15px}
+@media(max-width:1150px){.shooter-with-keypad{grid-template-columns:minmax(180px,.8fr) minmax(200px,1fr) minmax(280px,1fr)}.shooter-with-keypad .shooter-target{grid-template-columns:1fr;padding:20px}.shooter-with-keypad .shooter-target-board{display:none}.shooter-with-keypad .shooter-target-number>strong{font-size:100px}.shooter-player{padding:10px}.shooter-player .player-avatar{width:28px;height:28px}}
+@media(max-width:800px){.shooter-rules .rule-group{grid-template-columns:1fr;gap:8px}.shooter-workspace,.shooter-with-keypad{display:flex;flex-direction:column;overflow:auto}.shooter-players{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:auto;flex:none}.shooter-target{min-height:280px;flex:1 0 auto;padding:20px}.shooter-with-keypad .shooter-target{min-height:200px}.shooter-target-number>strong{font-size:100px}.shooter-player-points{font-size:28px}.shooter-clock-actions{flex-wrap:wrap}.shooter-result{flex-wrap:wrap}.shooter-result .winner-actions{margin-left:0}}

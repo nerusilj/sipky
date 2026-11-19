@@ -9,7 +9,7 @@ import { DEFAULT_SETUP, parseLastSetup } from '../src/game/lastSetup.ts';
 
 test('sestava poslední hry: platné hodnoty se převezmou, neplatné nahradí výchozími', () => {
   assert.deepEqual(parseLastSetup('{"playerIds":["a","b","a",3],"randomOrder":false,"legsToWin":3,"doubleOut":false,"nextLegOrder":"rotate","maxRounds":15,"minFinishers":2}'),
-    { startScore: 501, playerIds: ['a', 'b'], randomOrder: false, legsToWin: 3, doubleOut: false, nextLegOrder: 'rotate', maxRounds: 15, minFinishers: 2 });
+    { startScore: 501, checkoutSetupEnabled: true, playerIds: ['a', 'b'], randomOrder: false, legsToWin: 3, doubleOut: false, nextLegOrder: 'rotate', maxRounds: 15, minFinishers: 2 });
   assert.equal(parseLastSetup('{"maxRounds":13}').maxRounds, 0);
   assert.equal(parseLastSetup('{"nextLegOrder":"nahodne"}').nextLegOrder, 'loserFirst');
   assert.deepEqual(parseLastSetup('{"legsToWin":9,"randomOrder":"ano"}'), DEFAULT_SETUP);

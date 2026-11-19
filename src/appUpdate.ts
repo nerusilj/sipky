@@ -18,6 +18,7 @@ export function useAppUpdate() {
   const [installing, setInstalling] = useState(false);
   const [installedUpdate, setInstalledUpdate] = useState<string>();
   const [error, setError] = useState<string>();
+  const [lastCheckedAt, setLastCheckedAt] = useState<number>();
   const checkingRef = useRef(false);
   const installingRef = useRef(false);
 
@@ -29,8 +30,9 @@ export function useAppUpdate() {
     setError(undefined);
     try {
       setStatus(await invoke<UpdateStatus>('check_app_update'));
-    } catch {
-      setError('Aktualizace se nepodařilo ověřit.');
+      setLastCheckedAt(Date.now());
+    } catch (cause) {
+      setError(typeof cause === 'string' ? cause : 'Aktualizace se nepodařilo ověřit.');
     } finally {
       checkingRef.current = false;
       setChecking(false);
@@ -56,5 +58,5 @@ export function useAppUpdate() {
   }
 
   return { desktop, version: status?.installed ?? packageInfo.version, status, checking, installing, installingRef,
-    installedUpdate, error, check, install };
+    installedUpdate, lastCheckedAt, error, check, install };
 }

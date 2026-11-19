@@ -44,7 +44,7 @@ function CricketSetup() {
   function start() {
     if (!chosen.length) return;
     try { localStorage.setItem(SETUP_KEY, JSON.stringify({ playerIds: chosen.map(p => p.id), legsToWin: legs, randomOrder: random })); } catch { /* Nastavení je volitelné. */ }
-    startCricket({ legsToWin: legs }, (random ? shuffle(chosen) : chosen).map(({ id, name, color, avatarId, bot }) => ({ id, name, color, avatarId, bot })));
+    startCricket({ legsToWin: legs }, (random ? shuffle(chosen) : chosen).map(({ id, name, color, avatarId, avatarColor, bot }) => ({ id, name, color, avatarId, avatarColor, bot })));
   }
   return <div className="page">
     <div className="page-heading"><div><h1>Nová hra Cricket</h1><p>Zavřete čísla 20–15 a BULL a získejte nejvíce bodů.</p></div></div>

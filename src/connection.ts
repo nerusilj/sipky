@@ -10,6 +10,7 @@ import { messageStore } from './inspector/messageStore.ts';
 import { VisitTracker } from './caller/visitTracker.ts';
 import type { BoardEvent } from './caller/visitTracker.ts';
 import { feedActiveGame, resetGameBoardInputs } from './game/activeGame.ts';
+import { setShooterBoardConnected } from './game/shooterStore.ts';
 import { recorder } from './recording.ts';
 import { isAutodartsEnabled, setAutodartsEnabled } from './settings.ts';
 
@@ -140,6 +141,7 @@ class BoardConnection {
 
   private update(patch: Partial<ConnectionSnapshot>): void {
     this.snapshot = { ...this.snapshot, ...patch };
+    setShooterBoardConnected(this.snapshot.state === 'connected');
     this.listeners.forEach(listener => listener());
   }
 }

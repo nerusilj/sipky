@@ -37,18 +37,21 @@ export function X01Visit({ state, darts, selected, onSelect, readOnly }: { state
 
 export function X01PlayerCard({ score }: { score: ReturnType<typeof x01PlayerScore> }) {
   const { index, player, active, busted, place, legsWon, remaining, shownDarts, visitTotal,
-    visitBusted, dartNumber, legAverage, checkout, winner } = score;
+    visitBusted, dartNumber, legAverage, checkout, checkoutSetup, winner } = score;
+  const route = checkout ?? checkoutSetup?.route;
+  const routeText = route?.map(dartLabel).join(' → ');
+  const hintLabel = checkoutSetup ? `Připravit: ${routeText}, zbývá ${checkoutSetup.leave}` : `Zavřít: ${routeText}`;
   return <section className={`score-card card ${active ? 'active' : ''} ${busted ? 'has-bust' : ''} ${winner ? 'winner' : ''} ${place !== undefined ? 'done' : ''}`} aria-label={player.name} data-player-index={index}>
     {busted && <BustFragments />}
     {place !== undefined && <PlacementBadge place={place} />}
     <div className="score-head">
-      <div className="score-player-details"><PlayerName name={player.name} color={player.color} avatarSeed={player.id} avatarId={player.avatarId} avatarSize={52} className="plain" /></div>
+      <div className="score-player-details"><PlayerName {...player} avatarSeed={player.id} avatarSize={52} className="plain" /></div>
     </div>
     <div className="player-score-line"><div className="score-remaining">{remaining}</div>
       <span className="player-legs-badge" aria-label={`Vyhrané legy: ${legsWon}`} title={`Vyhráno ${legCount(legsWon)}`}><span>{legsWon}</span></span>
     </div>
-    <div className={`player-bottom ${checkout ? 'has-checkout' : ''}`}>
-    <div className="player-visit-strip" role="group" aria-hidden={!!checkout} aria-label={active ? 'Aktuální hody hráče' : 'Poslední kolo hráče'}>
+    <div className={`player-bottom ${route ? 'has-checkout' : ''}`}>
+    <div className="player-visit-strip" role="group" aria-hidden={!!route} aria-label={active ? 'Aktuální hody hráče' : 'Poslední kolo hráče'}>
       {Array.from({ length: DARTS_PER_VISIT }, (_, i) => <div key={i} className={`player-visit-slot ${shownDarts[i] ? 'filled' : 'empty'}`}
         aria-label={`${i + 1}. šipka: ${shownDarts[i] ? dartLabel(shownDarts[i]) : 'neházeno'}`}>
         {shownDarts[i] ? <strong>{dartLabel(shownDarts[i])}</strong> : <VisitDartIcon />}
@@ -57,16 +60,18 @@ export function X01PlayerCard({ score }: { score: ReturnType<typeof x01PlayerSco
         <strong>{visitBusted ? 'BUST' : visitTotal}</strong>
       </div>
     </div>
-    <div className="player-leg-summary" role="group" aria-hidden={!!checkout} aria-label="Šipky a průměr aktuálního legu">
+    <div className="player-leg-summary" role="group" aria-hidden={!!route} aria-label="Šipky a průměr aktuálního legu">
       <span className="leg-dart-number" aria-label={`Hozené šipky v legu: ${dartNumber}`}
         title={`V aktuálním legu hozeno ${dartNumber} šipek`}><VisitDartIcon /><strong>{dartNumber}</strong></span>
       <span className="leg-summary-divider" aria-hidden="true" />
       <span className="leg-average" aria-label={`Průměr aktuálního legu na 3 šipky: ${legAverage}`} title="Průměr aktuálního legu na 3 šipky"><span aria-hidden="true">Ø</span><strong>{legAverage}</strong></span>
     </div>
-    {checkout && <div className="player-checkout" role="group" aria-label={`Zavřít: ${checkout.map(dartLabel).join(', ')}`} title={`Doporučené zavření: ${checkout.map(dartLabel).join(' → ')}`}>
-      <div className="player-checkout-route" aria-hidden="true">{checkout.map((dart, i) =>
-        <span className="player-checkout-step" key={i}><strong className={i === checkout.length - 1 ? 'checkout-finish' : ''}>{dartLabel(dart)}</strong>
-          {i < checkout.length - 1 && <span className="checkout-arrow">→</span>}</span>)}
+    {route && <div className={`player-checkout${checkoutSetup ? ' player-checkout-setup' : ''}`} role="group"
+      aria-label={hintLabel} title={hintLabel}>
+      <div className="player-checkout-route" aria-hidden="true">{route.map((dart, i) =>
+        <span className="player-checkout-step" key={i}><strong className={!checkoutSetup && i === route.length - 1 ? 'checkout-finish' : ''}>{dartLabel(dart)}</strong>
+          {(checkoutSetup || i < route.length - 1) && <span className="checkout-arrow">→</span>}</span>)}
+        {checkoutSetup && <span className="player-checkout-step"><strong className="checkout-finish">{checkoutSetup.leave}</strong></span>}
       </div>
     </div>}
     </div>
