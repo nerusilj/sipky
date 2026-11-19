@@ -1,5 +1,21 @@
 # Sestavení pro Xubuntu x86_64
 
+## Vydání 0.1.16 — oprava zbytečné aktualizace doplňků
+
+Nejnovější stabilní vydání je [0.1.16](https://github.com/nerusilj/sipky/releases/tag/v0.1.16), zveřejněné 19. 11. 2026. [GitHub Actions 44602195704](https://github.com/nerusilj/sipky/actions/runs/44602195704) sestavil pouze aplikaci (DEB 9 854 216 B) a aktualizační metadata. WSL se nepoužilo. Zdroj: commit `8a1d0e0`, tag `v0.1.16`, větev `codex/release-0.1.16`.
+
+Verze 0.1.15 zbytečně aktualizovala doplňky kvůli dvěma již nepoužívaným nahrávkám Radkoviny a úpravě enginu pro jejich rychlost. V 0.1.16 jsou tyto pozůstatky odstraněné. Aplikace opět používá původní **zvuky 1.0.1 z v0.1.10** a **hlasatel 1.0.0 z v0.1.8**. Zdroje doplňků přesně odpovídají původním tagům. Radkovina dál zobrazuje pivní animaci a hlasatel oznámí 29.
+
+Pokud už máte nainstalované doplňky z 0.1.14 nebo 0.1.15, aktualizuje se pouze aplikace. Při ruční aktualizaci stačí:
+
+```bash
+sudo apt install ./sipky_0.1.16_amd64.deb
+```
+
+Vyšší již nainstalované kompatibilní verze zvuků 1.0.2 a hlasatele 1.0.1 se neodinstalovávají ani nestahují znovu. Při první instalaci doplňky stáhněte z odkazů uvedených ve vydání. Původní zvuky mají 26 843 588 B (26,8 MB), hlasatel 434 736 092 B.
+
+Prošlo 233 Node testů, 13 Rust testů v Linuxu, frontend a kontrola DEB. Stažená aplikace, manifest i kontrolní součty jsou v `outputs/linux/0.1.16`; metadata DEB a SHA-256 jsou nezávisle ověřené v `github-release-verification.json`, stav `build-status.txt` je COMPLETE. Fyzická instalace na cílovém Xubuntu zůstává následnou kontrolou.
+
 ## Vydání 0.1.15 — 19. 11. 2026
 
 [Šipky 0.1.15](https://github.com/nerusilj/sipky/releases/tag/v0.1.15) jsou zveřejněné jako nejnovější stabilní vydání. Sestavil je [GitHub Actions](https://github.com/nerusilj/sipky/actions/runs/44593827227) na Ubuntu 24.04 z commitu `ca8e37b`, bez WSL. Zdroj je na tagu `v0.1.15` a větvi `codex/release-0.1.15`; hlavní vzdálená větev dosud tento commit neobsahuje.
