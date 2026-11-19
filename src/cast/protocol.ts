@@ -64,6 +64,7 @@ export type CastSnapshot = {
   autodartsEnabled: boolean;
   boardStatus?: BoardStatusDisplay;
   effect?: ActiveEffect;
+  lastEffect?: ActiveEffect;
   celebration?: number;
   game?: ReturnType<typeof x01Display> | ReturnType<typeof cricketDisplay>;
 };
@@ -84,9 +85,10 @@ export function readCastMessage(data: unknown): CastMessage | undefined {
   const boardStatus = snapshot.boardStatus;
   if (boardStatus !== undefined && (!boardStatus || typeof boardStatus.label !== 'string'
     || !BOARD_STATUS_TONES.includes(boardStatus.tone))) return;
-  const effect = snapshot.effect;
-  if (effect !== undefined && (!effect || !EFFECT_IDS.includes(effect.id)
-    || !Number.isSafeInteger(effect.key) || effect.key < 1)) return;
+  for (const effect of [snapshot.effect, snapshot.lastEffect]) {
+    if (effect !== undefined && (!effect || !EFFECT_IDS.includes(effect.id)
+      || !Number.isSafeInteger(effect.key) || effect.key < 1)) return;
+  }
   if (snapshot.celebration !== undefined
     && (!Number.isSafeInteger(snapshot.celebration) || snapshot.celebration < 0)) return;
   const game = snapshot.game;

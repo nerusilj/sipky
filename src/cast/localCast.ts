@@ -10,6 +10,7 @@ import { cricketDisplay, x01Display } from './protocol.ts';
 import type { CastSnapshot } from './protocol.ts';
 import { onCelebrate } from '../effects/confetti.ts';
 import { getActiveEffect, subscribeEffect } from '../effects/effects.ts';
+import type { ActiveEffect } from '../effects/effects.ts';
 
 interface Television { id: string; name: string }
 interface ConnectedTelevision extends Television { certificate: string }
@@ -32,6 +33,7 @@ let scheduled = false;
 let inFlight = false;
 let pending = false;
 let celebration = 0;
+let lastEffect: ActiveEffect | undefined;
 let previous: { attempt: string; json: string } | undefined;
 
 function loadTelevision(): ConnectedTelevision | undefined {
@@ -61,9 +63,12 @@ function snapshot(): CastSnapshot {
   const connection = boardConnection.get();
   const x01 = getGameSnapshot();
   const cricket = getCricketSnapshot();
+  const activeEffect = getActiveEffect();
   return {
     ...display,
-    effect: getActiveEffect(),
+    // Starší receiver podporuje v tomto poli pouze Ambrožovku.
+    effect: activeEffect?.id === 'ambrozovina' ? activeEffect : undefined,
+    lastEffect,
     celebration,
     boardStatus: display.autodartsEnabled ? gameBoardStatusDisplay(connection, connection.commandPending === 'reset') : undefined,
     game: x01.state ? x01Display(x01.state, !!x01.bullOffResultOpen, x01.boardPhase, !!x01.completing)
@@ -115,6 +120,7 @@ function endAttempt() {
   for (const stop of stopPublishing) stop();
   stopPublishing = [];
   celebration = 0;
+  lastEffect = undefined;
 }
 
 function listenForDisconnect() {
@@ -158,11 +164,17 @@ export async function connectTelevision(television: Television, certificate?: st
   try {
     await listenForDisconnect();
     const current = Array.from(crypto.getRandomValues(new Uint8Array(16)), byte => byte.toString(16).padStart(2, '0')).join('');
+    lastEffect = getActiveEffect();
     const json = JSON.stringify(snapshot());
     attempt = current;
     stopPublishing = [
       subscribeGame(schedule), subscribeCricket(schedule), subscribeSettings(schedule), subscribeBoardStatus(),
-      subscribeEffect(schedule), onCelebrate(() => { celebration++; schedule(); }),
+      subscribeEffect(() => {
+        // I snímek po skončení animace musí TV předat poslední spuštěný efekt.
+        lastEffect = getActiveEffect() ?? lastEffect;
+        schedule();
+      }),
+      onCelebrate(() => { celebration++; schedule(); }),
     ];
     const connected = await invoke<ConnectedTelevision>('cast_connect', {
       id: television.id, appId: APP_ID, attempt: current, snapshot: json, certificate,

@@ -7,14 +7,17 @@ export interface EffectRule {
   trigger: string;
   title: string;
   subtitle: string;
-  phrase: PhraseId;
+  phrase: PhraseId | null;
   replacesScore: boolean;
   // Pole terče, která se v efektu rozsvítí (místo podtitulku).
   highlight?: { number: number; multiplier: number }[];
+  beerNumbers?: readonly number[];
+  durationMs?: number;
   match(event: BoardEvent): boolean;
 }
 
 const single = (darts: Dart[], number: number) => darts.some(dart => dart.number === number && dart.multiplier === 1);
+const RADKOVINA_NUMBERS = [7, 19, 3] as const;
 
 export const EFFECTS = {
   ambrozovina: {
@@ -26,6 +29,17 @@ export const EFFECTS = {
     replacesScore: true,
     highlight: [{ number: 5, multiplier: 1 }, { number: 20, multiplier: 1 }, { number: 1, multiplier: 1 }],
     match: event => event.kind === 'visit' && event.darts.length === 3 && [1, 20, 5].every(n => single(event.darts, n)),
+  },
+  radkovina: {
+    name: 'Radkovina',
+    trigger: 'Kolo 19, 3 a 7 (single, libovolné pořadí)',
+    title: 'RADKOVINA!',
+    subtitle: RADKOVINA_NUMBERS.join(' · '),
+    phrase: null,
+    replacesScore: false,
+    beerNumbers: RADKOVINA_NUMBERS,
+    durationMs: 5000,
+    match: event => event.kind === 'visit' && event.darts.length === 3 && RADKOVINA_NUMBERS.every(n => single(event.darts, n)),
   },
 } satisfies Record<string, EffectRule>;
 

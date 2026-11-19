@@ -13,6 +13,8 @@ import { gamePanelLayout } from '../game/panelLayout.ts';
 import Confetti from '../components/Confetti.tsx';
 import { EffectVisual } from '../components/EffectOverlay.tsx';
 import { showConfetti } from '../effects/confetti.ts';
+import { effectDurationMs } from '../effects/effects.ts';
+import type { ActiveEffect } from '../effects/effects.ts';
 import type { GamePlayer } from '../game/x01.ts';
 import { CAST_NAMESPACE, CAST_PROTOCOL, readCastMessage } from './protocol.ts';
 import type { CastSnapshot } from './protocol.ts';
@@ -136,6 +138,7 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
 
 function Receiver() {
   const [snapshot, setSnapshot] = useState<CastSnapshot>();
+  const [effect, setEffect] = useState<ActiveEffect>();
   const [scale, setScale] = useState(() => Math.min(innerWidth / 1920, innerHeight / 1080));
   useEffect(() => {
     const resize = () => setScale(Math.min(innerWidth / 1920, innerHeight / 1080));
@@ -148,7 +151,14 @@ function Receiver() {
     const context = framework.CastReceiverContext.getInstance();
     let active: string | undefined;
     let celebration = 0;
+    let effectKey = 0;
+    let effectTimer: ReturnType<typeof setTimeout> | undefined;
     const revisions = new Map<string, number>();
+    const clearEffect = () => {
+      clearTimeout(effectTimer);
+      effectKey = 0;
+      setEffect(undefined);
+    };
     context.addCustomMessageListener(CAST_NAMESPACE, ({ data, senderId }) => {
       const message = readCastMessage(data);
       if (!message) return;
@@ -157,13 +167,22 @@ function Receiver() {
       if (message.seq > revision) {
         revisions.set(senderId, message.seq);
         if (message.type === 'state') {
+          if (active !== senderId) clearEffect();
           const nextCelebration = message.snapshot.celebration ?? 0;
           if (active === senderId && nextCelebration > celebration) showConfetti();
+          const nextEffect = message.snapshot.lastEffect ?? message.snapshot.effect;
+          if (nextEffect && nextEffect.key > effectKey) {
+            effectKey = nextEffect.key;
+            setEffect(nextEffect);
+            clearTimeout(effectTimer);
+            effectTimer = setTimeout(() => setEffect(undefined), effectDurationMs(nextEffect.id));
+          }
           celebration = nextCelebration;
           active = senderId;
           setSnapshot(message.snapshot);
         } else if (active === senderId) {
           active = undefined;
+          clearEffect();
           setSnapshot(undefined);
         }
       }
@@ -175,12 +194,14 @@ function Receiver() {
       revisions.delete(senderId);
       if (active !== senderId) return;
       active = undefined;
+      clearEffect();
       setSnapshot(undefined);
     });
     context.start({
       disableIdleTimeout: true,
       customNamespaces: { [CAST_NAMESPACE]: framework.system.MessageType.JSON },
     });
+    return () => clearTimeout(effectTimer);
   }, []);
   return <>
     <div className={snapshot?.game ? 'tv-display' : 'tv-display tv-display--idle'}>
@@ -189,7 +210,7 @@ function Receiver() {
       </div>
     </div>
     <Confetti />
-    <EffectVisual active={snapshot?.effect} />
+    <EffectVisual active={effect} />
   </>;
 }
 

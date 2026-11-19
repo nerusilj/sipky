@@ -33,11 +33,14 @@ export default function CallerPanel() {
     <div className="caller-quick">{QUICK.map(n => <button key={n} className={state.playing === String(n) ? 'playing' : ''} onClick={() => void caller.play(n)}>{n}</button>)}</div>
     <div className="caller-effects">
       <span className="field-label">EFEKTY</span>
-      {EFFECT_IDS.map(id => <span key={id} className="caller-effect">
-        <strong>{EFFECTS[id].name}</strong><span className="muted small">{EFFECTS[id].trigger}</span>
-        <button onClick={() => triggerEffect(id)}>▶ Efekt s hláškou</button>
-        <button onClick={() => void caller.playPhrase(EFFECTS[id].phrase)}>Jen hláška</button>
-      </span>)}
+      {EFFECT_IDS.map(id => {
+        const effect = EFFECTS[id], phrase = effect.phrase;
+        return <span key={id} className="caller-effect">
+          <strong>{effect.name}</strong><span className="muted small">{effect.trigger}</span>
+          <button onClick={() => triggerEffect(id)}>{phrase ? '▶ Efekt s hláškou' : '▶ Efekt'}</button>
+          {phrase && <button onClick={() => void caller.playPhrase(phrase)}>Jen hláška</button>}
+        </span>;
+      })}
       <span className="caller-effect"><strong>Konfety a fanfára</strong><span className="muted small">Platné zavření hry</span>
         <button onClick={() => celebrate()}>▶ Vyzkoušet</button></span>
     </div>

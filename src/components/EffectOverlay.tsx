@@ -2,7 +2,8 @@ import type { CSSProperties } from 'react';
 import { EFFECTS } from '../effects/effectRules.ts';
 import type { EffectRule } from '../effects/effectRules.ts';
 import BoardSectors from './BoardSectors.tsx';
-import { dismissEffect, useActiveEffect } from '../effects/effects.ts';
+import BeerNumber from './BeerNumber.tsx';
+import { dismissEffect, effectDurationMs, useActiveEffect } from '../effects/effects.ts';
 import type { ActiveEffect } from '../effects/effects.ts';
 
 const COLORS = ['#ff7a1f', '#ffd29a', '#3fcfbf', '#b6f5ea', '#ffffff', '#ff6a50', '#a68cf0'];
@@ -24,6 +25,18 @@ export default function EffectOverlay() {
 export function EffectVisual({ active, onDismiss }: { active?: ActiveEffect; onDismiss?: () => void }) {
   if (!active) return null;
   const effect: EffectRule = EFFECTS[active.id];
+  if (effect.beerNumbers) return <div key={active.key} className="effect-overlay beer-numbers" role="alert"
+    aria-label={`${effect.title} ${effect.subtitle}`}
+    style={{ animationDuration: `${effectDurationMs(active.id)}ms` }} onClick={onDismiss}>
+    <div className="beer-numbers-heading" aria-hidden="true">
+      <strong className="beer-heading-glass">{effect.title}</strong>
+      <strong className="beer-heading-liquid">{effect.title}</strong>
+      <strong className="beer-heading-foam">{effect.title}</strong>
+    </div>
+    <div className="beer-numbers-row" aria-hidden="true">
+      {effect.beerNumbers.map(number => <BeerNumber key={number} number={number} />)}
+    </div>
+  </div>;
   return <div key={active.key} className="effect-overlay" role="alert" onClick={onDismiss}>
     <div className="effect-rings" aria-hidden="true"><span /><span /><span /></div>
     <div className="effect-confetti" aria-hidden="true">{CONFETTI.map((style, i) => <i key={i} style={style} />)}</div>

@@ -21,6 +21,48 @@ Object.defineProperty(globalThis, 'Audio', { configurable: true, value: AudioStu
 const { caller } = await import('../src/caller/caller.ts');
 const { celebrate } = await import('../src/effects/confetti.ts');
 const { isSoundEnabled, setSoundEnabled, isCallerEnabled, getCallerVoice, isEffectActive } = await import('../src/settings.ts');
+const { setCallerEnabled, setCallerVoice, setEffectsEnabled } = await import('../src/settings.ts');
+const { reactToVisit } = await import('../src/reactions.ts');
+const { dismissEffect, getActiveEffect } = await import('../src/effects/effects.ts');
+
+test('Radkovina zobrazí animaci a ohlásí pouze součet 29 oběma hlasy; Ambrožovka má dál vlastní hlášku', async () => {
+  const voiceBefore = getCallerVoice(), callerBefore = isCallerEnabled(), soundBefore = isSoundEnabled();
+  const audioBefore = AudioStub.instances.slice(), effectsBefore = isEffectActive('ambrozovina');
+  const visit = (numbers: number[]) => ({ kind: 'visit' as const, total: numbers.reduce((a, b) => a + b, 0),
+    darts: numbers.map(number => ({ name: `S${number}`, number, multiplier: 1, score: number })) });
+  try {
+    setSoundEnabled(true); setCallerEnabled(true); setEffectsEnabled(true);
+    for (const voice of ['eliska', 'martin'] as const) {
+      setCallerVoice(voice);
+      const before = AudioStub.instances.length;
+      const speaking = reactToVisit(visit([7, 19, 3]));
+      assert.equal(getActiveEffect()?.id, 'radkovina');
+      assert.deepEqual(AudioStub.instances.slice(before).map(audio => audio.url), [`/sounds/cs/${voice}/score/29.wav`]);
+      AudioStub.instances.at(-1)!.finish();
+      await speaking;
+      assert.equal(AudioStub.instances.length, before + 1, 'po součtu nenásleduje vlastní hláška');
+      dismissEffect();
+    }
+    setCallerEnabled(false);
+    const beforeMuted = AudioStub.instances.length;
+    await reactToVisit(visit([19, 3, 7]));
+    assert.equal(getActiveEffect()?.id, 'radkovina');
+    assert.equal(AudioStub.instances.length, beforeMuted);
+    dismissEffect();
+
+    setCallerEnabled(true);
+    const beforeAmbroz = AudioStub.instances.length;
+    const ambroz = reactToVisit(visit([1, 20, 5]));
+    assert.equal(getActiveEffect()?.id, 'ambrozovina');
+    assert.deepEqual(AudioStub.instances.slice(beforeAmbroz).map(audio => audio.url), ['/sounds/cs/martin/fun/ambrozovina.wav']);
+    AudioStub.instances.at(-1)!.finish();
+    await ambroz;
+    assert.equal(AudioStub.instances.length, beforeAmbroz + 1);
+  } finally {
+    dismissEffect(); caller.stop(); setCallerVoice(voiceBefore); setCallerEnabled(callerBefore); setSoundEnabled(soundBefore);
+    setEffectsEnabled(effectsBefore); AudioStub.instances = audioBefore;
+  }
+});
 
 test('ztišení se načte z nastavení, umlčí všechny nahrávky a zachová nastavení hlasatele a efektů', async () => {
   assert.equal(isSoundEnabled(), false);

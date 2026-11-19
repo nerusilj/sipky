@@ -313,6 +313,63 @@ footer{display:flex;justify-content:space-between;gap:20px;font-size:11px;color:
 .effect-confetti{position:absolute;inset:0;display:grid;place-items:center}
 .effect-confetti i{grid-area:1/1;width:12px;height:20px;border-radius:2px;background:var(--color);opacity:0;
   animation:effect-confetti 2.4s cubic-bezier(.15,.7,.3,1) var(--delay) forwards}
+/* Radkovina: tři skleněná čísla se postupně naplní pivem. */
+.beer-numbers{--delay:.4s;--fill-duration:2.1s;--burst-delay:calc(var(--delay) + var(--fill-duration) * .68);
+  background:radial-gradient(ellipse at 50% 61%,#46321c 0%,#201e19 44%,#090d10 88%)}
+.beer-numbers::before{content:"";position:absolute;left:7%;right:7%;top:73%;height:22%;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0,#d7922421,transparent 68%);filter:blur(12px)}
+.beer-numbers-heading{position:absolute;top:16%;left:4%;right:4%;text-align:center;
+  animation:beer-number-heading .4s ease-out .15s both}
+.beer-numbers-heading>strong{display:block;font-size:clamp(32px,min(9vw,11vh),142px);line-height:1;
+  font-weight:900;letter-spacing:.035em}
+.beer-heading-glass{color:#f6f4e626;-webkit-text-stroke:1px #fff7df77;text-shadow:0 4px 22px #0008}
+.beer-heading-liquid{position:absolute;inset:0;color:transparent;-webkit-text-stroke:.6px #ffe5a780;
+  background:radial-gradient(circle,#fff5cba6 0 1px,transparent 1.5px) 3px 7px / 19px 23px,
+    radial-gradient(circle,#fff8dc80 0 .7px,transparent 1.2px) 11px 15px / 31px 29px,
+    linear-gradient(180deg,#fffaf0 0%,#efe2c9 28%,#f9d979 34%,#f3b52c 58%,#a45716 94%,#f9d979 100%);
+  -webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 2px 2px #6a37184d);
+  animation:beer-number-fill var(--fill-duration) cubic-bezier(.25,.2,.35,1) var(--delay) both}
+.beer-heading-foam{position:absolute;inset:0;color:transparent;-webkit-text-stroke:2px #fff8e8;
+  background:radial-gradient(circle,#d6c5a580 0 .65px,transparent 1.15px) 1px 3px / 5px 6px,
+    radial-gradient(circle,#fffef8 0 1px,transparent 1.6px) 3px 1px / 7px 8px,
+    linear-gradient(180deg,#fffef7,#fff8e8 70%,#e5d3b5);
+  -webkit-background-clip:text;background-clip:text;clip-path:inset(0 0 66%);
+  filter:drop-shadow(0 -1px 1px #fffbea80) drop-shadow(0 2px 1px #70501f45);
+  animation:beer-heading-foam .35s ease-out calc(var(--delay) + var(--fill-duration) - .35s) both}
+.beer-numbers-row{--number-size:min(30vw,50vh,480px);position:absolute;left:50%;top:58%;width:min(94vw,1440px);
+  transform:translate(-50%,-50%);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));justify-items:center}
+.beer-number{position:relative;width:var(--number-size);height:var(--number-size);isolation:isolate;
+  animation:beer-number-arrive .45s ease-out .1s both}
+.beer-number img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}
+.beer-number-glass{position:absolute;inset:0;filter:grayscale(1) brightness(1.5);opacity:.2;clip-path:inset(17% 0 0)}
+.beer-number-liquid{position:absolute;inset:0;filter:drop-shadow(0 5px 9px #0006);
+  animation:beer-number-fill var(--fill-duration) cubic-bezier(.25,.2,.35,1) var(--delay) both}
+.beer-number-glow{position:absolute;left:12%;right:12%;top:70%;height:30%;z-index:-1;
+  background:radial-gradient(ellipse,#ffb33438,transparent 65%);filter:blur(14px);
+  animation:beer-number-glow var(--fill-duration) ease-out var(--delay) both}
+.beer-number-fizz{position:absolute;inset:0;pointer-events:none;-webkit-mask-image:var(--beer-number-art);mask-image:var(--beer-number-art);
+  -webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  animation:beer-number-fizz-in .35s ease-out calc(var(--delay) + var(--fill-duration) - .3s) both}
+.beer-number-fizz>i{position:absolute;left:var(--bubble-x);top:77%;width:var(--bubble-size);height:var(--bubble-size);
+  border:1px solid #fff0b999;border-radius:50%;animation:beer-number-bubble 2.8s linear var(--bubble-delay) infinite}
+.beer-number-burst{position:absolute;left:var(--vent-x);top:14%;width:0;height:0;pointer-events:none}
+.beer-number-burst>i{position:absolute;left:0;top:0;width:var(--spray-size);height:var(--spray-size);border-radius:50%;
+  background:#fff7ded9;box-shadow:0 0 3px #ffeab866;animation:beer-number-spray .8s ease-out calc(var(--burst-delay) + var(--spray-delay)) both}
+@keyframes beer-number-heading{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes beer-heading-foam{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:none}}
+@keyframes beer-number-arrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes beer-number-fill{from{clip-path:inset(100% 0 0)}to{clip-path:inset(0 0 0)}}
+@keyframes beer-number-glow{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@keyframes beer-number-fizz-in{from{opacity:0}to{opacity:.65}}
+@keyframes beer-number-bubble{0%{opacity:0;transform:translate(0,0)}12%{opacity:.7}80%{opacity:.5}
+  100%{opacity:0;transform:translate(4px,calc(var(--number-size) * -.6))}}
+@keyframes beer-number-spray{0%{opacity:0;transform:translate(0,0) scale(.4)}12%{opacity:.85}
+  62%{opacity:.55;transform:translate(calc(var(--number-size) * var(--spray-dx) * .85),calc(var(--number-size) * var(--spray-dy))) scale(1)}
+  100%{opacity:0;transform:translate(calc(var(--number-size) * var(--spray-dx)),calc(var(--number-size) * (var(--spray-dy) + .04))) scale(.3)}}
+@media(prefers-reduced-motion:reduce){
+  .beer-numbers-heading,.beer-heading-liquid,.beer-heading-foam,.beer-number,.beer-number-liquid,.beer-number-glow{animation:none}
+  .beer-number-fizz,.beer-number-burst{display:none}
+}
 .board-sectors{width:clamp(170px,21vw,340px);height:auto;overflow:visible;animation:effect-sub 3.2s ease both;filter:drop-shadow(0 10px 24px #000a)}
 .board-sectors .sector-dim{opacity:.4}
 .board-sectors .bed-lit{animation:bed-blink .36s ease-in-out infinite alternate}

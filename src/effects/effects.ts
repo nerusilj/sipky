@@ -1,9 +1,12 @@
 import { useSyncExternalStore } from 'react';
 import { caller } from '../caller/caller.ts';
 import { EFFECTS } from './effectRules.ts';
-import type { EffectId } from './effectRules.ts';
+import type { EffectId, EffectRule } from './effectRules.ts';
 
-export const EFFECT_DURATION_MS = 3200;
+export function effectDurationMs(id: EffectId): number {
+  const effect: EffectRule = EFFECTS[id];
+  return effect.durationMs ?? 3200;
+}
 
 export interface ActiveEffect { id: EffectId; key: number }
 
@@ -18,12 +21,13 @@ function set(value: ActiveEffect | undefined): void {
   listeners.forEach(listener => listener());
 }
 
-// Spustí efekt: zařadí jeho hlášku k hlasateli a zobrazí animaci.
+// Spustí animaci a případnou vlastní hlášku efektu.
 export function triggerEffect(id: EffectId, withSound = true): Promise<void> {
-  const sound = withSound ? caller.enqueuePhrase(EFFECTS[id].phrase) : Promise.resolve();
+  const phrase = EFFECTS[id].phrase;
+  const sound = withSound && phrase ? caller.enqueuePhrase(phrase) : Promise.resolve();
   clearTimeout(timer);
   set({ id, key: nextKey++ });
-  timer = setTimeout(() => set(undefined), EFFECT_DURATION_MS);
+  timer = setTimeout(() => set(undefined), effectDurationMs(id));
   return sound;
 }
 

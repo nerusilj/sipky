@@ -8,12 +8,16 @@ import { normalizeVoice, parseDisabledEffects } from '../src/settings.ts';
 import { phraseSoundUrl } from '../src/caller/phrases.ts';
 import { matchEffects } from '../src/effects/effectRules.ts';
 
-test('Ambrožovka: kolo S1, S20, S5 v libovolném pořadí, jen když je efekt zapnutý', () => {
+test('Ambrožovka a Radkovina vyžadují tři singly v libovolném pořadí a zapnutý efekt', () => {
   const dart = (number: number, multiplier = 1) => ({ name: `${'SDT'[multiplier - 1] ?? 'M'}${number}`, number, multiplier, score: number * multiplier });
   const visit = (...darts: ReturnType<typeof dart>[]): BoardEvent => ({ kind: 'visit', darts, total: darts.reduce((s, d) => s + d.score, 0) });
   const on = () => true;
   assert.deepEqual(matchEffects(visit(dart(1), dart(20), dart(5)), on), ['ambrozovina']);
   assert.deepEqual(matchEffects(visit(dart(5), dart(1), dart(20)), on), ['ambrozovina']);
+  assert.deepEqual(matchEffects(visit(dart(19), dart(3), dart(7)), on), ['radkovina']);
+  assert.deepEqual(matchEffects(visit(dart(7), dart(19), dart(3)), on), ['radkovina']);
+  assert.deepEqual(matchEffects(visit(dart(19, 2), dart(3), dart(7)), on), []);
+  assert.deepEqual(matchEffects(visit(dart(19), dart(3), dart(7)), id => id !== 'radkovina'), []);
   for (const other of [visit(dart(1, 3), dart(20), dart(5)), visit(dart(20), dart(5)), visit(dart(20), dart(6), dart(0, 0)), visit(dart(1), dart(20), dart(20))]) {
     assert.deepEqual(matchEffects(other, on), []);
   }

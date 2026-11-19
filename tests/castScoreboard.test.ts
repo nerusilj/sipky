@@ -53,6 +53,12 @@ test('Cast přijímá starší snapshot i volitelné TV efekty v protokolu v1', 
   const send = (extra = {}) => readCastMessage({ v: CAST_PROTOCOL, type: 'state', seq: 1, snapshot: { ...snapshot, ...extra } });
   assert.ok(send());
   assert.ok(send({ effect: { id: 'ambrozovina', key: 2 }, celebration: 3 }));
+  const lastEffect = { id: 'radkovina', key: 2 };
+  const retained = send({ lastEffect });
+  assert.equal(retained?.type, 'state');
+  assert.deepEqual(retained.snapshot.lastEffect, lastEffect);
+  assert.equal(retained.snapshot.effect, undefined);
+  assert.equal(send({ lastEffect: { ...lastEffect, key: 0 } }), undefined);
   assert.equal(send({ effect: { id: 'unknown', key: 2 } }), undefined);
   assert.equal(send({ effect: { id: 'ambrozovina', key: 0 } }), undefined);
   assert.equal(send({ celebration: -1 }), undefined);
