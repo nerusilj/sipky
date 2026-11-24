@@ -12,6 +12,7 @@ import { legsText } from '../game/x01Presentation.ts';
 import { gamePanelLayout } from '../game/panelLayout.ts';
 import Confetti from '../components/Confetti.tsx';
 import { EffectVisual } from '../components/EffectOverlay.tsx';
+import { preloadBeerNumbers } from '../components/BeerNumber.tsx';
 import { showConfetti } from '../effects/confetti.ts';
 import { effectDurationMs } from '../effects/effects.ts';
 import type { ActiveEffect } from '../effects/effects.ts';
@@ -141,6 +142,7 @@ function Receiver() {
   const [effect, setEffect] = useState<ActiveEffect>();
   const [scale, setScale] = useState(() => Math.min(innerWidth / 1920, innerHeight / 1080));
   useEffect(() => {
+    preloadBeerNumbers();
     const resize = () => setScale(Math.min(innerWidth / 1920, innerHeight / 1080));
     window.addEventListener('resize', resize);
     return () => window.removeEventListener('resize', resize);
@@ -210,7 +212,7 @@ function Receiver() {
       </div>
     </div>
     <Confetti />
-    <EffectVisual active={effect} />
+    <EffectVisual active={effect} lightweight />
   </>;
 }
 

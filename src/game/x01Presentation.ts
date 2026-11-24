@@ -1,4 +1,4 @@
-import { suggestCheckout } from './checkout.ts';
+import { suggestCheckout, suggestCheckoutSetup } from './checkout.ts';
 import { DARTS_PER_VISIT, ENDLESS, legDartNumber, legThreeDartAverage, playerDisplayedLegsWon, playerFinishPlace } from './x01.ts';
 import type { X01State } from './x01.ts';
 
@@ -22,7 +22,13 @@ export function x01PlayerScore(state: X01State, index: number) {
   const legsWon = playerDisplayedLegsWon(state, index);
   const remaining = active ? state.visitResult.remaining : state.remaining[index];
   const dartsLeft = active ? DARTS_PER_VISIT - state.visit.length : DARTS_PER_VISIT;
-  const checkout = active && state.settings.doubleOut && !state.visitResult.closed ? suggestCheckout(remaining, dartsLeft) : undefined;
+  const canSuggest = active && state.settings.doubleOut && !state.visitResult.closed;
+  const checkout = canSuggest ? suggestCheckout(remaining, dartsLeft, player.preferredDouble) : undefined;
+  // Žlutá smí navázat jen na zelený dohoz v tomto kole. Pokud existuje
+  // dohoz po dílčím hodu, existoval i na začátku kola s těmito hody před ním.
+  const checkoutSetup = canSuggest && state.settings.checkoutSetupEnabled !== false && !checkout && state.visit.length > 0
+    && suggestCheckout(state.remaining[index], DARTS_PER_VISIT, player.preferredDouble)
+    ? suggestCheckoutSetup(remaining, dartsLeft, player.preferredDouble) : undefined;
   let lastVisit;
   if (!active) {
     for (let i = state.history.length - 1; i >= 0; i--) {
@@ -38,5 +44,5 @@ export function x01PlayerScore(state: X01State, index: number) {
   const dartNumber = legDartNumber(state, index);
   const legAverage = legThreeDartAverage(state, index).toFixed(1).replace('.', ',');
   return { index, player, active, busted, place, legsWon, remaining, shownDarts, visitTotal,
-    visitBusted, dartNumber, legAverage, checkout, winner: state.winner === index };
+    visitBusted, dartNumber, legAverage, checkout, checkoutSetup, winner: state.winner === index };
 }

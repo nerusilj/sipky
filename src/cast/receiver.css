@@ -38,3 +38,25 @@ html,body,#root{width:100%;height:100%;overflow:hidden;margin:0;background:#000}
 .tv-idle{height:100%;padding-top:463px;text-align:center;background:url('./tv-idle-motif.png') no-repeat left 260px / 480px auto}
 .tv-idle h1{width:540px;margin:0 auto;font-size:0}
 .tv-idle p{margin:27px 0 0;font:30px/1.35 "Segoe UI",system-ui,sans-serif;color:#a3a8ae}
+
+/* Chromecast 3: neskládat celou oslavu do průhledné filtrované textury.
+   Délku zobrazení dál řídí receiver; animují se jen jednotlivé malé prvky. */
+.effect-overlay--tv{animation:none;cursor:default}
+.effect-overlay--tv .effect-text strong{color:#ffb06e;background:none;filter:none;text-shadow:0 3px 0 #0008}
+.effect-overlay--tv .effect-text span{ text-shadow:none }
+.effect-overlay--tv .board-sectors,.effect-overlay--tv .board-sectors .bed-lit,
+.effect-overlay--tv .board-sectors .sector-number.lit{filter:none}
+.effect-overlay--tv .board-sectors .bed-lit{animation:tv-bed-blink .5s ease-in-out infinite alternate}
+.effect-overlay--tv.beer-numbers::before{display:none}
+.effect-overlay--tv .beer-number{animation:none;isolation:auto}
+.effect-overlay--tv .beer-number-glass{filter:none;clip-path:none}
+.effect-overlay--tv .beer-number-liquid{top:auto;bottom:0;height:100%;overflow:hidden;filter:none;clip-path:none;
+  animation:tv-beer-fill var(--fill-duration) cubic-bezier(.25,.2,.35,1) var(--delay) both}
+.effect-overlay--tv .beer-number-liquid img{position:absolute;bottom:0;left:0;width:100%;height:var(--number-size);max-width:none}
+.effect-overlay--tv .beer-heading-liquid,.effect-overlay--tv .beer-heading-foam{filter:none}
+.effect-overlay--tv .beer-number-burst>i{box-shadow:none}
+@keyframes tv-beer-fill{from{height:0}to{height:100%}}
+@keyframes tv-bed-blink{from{fill:#ff7a1f}to{fill:#fff1d6}}
+@media(prefers-reduced-motion:reduce){
+  .effect-overlay--tv .beer-number-liquid,.effect-overlay--tv .board-sectors .bed-lit{animation:none}
+}

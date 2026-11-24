@@ -22,10 +22,13 @@ export default function EffectOverlay() {
   return <EffectVisual active={useActiveEffect()} onDismiss={dismissEffect} />;
 }
 
-export function EffectVisual({ active, onDismiss }: { active?: ActiveEffect; onDismiss?: () => void }) {
+export function EffectVisual({ active, onDismiss, lightweight = false }: {
+  active?: ActiveEffect; onDismiss?: () => void; lightweight?: boolean;
+}) {
   if (!active) return null;
   const effect: EffectRule = EFFECTS[active.id];
-  if (effect.beerNumbers) return <div key={active.key} className="effect-overlay beer-numbers" role="alert"
+  const className = `effect-overlay${lightweight ? ' effect-overlay--tv' : ''}`;
+  if (effect.beerNumbers) return <div key={active.key} className={`${className} beer-numbers`} role="alert"
     aria-label={`${effect.title} ${effect.subtitle}`}
     style={{ animationDuration: `${effectDurationMs(active.id)}ms` }} onClick={onDismiss}>
     <div className="beer-numbers-heading" aria-hidden="true">
@@ -34,12 +37,12 @@ export function EffectVisual({ active, onDismiss }: { active?: ActiveEffect; onD
       <strong className="beer-heading-foam">{effect.title}</strong>
     </div>
     <div className="beer-numbers-row" aria-hidden="true">
-      {effect.beerNumbers.map(number => <BeerNumber key={number} number={number} />)}
+      {effect.beerNumbers.map(number => <BeerNumber key={number} number={number} lightweight={lightweight} />)}
     </div>
   </div>;
-  return <div key={active.key} className="effect-overlay" role="alert" onClick={onDismiss}>
-    <div className="effect-rings" aria-hidden="true"><span /><span /><span /></div>
-    <div className="effect-confetti" aria-hidden="true">{CONFETTI.map((style, i) => <i key={i} style={style} />)}</div>
+  return <div key={active.key} className={className} role="alert" onClick={onDismiss}>
+    {!lightweight && <div className="effect-rings" aria-hidden="true"><span /><span /><span /></div>}
+    <div className="effect-confetti" aria-hidden="true">{(lightweight ? CONFETTI.slice(0, 18) : CONFETTI).map((style, i) => <i key={i} style={style} />)}</div>
     <div className="effect-text" aria-label={`${effect.title} ${effect.subtitle}`}><strong>{effect.title}</strong>
       {effect.highlight ? <BoardSectors highlight={effect.highlight} /> : <span>{effect.subtitle}</span>}</div>
   </div>;

@@ -20,12 +20,13 @@ export type NextLegOrder = 'loserFirst' | 'rotate';
 export interface X01Settings {
   startScore: StartScore; doubleOut: boolean; legsToWin: number;
   nextLegOrder?: NextLegOrder; maxRounds?: number; minFinishers?: number;
+  checkoutSetupEnabled?: boolean;
 }
 export const ENDLESS = 0;
 export const NO_ROUND_LIMIT = 0;
 export const DEFAULT_NEXT_LEG_ORDER: NextLegOrder = 'loserFirst';
 export const isEndless = (settings: X01Settings) => settings.legsToWin === ENDLESS;
-export interface GamePlayer { id: string; name: string; color: string; avatarId?: AvatarId; bot?: BotLevel }
+export interface GamePlayer { id: string; name: string; color: string; avatarId?: AvatarId; bot?: BotLevel; preferredDouble?: number }
 
 export interface VisitResult { scored: number; bust: boolean; checkout: boolean; closed: boolean; remaining: number }
 export interface VisitRecord extends VisitResult { player: number; leg: number; round: number; darts: Dart[]; remainingBefore: number }

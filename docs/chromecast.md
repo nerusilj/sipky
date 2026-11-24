@@ -33,3 +33,9 @@ Aktualizace odejde po každém zaznamenaném hodu nebo opravě bez čekání na 
 - Připojte televizi před zahájením i uprostřed hry. V obou režimech vyzkoušejte ruční hod, hod z Autodarts, opravu, Zpět, změnu hráče a výsledek. V X01 vyzkoušejte také rozhoz.
 - Ověřte **Odpojit TV**, rychlé připojení po restartu Šipek a stav při ztrátě připojení.
 - U Full HD televize zkontrolujte její HDMI režim a viewport receiveru. Zpoždění změřte z videa, které současně zachycuje notebook i televizi. [Ladění Web Receiveru](https://developers.google.com/cast/docs/debugging/remote_debugger)
+
+## TV aktualizace 24. 11. 2026
+
+Receiver přijímá také volitelnou žlutou přípravu `checkoutSetup` v kartách X01. Zobrazuje jen doporučené hody. Podmínky i vypnutí návrhu určuje aplikace; starší snapshot bez přípravy dál funguje. Po aktualizaci je potřeba TV odpojit a znovu připojit.
+
+Televizní efekty používají odlehčené vykreslení bez CSS filtrů a masek bublinek. Radkovina zachovává obrázky 7, 19, 3 a plnění odspodu pomocí výšky ořezávajícího prvku. Podklady se předem načítají a dekódují při připojení. Ambrožovka používá plný barevný nápis, terč a méně konfet. Časování a protokol zůstávají stejné. Fyzický test na Chromecastu 3 je stále nutný.

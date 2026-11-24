@@ -59,13 +59,67 @@ for (let count = 2; count <= 3; count++) {
 }
 const cache = new Map<string, Dart[] | null>();
 
-export function suggestCheckout(remaining: number, dartsLeft: number): Dart[] | undefined {
+type CheckoutSetup = { route: Dart[]; leave: number };
+const setupCache = new Map<string, CheckoutSetup | null>();
+
+// Pro každý součet přípravných šipek stačí nejjednodušší cesta k němu.
+const setupPrefixes = [new Map([[0, { route: [] as Dart[], cost: 0 }]])];
+for (let count = 1; count <= 2; count++) {
+  const prefixes = new Map<number, { route: Dart[]; cost: number }>();
+  for (const [score, prefix] of setupPrefixes[count - 1]) for (const dart of SETUPS) {
+    const total = score + dart.score;
+    const cost = prefix.cost + setupCost(dart);
+    if (cost < (prefixes.get(total)?.cost ?? Infinity)) prefixes.set(total, { route: [...prefix.route, dart], cost });
+  }
+  setupPrefixes.push(prefixes);
+}
+
+export function suggestCheckoutSetup(remaining: number, dartsLeft: number, preferredDouble?: number): CheckoutSetup | undefined {
+  if (!Number.isInteger(remaining) || !Number.isInteger(dartsLeft) || dartsLeft < 1 || dartsLeft > 3
+    || remaining > MAX_CHECKOUT + 60 * dartsLeft || remaining < 2 || reachable[dartsLeft].has(remaining)) return undefined;
+  const key = `${remaining}/${dartsLeft}/${preferredDouble ?? ''}`;
+  if (setupCache.has(key)) return setupCache.get(key) ?? undefined;
+  let best: CheckoutSetup | undefined;
+  let bestRank = [Infinity];
+  for (const [scored, prefix] of setupPrefixes[dartsLeft - 1]) for (const dart of SETUPS) {
+    const beforeLast = remaining - scored;
+    const leave = beforeLast - dart.score;
+    if (!reachable[3].has(leave)) continue;
+    const otherMultiplier = dart.multiplier === 1 && dart.number !== 25 ? 3 : dart.multiplier === 1 ? 2 : 1;
+    const otherLeave = beforeLast - dart.number * otherMultiplier;
+    const rank = [
+      reachable[1].has(leave) ? 1 : reachable[2].has(leave) ? 2 : 3,
+      leave === (preferredDouble ?? 0) * 2 ? 0 : 1,
+      reachable[3].has(otherLeave) ? 0 : 1,
+      prefix.cost + setupCost(dart),
+      finishRank.get(FINISHES.find(finish => finish.score === leave)?.name ?? '') ?? FINISHES.length,
+      leave,
+    ];
+    const different = rank.findIndex((value, i) => value !== bestRank[i]);
+    if (different >= 0 && rank[different] < bestRank[different]) {
+      best = { route: [...prefix.route, dart], leave };
+      bestRank = rank;
+    }
+  }
+  setupCache.set(key, best ?? null);
+  return best;
+}
+
+export function suggestCheckout(remaining: number, dartsLeft: number, preferredDouble?: number): Dart[] | undefined {
   if (!Number.isInteger(remaining) || remaining < 2 || remaining > MAX_CHECKOUT || !Number.isInteger(dartsLeft) || dartsLeft < 1) return undefined;
   const count = Math.min(dartsLeft, 3);
   if (!reachable[count].has(remaining)) return undefined;
   const key = `${remaining}/${count}`;
   if (!cache.has(key)) cache.set(key, search(remaining, count));
-  return cache.get(key) ?? undefined;
+  const standard = cache.get(key);
+  if (!standard) return undefined;
+  const preferredFinish = FINISHES.find(dart => dart.number === preferredDouble);
+  if (!preferredFinish || standard.length === 1 || standard.at(-1) === preferredFinish) return standard;
+  const preferredKey = `${key}/${preferredDouble}`;
+  if (!cache.has(preferredKey)) {
+    cache.set(preferredKey, search(remaining, count, preferredFinish, standard.length));
+  }
+  return cache.get(preferredKey) ?? standard;
 }
 
 // Cena nerozhoduje o platnosti a neodhaduje hráčovu úspěšnost. Rozliší jen
@@ -89,7 +143,7 @@ function openingRisk(remaining: number, first: Dart, dartsLeft: number): number 
   return miss === undefined || reachable[dartsLeft - 1].has(remaining - miss) ? 0 : 1;
 }
 
-function search(remaining: number, dartsLeft: number): Dart[] | null {
+function search(remaining: number, dartsLeft: number, preferredFinish?: Dart, maxLength = dartsLeft): Dart[] | null {
   const direct = FINISHES.find(dart => dart.score === remaining);
   if (direct) return [direct];
   const standard = STANDARD_ROUTES[remaining];
@@ -98,6 +152,7 @@ function search(remaining: number, dartsLeft: number): Dart[] | null {
   const consider = (route: Dart[]) => {
     const finish = route.at(-1)!;
     const rank = [
+      preferredFinish ? route.length : 0,
       openingRisk(remaining, route[0], dartsLeft),
       route.map(dart => dart.name).join(' ') === standard ? 0 : 1,
       route.length,
@@ -106,11 +161,11 @@ function search(remaining: number, dartsLeft: number): Dart[] | null {
     const different = rank.findIndex((value, i) => value !== bestRank[i]);
     if (different >= 0 && rank[different] < (bestRank[different] ?? Infinity)) { best = route; bestRank = rank; }
   };
-  for (let count = 2; count <= dartsLeft; count++) {
+  for (let count = 2; count <= maxLength; count++) {
     const visit = (prefix: Dart[], left: number) => {
       if (prefix.length === count - 1) {
-        const finish = FINISHES.find(dart => dart.score === left);
-        if (finish) consider([...prefix, finish]);
+        const finish = preferredFinish ?? FINISHES.find(dart => dart.score === left);
+        if (finish?.score === left) consider([...prefix, finish]);
         return;
       }
       for (const dart of SETUPS) if (dart.score < left - 1) visit([...prefix, dart], left - dart.score);
