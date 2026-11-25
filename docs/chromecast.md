@@ -11,6 +11,8 @@ Televizor vykresluje skóre X01, Cricket nebo rozhoz na střed. Vpravo nahoře j
 
 Receiver používá plochu **1920 × 1080, 16:9** a přizpůsobí ji ploše, kterou poskytne Chromecast. Velikost okna notebooku do tohoto výpočtu nevstupuje. Chromecast 3 podporuje výstup až 1080p. Rozlišení vykreslování HTML určuje firmware. Pokud receiver dostane plochu 1280 × 720, vykreslí stejný layout v měřítku 2/3. [Specifikace Chromecastu](https://support.google.com/chromecast/answer/3046409) · [Podporovaná média Google Cast](https://developers.google.com/cast/docs/media)
 
+Rozhodující je **CSS viewport receiveru** (`innerWidth` / `innerHeight`), nikoli fyzické rozlišení panelu, `screen.width`, DPR nebo velikost notebookového okna. Google uvádí pro Chromecast grafickou plochu 720p a u některých dalších platforem až 1080p. Aplikace tedy nemůže vynutit 4K rozhraní jen podle připojené 4K TV. Změna dostupné plochy přepočítá měřítko; odlišný poměr stran zachová celý obraz s volnými okraji. [Grafická plocha Web Receiveru](https://developers.google.com/cast/docs/android_tv_receiver/debugging)
+
 ## Jednorázové nasazení pro vývojáře
 
 1. V kořeni projektu spusťte `pnpm build:cast`. Výsledkem je samostatný adresář `dist-cast/`.
@@ -39,3 +41,9 @@ Aktualizace odejde po každém zaznamenaném hodu nebo opravě bez čekání na 
 Receiver přijímá také volitelnou žlutou přípravu `checkoutSetup` v kartách X01. Zobrazuje jen doporučené hody. Podmínky i vypnutí návrhu určuje aplikace; starší snapshot bez přípravy dál funguje. Po aktualizaci je potřeba TV odpojit a znovu připojit.
 
 Televizní efekty používají odlehčené vykreslení bez CSS filtrů a masek bublinek. Radkovina zachovává obrázky 7, 19, 3 a plnění odspodu pomocí výšky ořezávajícího prvku. Podklady se předem načítají a dekódují při připojení. Ambrožovka používá plný barevný nápis, terč a méně konfet. Časování a protokol zůstávají stejné. Fyzický test na Chromecastu 3 je stále nutný.
+
+### Revize velikostí a rozložení
+
+Zelený dohoz i žlutá příprava používají TV písmo 28–38 px podle šířky karty v návrhové ploše. Nepřebírají již `vw` z fyzického viewportu, takže nedochází ke dvojímu zmenšení. Šipky mají společné TV rozestupy. Větší jsou také hody v kartách, jména a metriky Cricketu. Záhlaví zůstává ve třech sloupcích i při 720p; jeho prvky mají výslovně určené řádky a sloupce. Rozhoz má kompaktní avatary a celý seznam osmi účastníků se vejde bez posouvání. Lokální notebookové styly se touto změnou neupravují.
+
+Pro revizi se používají umělé snapshoty X01 (zelená, žlutá, přehoz, vítěz; 2–8 hráčů, dlouhá jména, živý terč), Cricketu, rozhozu a výsledků i čekací obrazovky. Kontrolují se viewporty 1280 × 720, 1920 × 1080, 1024 × 768 a 3840 × 2160. To ověřuje rozložení v prohlížeči, nikoli výkon nebo firmware fyzického Chromecastu.
