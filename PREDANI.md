@@ -2,6 +2,14 @@
 
 Aktualizováno 27. 11. 2026. Před zahájením práce si projdi také `AGENTS.md` a postup pro nový klon v `README.md`.
 
+## Linux vydání 0.1.17 zveřejněné a ověřené — 27. 11. 2026
+
+- **Všechny rozpracované změny jsou v commitu `1060cbbb745c2985255d851846e3cf3dec5453aa`** ve větvi `codex/release-0.1.17`, odeslané na GitHub. Tag **v0.1.17** ukazuje na tentýž commit; záměrně se nepřepisoval žádný starší tag ani vzdálená větev. Pracovalo se v původním checkoutu a všechny jeho změny zůstaly zachované.
+- **GitHub Actions běh [45956289737](https://github.com/nerusilj/sipky/actions/runs/45956289737) úspěšně dokončil sestavení, ověření DEB i publikování.** [Release v0.1.17](https://github.com/nerusilj/sipky/releases/tag/v0.1.17) je veřejně zveřejněný, není draft ani prerelease. Přílohy: `sipky_0.1.17_amd64.deb` (**9 854 756 B**), `linux-components.json` a `SHA256SUMS.txt`.
+- Všechny tři přílohy stažené do `outputs/linux/0.1.17/`. Jejich SHA256 souhlasí s GitHub digesty; DEB i manifest souhlasí také s publikovaným `SHA256SUMS.txt`. SHA256 DEB: `25aa73878b0d5dc7ab5d87029e99f5148240d28080ef250426f68139b6e8fa5a`. Manifest dál používá původní **zvuky 1.0.1 / v0.1.10** a **hlasatel 1.0.0 / v0.1.8**, bez nového stahování v kompatibilních instalacích.
+- Lokálně před vydáním prošly **všechny 241 Node testy**, `pnpm build`, `pnpm build:cast` a kontrola diffu. Podrobnosti a log viz příprava níže. Linuxový balíček fyzicky nainstalovaný a spuštěný nebyl; kontrola balení proběhla v CI a místní stažení ověřilo integritu.
+- Dříve popsané nevydané změny jsou nyní obsažené v Linux aplikaci **0.1.17**. **TV receiver je pouze sestavený do `dist-cast/`, na hosting nasazený nebyl**; změny TV se projeví až po samostatném nasazení. Windows instalátor se nevytvářel, stávající nativní debug EXE a Vite zůstaly běžet. Verze zdrojů je 0.1.17, starší údaje „balíčky zůstávají 0.1.16“ níže popisují předchozí stav.
+
 ## Příprava Linux vydání 0.1.17 — 27. 11. 2026
 
 - Uživatel výslovně zadal commit všech změn, push na GitHub a vydání nového Linux release. Verze zvýšená na **0.1.17** v `package.json`, obou souborech Cargo, `tauri.conf.json` a nadpisu README. Poznámky vydání v `docs/releases/0.1.17.md` shrnují všechny dosud nevydané úpravy níže: přípravy her a navigaci, Shooter v DEV, záhlaví, podmínku žluté přípravy zavření a zdroje TV receiveru.
