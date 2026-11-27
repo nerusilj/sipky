@@ -2,7 +2,9 @@
 
 Režim přidán do zdrojů 19. 11. 2026 na pokyn uživatele. Navazuje na [průzkum náhodných cílů](nahodny-cil-vyzkum.md); schválený název je **Shooter**.
 
-**Dostupnost:** na navazující pokyn uživatele 19. 11. 2026 má karta na Domů označení **PŘIPRAVUJEME** a je neaktivní. Běžní uživatelé hru z nabídky nespustí, dokud neproběhne skutečné vyzkoušení a nebude znovu povolená. Implementace zůstává zachovaná pro další vývoj a testování.
+**Dostupnost ve zdrojích od 25. 11. 2026:** Shooter lze z Domů spustit při zapnuté sekci DEV (Nastavení → Pokročilé a informace o aplikaci → Sekce DEV → Zobrazit v menu). Bez DEV má karta dál označení **PŘIPRAVUJEME** a je neaktivní. Změna přepínače se projeví bez restartu aplikace. Vydané instalační balíčky 0.1.16 tuto podmíněnou dostupnost ještě neobsahují.
+
+Od 26. 11. 2026 položka **Hra** v menu otevírá poslední skutečně spuštěný režim s jeho hráči a pravidly. Pokud jím byl Shooter, lze přípravu zobrazit i bez DEV, ale **Začít hru** zůstává neaktivní a stránka vysvětluje nutnost DEV zapnout. Pouhé otevření či upravování přípravy jiného režimu poslední hru nepřepíše. Jde o změnu ve zdrojích, nikoli v balíčcích 0.1.16.
 
 ## Pravidla a ovládání
 

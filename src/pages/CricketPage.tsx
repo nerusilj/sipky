@@ -1,6 +1,7 @@
 import { CricketScoreboard, CricketVisit, decimal } from '../components/CricketScoreboard.tsx';
 import { cricketScore } from '../game/cricketPresentation.ts';
 import SegmentedControl from '../components/SegmentedControl.tsx';
+import SetupPlayersPanel from '../components/SetupPlayersPanel.tsx';
 import { availableGamePlayers } from '../game/bots.ts';
 import { useEffect, useRef, useState } from 'react';
 import PlayerName from '../components/PlayerName.tsx';
@@ -18,6 +19,7 @@ import { endCricket, enterCricketDart, nextCricketPlayer, rematchCricket, replac
 import { dartLabel } from '../game/x01.ts';
 import type { Dart } from '../game/x01.ts';
 import { loadLastSetup, parseLastSetup } from '../game/lastSetup.ts';
+import { rememberLastPlayedMode } from '../game/lastPlayed.ts';
 import { shuffle } from '../game/order.ts';
 import { usePlayers } from '../players/players.ts';
 import { useBoardVisible } from '../settings.ts';
@@ -43,23 +45,19 @@ function CricketSetup() {
   const chosen = selected.flatMap(id => available.filter(player => player.id === id));
   function start() {
     if (!chosen.length) return;
-    try { localStorage.setItem(SETUP_KEY, JSON.stringify({ playerIds: chosen.map(p => p.id), legsToWin: legs, randomOrder: random })); } catch { /* Nastavení je volitelné. */ }
     startCricket({ legsToWin: legs }, (random ? shuffle(chosen) : chosen).map(({ id, name, color, avatarId, avatarColor, bot }) => ({ id, name, color, avatarId, avatarColor, bot })));
+    try { localStorage.setItem(SETUP_KEY, JSON.stringify({ playerIds: chosen.map(p => p.id), legsToWin: legs, randomOrder: random })); } catch { /* Nastavení je volitelné. */ }
+    rememberLastPlayedMode('cricket');
   }
-  return <div className="page">
-    <div className="page-heading"><div><h1>Nová hra Cricket</h1><p>Zavřete čísla 20–15 a BULL a získejte nejvíce bodů.</p></div></div>
-    <section className="settings-card card setup-section">
-      <div className="setup-players-head"><span className="eyebrow">HRÁČI</span><SegmentedControl label="Pořadí hráčů" value={random} onChange={setRandom}
-        options={[{ value: false, label: 'Podle výběru' }, { value: true, label: 'Náhodné' }]} /></div>
-      {!loaded ? <p className="muted">Načítám hráče…</p> : <div className="setup-players">
-        {chosen.map((player, i) => <div className="setup-member" key={player.id}>
-          {!random && <span className="setup-member-order">{i + 1}.</span>}
-          <PlayerName {...player} avatarSeed={player.id} />
+  return <div className="page game-setup">
+    <div className="page-heading game-setup-heading"><div><h1>Nová hra Cricket</h1><p>Zavřete čísla 20–15 a BULL a získejte nejvíce bodů.</p></div></div>
+    <SetupPlayersPanel loaded={loaded} count={chosen.length} randomOrder={random} onRandomOrder={setRandom}>
+        {chosen.map(player => <div className="setup-member" key={player.id}>
+          <PlayerName {...player} avatarSeed={player.id} avatarSize={32} />
           <button className="icon-button setup-remove-player" aria-label={`Odebrat hráče ${player.name} ze hry`} onClick={() => setSelected(ids => ids.filter(id => id !== player.id))}><CloseIcon size={18} /></button>
         </div>)}
-        <button className="setup-add-player" disabled={chosen.length >= 8} aria-haspopup="dialog" onClick={() => setPicker(true)}><PlusIcon size={22} />Přidat hráče</button>
-      </div>}
-    </section>
+        <button className="setup-add-player" aria-label="Přidat hráče" title="Přidat hráče" disabled={chosen.length >= 8} aria-haspopup="dialog" onClick={() => setPicker(true)}><PlusIcon size={22} /><span className="setup-add-player-label">Přidat hráče</span></button>
+    </SetupPlayersPanel>
     {picker && <GamePlayerDialog selected={chosen.map(p => p.id)} limit={8} onClose={() => setPicker(false)} onAdd={id => setSelected(ids => {
       const current = ids.filter(id => available.some(player => player.id === id)); return current.includes(id) || current.length >= 8 ? current : [...current, id];
     })} />}
@@ -72,7 +70,7 @@ function CricketSetup() {
         options={[0, 1, 2, 3, 4, 5].map(n => ({ value: n, label: n === 0 ? '∞ Dokola' : n }))} /></div><p className="small">Každé číslo zavřete třemi zásahy. Single platí za jeden, double za dva a triple za tři. Vnější BULL platí za jeden zásah, vnitřní za dva. Další zásahy přidávají body, dokud má některý soupeř číslo otevřené. Vyhrává hráč, který zavře všechna čísla a má alespoň tolik bodů jako každý soupeř. Při hře jednoho hráče stačí zavřít všechna čísla.</p></div>
     </details>
     <div className="setup-start"><span className="muted">{chosen.length ? `${legsText(legs)} · ${playerCount(chosen.length)}${random ? ' · náhodné pořadí' : ''}` : 'Vyberte alespoň jednoho hráče.'}</span>
-      <button className="primary big" disabled={!chosen.length} onClick={start}>Začít hru</button></div>
+      <button className="primary-orange setup-start-button" disabled={!chosen.length} onClick={start}>Začít hru</button></div>
   </div>;
 }
 function CricketBoard({ state, ...actions }: { state: CricketState } & GameToolbarActions) {

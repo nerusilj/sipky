@@ -40,7 +40,7 @@ export function X01PlayerCard({ score }: { score: ReturnType<typeof x01PlayerSco
     visitBusted, dartNumber, legAverage, checkout, checkoutSetup, winner } = score;
   const route = checkout ?? checkoutSetup?.route;
   const routeText = route?.map(dartLabel).join(' → ');
-  const hintLabel = checkoutSetup ? `Připravit: ${routeText}, zbývá ${checkoutSetup.leave}` : `Zavřít: ${routeText}`;
+  const hintLabel = checkoutSetup ? `Připravit: ${routeText}` : `Zavřít: ${routeText}`;
   return <section className={`score-card card ${active ? 'active' : ''} ${busted ? 'has-bust' : ''} ${winner ? 'winner' : ''} ${place !== undefined ? 'done' : ''}`} aria-label={player.name} data-player-index={index}>
     {busted && <BustFragments />}
     {place !== undefined && <PlacementBadge place={place} />}
@@ -70,8 +70,7 @@ export function X01PlayerCard({ score }: { score: ReturnType<typeof x01PlayerSco
       aria-label={hintLabel} title={hintLabel}>
       <div className="player-checkout-route" aria-hidden="true">{route.map((dart, i) =>
         <span className="player-checkout-step" key={i}><strong className={!checkoutSetup && i === route.length - 1 ? 'checkout-finish' : ''}>{dartLabel(dart)}</strong>
-          {(checkoutSetup || i < route.length - 1) && <span className="checkout-arrow">→</span>}</span>)}
-        {checkoutSetup && <span className="player-checkout-step"><strong className="checkout-finish">{checkoutSetup.leave}</strong></span>}
+          {i < route.length - 1 && <span className="checkout-arrow">→</span>}</span>)}
       </div>
     </div>}
     </div>

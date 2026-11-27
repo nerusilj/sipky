@@ -14,12 +14,14 @@ import { legsText } from '../game/x01Presentation.ts';
 import { gamePanelLayout } from '../game/panelLayout.ts';
 import Confetti from '../components/Confetti.tsx';
 import { EffectVisual } from '../components/EffectOverlay.tsx';
+import { preloadBeerNumbers } from '../components/BeerNumber.tsx';
 import { showConfetti } from '../effects/confetti.ts';
 import { effectDurationMs } from '../effects/effects.ts';
 import type { ActiveEffect } from '../effects/effects.ts';
 import type { GamePlayer } from '../game/x01.ts';
 import { CAST_NAMESPACE, CAST_PROTOCOL, readCastMessage } from './protocol.ts';
 import type { CastSnapshot } from './protocol.ts';
+import { tvViewport } from './layout.ts';
 import tvWordmark from './tv-wordmark.png';
 import '../styles.css';
 import './receiver.css';
@@ -140,7 +142,7 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
       : x01 && game.bull ? <BullOffArena {...game.bull} autodartsEnabled={snapshot.autodartsEnabled} />
       : <>
         {winner && <Winner player={winner} />}
-        <div className="tv-workspace">
+        <div className="tv-workspace" data-player-count={x01 ? game.players.length : game.score.players.length}>
           {x01 ? <X01Players players={game.players} /> : <CricketScoreboard score={game.score} readOnly />}
           {liveBoard && <aside className="tv-board" aria-label="Živý terč"><Dartboard darts={game.darts} /></aside>}
         </div>
@@ -151,9 +153,10 @@ function Scoreboard({ snapshot }: { snapshot?: CastSnapshot }) {
 function Receiver() {
   const [snapshot, setSnapshot] = useState<CastSnapshot>();
   const [effect, setEffect] = useState<ActiveEffect>();
-  const [scale, setScale] = useState(() => Math.min(innerWidth / 1920, innerHeight / 1080));
+  const [viewport, setViewport] = useState(() => tvViewport(innerWidth, innerHeight));
   useEffect(() => {
-    const resize = () => setScale(Math.min(innerWidth / 1920, innerHeight / 1080));
+    preloadBeerNumbers();
+    const resize = () => setViewport(tvViewport(innerWidth, innerHeight));
     window.addEventListener('resize', resize);
     return () => window.removeEventListener('resize', resize);
   }, []);
@@ -217,12 +220,12 @@ function Receiver() {
   }, []);
   return <>
     <div className={snapshot?.game ? 'tv-display' : 'tv-display tv-display--idle'}>
-      <div className="tv-stage game-screen" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
+      <div className="tv-stage game-screen" style={{ transform: `translate(-50%, -50%) scale(${viewport.scale})` }}>
         <Scoreboard snapshot={snapshot} />
       </div>
     </div>
     <Confetti />
-    <EffectVisual active={effect} />
+    <EffectVisual active={effect} lightweight />
   </>;
 }
 

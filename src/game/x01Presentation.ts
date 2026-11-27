@@ -24,7 +24,10 @@ export function x01PlayerScore(state: X01State, index: number) {
   const dartsLeft = active ? DARTS_PER_VISIT - state.visit.length : DARTS_PER_VISIT;
   const canSuggest = active && state.settings.doubleOut && !state.visitResult.closed;
   const checkout = canSuggest ? suggestCheckout(remaining, dartsLeft, player.preferredDouble) : undefined;
-  const checkoutSetup = canSuggest && state.settings.checkoutSetupEnabled !== false && !checkout
+  // Žlutá smí navázat jen na zelený dohoz v tomto kole. Pokud existuje
+  // dohoz po dílčím hodu, existoval i na začátku kola s těmito hody před ním.
+  const checkoutSetup = canSuggest && state.settings.checkoutSetupEnabled !== false && !checkout && state.visit.length > 0
+    && suggestCheckout(state.remaining[index], DARTS_PER_VISIT, player.preferredDouble)
     ? suggestCheckoutSetup(remaining, dartsLeft, player.preferredDouble) : undefined;
   let lastVisit;
   if (!active) {

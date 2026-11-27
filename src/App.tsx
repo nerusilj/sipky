@@ -6,6 +6,7 @@ import { WindowCloseGuard } from './windowClose.ts';
 import type { ComponentType } from 'react';
 import Confetti from './components/Confetti.tsx';
 import EffectOverlay from './components/EffectOverlay.tsx';
+import GameModeCards from './components/GameModeCards.tsx';
 import { DartIcon, DevIcon, FullscreenIcon, HomeIcon, PlayersIcon, SettingsIcon } from './components/Icons.tsx';
 import { boardConnection } from './connection.ts';
 import { useShowDev } from './settings.ts';
@@ -19,6 +20,7 @@ import { useShooterGame } from './game/shooterStore.ts';
 import { useCricket } from './game/cricketStore.ts';
 import { endAnyGame, isAnyGameRunning } from './game/activeGame.ts';
 import type { GameMode } from './game/activeGame.ts';
+import { GAME_MODE_LABELS, useLastPlayedMode } from './game/lastPlayed.ts';
 import HomePage from './pages/HomePage.tsx';
 import PlayersPage from './pages/PlayersPage.tsx';
 import SettingsPage from './pages/SettingsPage.tsx';
@@ -38,12 +40,14 @@ export default function App() {
   const [section, setSection] = useState<Section>('home');
   const [mode, setMode] = useState<GameMode>('x01');
   const [pendingMode, setPendingMode] = useState<GameMode>('x01');
+  const [setupRevision, setSetupRevision] = useState(0);
   const [leave, setLeave] = useState<'close' | 'newGame'>();
   const [closeError, setCloseError] = useState<string>();
   const closeGuard = useRef<WindowCloseGuard | undefined>(undefined);
   const update = useAppUpdate();
   const { installingRef } = update;
   const showDev = useShowDev();
+  const lastPlayedMode = useLastPlayedMode();
   const nav = NAV.filter(item => item.id !== 'dev' || showDev);
   // Po skrytí sekce DEV se z ní odejde na Domů.
   const current: Section = section === 'dev' && !showDev ? 'home' : section;
@@ -53,6 +57,14 @@ export default function App() {
   const hasGame = !!game || !!cricket || !!shooter;
   const gameScreen = current === 'game' && hasGame;
   const fullscreen = useGameFullscreen(gameScreen);
+  const gameTitle = hasGame ? 'Zpět do hry'
+    : lastPlayedMode ? `Příprava poslední hry: ${GAME_MODE_LABELS[lastPlayedMode]}` : 'Vybrat herní režim';
+  const openLastGame = () => {
+    if (hasGame) { setSection('game'); return; }
+    if (!lastPlayedMode) { setSection('home'); return; }
+    setSetupRevision(revision => revision + 1);
+    setMode(lastPlayedMode); setSection('game');
+  };
 
   // Připojení k terči navazujeme po spuštění aplikace.
   useEffect(() => boardConnection.start(), []);
@@ -106,11 +118,16 @@ export default function App() {
     </header>
     <nav className="sidebar" aria-label="Hlavní navigace">
       {nav.map(({ id, label, Icon }) => <button key={id} className={`nav-item ${current === id ? 'active' : ''} ${id === 'dev' ? 'nav-dev' : ''}`}
-        aria-current={current === id ? 'page' : undefined} disabled={update.installing} onClick={() => setSection(id)}><Icon /><span>{label}</span></button>)}
+        aria-current={current === id ? 'page' : undefined} title={id === 'game' ? gameTitle : undefined}
+        disabled={update.installing}
+        onClick={() => id === 'game' ? openLastGame() : setSection(id)}><Icon /><span>{label}</span></button>)}
     </nav></>}
     <main className="content">
       {current === 'home' && <HomePage onPlay={newGame} update={update} gameRunning={isAnyGameRunning()} />}
-      {current === 'game' && (mode === 'shooter' ? <ShooterPage {...gameActions} /> : mode === 'cricket' ? <CricketPage {...gameActions} /> : <GamePage {...gameActions} />)}
+      {current === 'game' && !hasGame && <div className="game-setup-navigation">
+        <GameModeCards compact selected={mode} onSelect={newGame} disabled={update.installing} />
+      </div>}
+      {current === 'game' && (mode === 'shooter' ? <ShooterPage key={setupRevision} {...gameActions} /> : mode === 'cricket' ? <CricketPage key={setupRevision} {...gameActions} /> : <GamePage key={setupRevision} {...gameActions} />)}
       {current === 'players' && <PlayersPage />}
       {current === 'settings' && <SettingsPage onGame={hasGame ? () => setSection('game') : undefined} />}
       {current === 'dev' && <DevPage onSettings={() => setSection('settings')} />}

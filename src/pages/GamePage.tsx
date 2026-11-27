@@ -1,6 +1,7 @@
 import { X01PlayerCard, X01Visit } from '../components/X01Scoreboard.tsx';
 import { legCount, legsText, x01PlayerScore } from '../game/x01Presentation.ts';
 import SegmentedControl from '../components/SegmentedControl.tsx';
+import SetupPlayersPanel from '../components/SetupPlayersPanel.tsx';
 import BullOffArena, { BullOffResults } from '../components/BullOffArena.tsx';
 import { bullThrowNeedsDistance, bullThrowRequiresTakeout } from '../game/bullOffRanking.ts';
 import { availableGamePlayers } from '../game/bots.ts';
@@ -21,6 +22,7 @@ import { cancelGameBullOff, continueAfterBullOff, correctBullOffThrow, endGame, 
 import { dartLabel, DARTS_PER_VISIT, ENDLESS, NO_ROUND_LIMIT, playerDisplayedLegsWon, playerTotals, threeDartAverage } from '../game/x01.ts';
 import type { Dart, GamePlayer, NextLegOrder, X01Settings, X01State } from '../game/x01.ts';
 import { loadLastSetup, ROUND_LIMITS, saveLastSetup } from '../game/lastSetup.ts';
+import { rememberLastPlayedMode } from '../game/lastPlayed.ts';
 import { START_SCORES, isStartScore } from '../game/startScores.ts';
 import type { StartScore } from '../game/startScores.ts';
 import { shuffle } from '../game/order.ts';
@@ -54,10 +56,9 @@ function GameSetup() {
   const [playerPickerOpen, setPlayerPickerOpen] = useState(false);
   const chooseScore = (value: StartScore) => {
     setScore(value);
-    saveLastSetup({ ...loadLastSetup(), startScore: value });
   };
   const removeGamePlayer = (id: string) => setSelected(list => list.filter(other => other !== id));
-  // Vybraní hráči v pořadí hry; další se vybírají v dialogu.
+  // Příprava zachovává pořadí přidání; případné losování proběhne až při startu.
   const available = availableGamePlayers(players);
   const chosen = selected.flatMap(id => available.filter(player => player.id === id));
   function addGamePlayer(id: string) {
@@ -70,15 +71,16 @@ function GameSetup() {
   const maxFinishers = Math.max(1, chosen.length - 1);
   const finishers = Math.min(minFinishers, maxFinishers);
   function start() {
-    saveLastSetup({ startScore: score, playerIds: chosen.map(player => player.id), randomOrder, legsToWin, doubleOut, nextLegOrder: legOrder, maxRounds, minFinishers, checkoutSetupEnabled });
     const order = randomOrder ? shuffle(chosen) : chosen;
-    if (order.length) startGame({ startScore: score, doubleOut, legsToWin, nextLegOrder: legOrder, maxRounds, minFinishers: finishers, checkoutSetupEnabled } satisfies X01Settings,
+    if (!order.length) return;
+    startGame({ startScore: score, doubleOut, legsToWin, nextLegOrder: legOrder, maxRounds, minFinishers: finishers, checkoutSetupEnabled } satisfies X01Settings,
       order.map(({ id, name, color, avatarId, avatarColor, bot, preferredDouble }) => ({ id, name, color, avatarId, avatarColor, bot, preferredDouble })));
+    saveLastSetup({ startScore: score, playerIds: chosen.map(player => player.id), randomOrder, legsToWin, doubleOut, nextLegOrder: legOrder, maxRounds, minFinishers: finishers, checkoutSetupEnabled });
+    rememberLastPlayedMode('x01');
   }
-  return <div className="page">
-    <div className="page-heading"><div><h1>Nová hra X01</h1><p>Vyberte počáteční skóre, hráče a pravidla.</p></div></div>
-    <section className="settings-card card setup-section">
-      <span className="eyebrow">POČÁTEČNÍ SKÓRE</span>
+  return <div className="page game-setup">
+    <div className="page-heading game-setup-heading"><div><h1>Nová hra X01</h1><p>Vyberte počáteční skóre, hráče a pravidla.</p></div></div>
+    <section className="settings-card card setup-section setup-score-panel" aria-label="Počáteční skóre">
       <div className="setup-score-choice">
         <SegmentedControl label="Počáteční skóre" value={score} onChange={chooseScore} options={QUICK_SCORES.map(value => ({ value, label: value }))} />
         <select className={QUICK_SCORES.includes(score) ? '' : 'selected'} aria-label="Další počáteční skóre" value={QUICK_SCORES.includes(score) ? '' : score}
@@ -88,21 +90,12 @@ function GameSetup() {
         </select>
       </div>
     </section>
-    <section className="settings-card card setup-section">
-      <div className="setup-players-head">
-        <span className="eyebrow">HRÁČI</span>
-        <SegmentedControl label="Pořadí hráčů" value={randomOrder} onChange={setRandomOrder}
-          options={[{ value: false, label: 'Podle výběru' }, { value: true, label: 'Náhodné' }]} />
-      </div>
-      {!loaded ? <p className="muted">Načítám hráče…</p> : <>
-        {!chosen.length && <p className="muted small">Vyberte hráče pro tuto hru.</p>}
-        <div className="setup-players">{chosen.map((player, order) =>
-          <SelectedGamePlayer key={player.id} player={player} order={randomOrder ? undefined : order + 1} onRemove={() => removeGamePlayer(player.id)} />)}
-          <button className="setup-add-player" aria-haspopup="dialog" aria-controls="game-player-dialog" aria-expanded={playerPickerOpen}
-            onClick={() => setPlayerPickerOpen(true)}><PlusIcon size={22} />Přidat hráče</button>
-        </div>
-      </>}
-    </section>
+    <SetupPlayersPanel loaded={loaded} count={chosen.length} randomOrder={randomOrder} onRandomOrder={setRandomOrder}>
+        {chosen.map(player =>
+          <SelectedGamePlayer key={player.id} player={player} onRemove={() => removeGamePlayer(player.id)} />)}
+          <button className="setup-add-player" aria-label="Přidat hráče" title="Přidat hráče" aria-haspopup="dialog" aria-controls="game-player-dialog" aria-expanded={playerPickerOpen}
+            onClick={() => setPlayerPickerOpen(true)}><PlusIcon size={22} /><span className="setup-add-player-label">Přidat hráče</span></button>
+    </SetupPlayersPanel>
     {playerPickerOpen && <GamePlayerDialog selected={chosen.map(player => player.id)} limit={MAX_GAME_PLAYERS}
       onAdd={addGamePlayer} onClose={() => setPlayerPickerOpen(false)} />}
     <details className="card setup-section setup-rules-panel">
@@ -138,16 +131,15 @@ function GameSetup() {
     </details>
     <div className="setup-start">
       <span className="muted">{chosen.length ? `${score} · ${legsText(legsToWin)} · ${chosen.length} ${chosen.length === 1 ? 'hráč' : chosen.length < 5 ? 'hráči' : 'hráčů'}${randomOrder && chosen.length > 1 ? ' · pořadí se vylosuje' : ''}` : 'Vyberte alespoň jednoho hráče.'}</span>
-      <button className="primary big" disabled={!chosen.length} onClick={start}>Začít hru</button>
+      <button className="primary-orange setup-start-button" disabled={!chosen.length} onClick={start}>Začít hru</button>
     </div>
   </div>;
 }
 
 // Přehled sestavy; přidávání probíhá výhradně v dialogu, křížek jen odebere hráče ze sestavy.
-function SelectedGamePlayer({ player, order, onRemove }: { player: GamePlayer; order?: number; onRemove: () => void }) {
+function SelectedGamePlayer({ player, onRemove }: { player: GamePlayer; onRemove: () => void }) {
   return <div className="setup-member">
-    {order !== undefined && <span className="setup-member-order" aria-label={`Pořadí ve hře: ${order}`}>{order}.</span>}
-    <PlayerName {...player} avatarSeed={player.id} />
+    <PlayerName {...player} avatarSeed={player.id} avatarSize={32} />
     <button className="icon-button setup-remove-player" title={`Odebrat hráče ${player.name} ze hry`}
       aria-label={`Odebrat hráče ${player.name} ze hry`} onClick={onRemove}><CloseIcon size={18} /></button>
   </div>;

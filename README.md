@@ -1,4 +1,4 @@
-# Šipky · v0.1.16
+# Šipky · v0.1.17
 
 Lokální šipkařská aplikace pro naši hospodu. Spustitelný soubor je `sipky` (Windows `sipky.exe`). Repozitář obsahuje zdroje, testy a návody k sestavení. Linuxové DEB aplikace, zvuků a hlasatele sestavuje a zveřejňuje GitHub Actions při označení vydání tagem.
 

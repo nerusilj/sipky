@@ -2,7 +2,8 @@ import type { GameMode } from '../game/activeGame.ts';
 import { useEffect, useId, useState } from 'react';
 import { isTauri } from '@tauri-apps/api/core';
 import AutodartsLogo from '../components/AutodartsLogo.tsx';
-import { ChevronIcon, EjectIcon, PlayIcon, StopIcon, TileBoard } from '../components/Icons.tsx';
+import { ChevronIcon, EjectIcon, PlayIcon, StopIcon } from '../components/Icons.tsx';
+import GameModeCards from '../components/GameModeCards.tsx';
 import { boardConnection, useConnection } from '../connection.ts';
 import type { BoardCommand } from '../connection.ts';
 import { isVerifiedBoardVersion, VERIFIED_BOARD_VERSIONS } from '../autodarts/boardVersion.ts';
@@ -12,12 +13,6 @@ import AppUpdatePanel from '../components/AppUpdatePanel.tsx';
 import HomeCast from '../components/HomeCast.tsx';
 import HomeStatus from '../components/HomeStatus.tsx';
 import { useAutodartsEnabled } from '../settings.ts';
-
-const MODES = [
-  { id: 'x01', title: 'X01', subtitle: 'Odpočítávání do nuly', available: true },
-  { id: 'cricket', title: 'Cricket', subtitle: 'Zavírání čísel a bodování', available: true },
-  { id: 'shooter', title: 'Shooter', subtitle: 'Zasáhni vylosované číslo', available: false },
-] as const;
 
 const BOARD_COMMANDS = {
   start: { label: 'Start', title: 'Spustit detekci hodů', Icon: PlayIcon },
@@ -55,13 +50,7 @@ export default function HomePage({ onPlay, update, gameRunning }: {
 
   return <div className="page">
     <div className="page-heading"><div><h1>Vítejte u šipek</h1><p>Vyberte herní mód a začněte hrát.</p></div></div>
-    <div className="modes">
-      {MODES.map(mode => <button key={mode.id} className={`mode-tile ${mode.id}`} disabled={!mode.available || update.installing}
-        title={mode.available ? `Nová hra ${mode.title}` : 'Připravujeme'} onClick={() => { if (mode.available) onPlay(mode.id); }}>
-        <TileBoard /><strong>{mode.title}</strong><span>{mode.subtitle}</span>
-        {!mode.available && <span className="mode-soon">PŘIPRAVUJEME</span>}<span className="mode-chevron"><ChevronIcon size={18} /></span>
-      </button>)}
-    </div>
+    <GameModeCards onSelect={onPlay} disabled={update.installing} />
     <div className="home-status-panels">
     {autodartsEnabled && <section className="home-connection card" aria-label="Autodarts">
       <div className="home-board-row">

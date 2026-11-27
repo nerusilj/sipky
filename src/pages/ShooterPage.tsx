@@ -6,10 +6,12 @@ import { shooterLengthText, shooterScore } from '../game/shooterPresentation.ts'
 import { endShooter, enterShooterDart, nextShooterPlayer, pauseShooter, rematchShooter, replaceShooterDart, resumeShooterClock, startShooter, undoShooterDart, useShooter } from '../game/shooterStore.ts';
 import { availableGamePlayers } from '../game/bots.ts';
 import { loadLastSetup } from '../game/lastSetup.ts';
+import { rememberLastPlayedMode } from '../game/lastPlayed.ts';
 import { shuffle } from '../game/order.ts';
 import { usePlayers } from '../players/players.ts';
-import { useBoardVisible } from '../settings.ts';
+import { useBoardVisible, useShowDev } from '../settings.ts';
 import SegmentedControl from '../components/SegmentedControl.tsx';
+import SetupPlayersPanel from '../components/SetupPlayersPanel.tsx';
 import PlayerName from '../components/PlayerName.tsx';
 import GamePlayerDialog from '../components/GamePlayerDialog.tsx';
 import GameToolbar from '../components/GameToolbar.tsx';
@@ -48,6 +50,7 @@ export default function ShooterPage(actions: GameToolbarActions) {
 
 function ShooterSetup() {
   const { players, loaded } = usePlayers();
+  const showDev = useShowDev();
   const [last] = useState(loadSetup);
   const [selected, setSelected] = useState(last.playerIds.slice(0, 8));
   const [settings, setSettings] = useState(last.settings);
@@ -55,23 +58,21 @@ function ShooterSetup() {
   const available = availableGamePlayers(players);
   const chosen = selected.flatMap(id => available.filter(p => p.id === id));
   function start() {
-    if (!chosen.length) return;
-    try { localStorage.setItem(SETUP_KEY, JSON.stringify({ playerIds: chosen.map(p => p.id), randomOrder: random, settings })); } catch { /* Volitelné uložení. */ }
+    if (!chosen.length || !showDev) return;
     startShooter(settings, random ? shuffle(chosen) : chosen);
+    try { localStorage.setItem(SETUP_KEY, JSON.stringify({ playerIds: chosen.map(p => p.id), randomOrder: random, settings })); } catch { /* Volitelné uložení. */ }
+    rememberLastPlayedMode('shooter');
   }
-  return <div className="page shooter-setup">
-    <div className="page-heading"><div><h1>Nová hra Shooter</h1><p>Zasáhni vylosované číslo. Každá šipka přináší nový cíl.</p></div></div>
-    <section className="settings-card card setup-section">
-      <div className="setup-players-head"><span className="eyebrow">HRÁČI</span><SegmentedControl label="Pořadí hráčů" value={random} onChange={setRandom}
-        options={[{ value: false, label: 'Podle výběru' }, { value: true, label: 'Náhodné' }]} /></div>
-      {!loaded ? <p className="muted">Načítám hráče…</p> : <div className="setup-players">
-        {chosen.map((player, i) => <div className="setup-member" key={player.id}>
-          {!random && <span className="setup-member-order">{i + 1}.</span>}<PlayerName {...player} avatarSeed={player.id} />
+  return <div className="page game-setup shooter-setup">
+    <div className="page-heading game-setup-heading"><div><h1>Nová hra Shooter</h1><p>Zasáhni vylosované číslo. Každá šipka přináší nový cíl.</p></div></div>
+    {!showDev && <div className="notice" role="status"><span>Shooter připravujeme. Pro zkušební hraní zapněte sekci DEV v Nastavení.</span></div>}
+    <SetupPlayersPanel loaded={loaded} count={chosen.length} randomOrder={random} onRandomOrder={setRandom}>
+        {chosen.map(player => <div className="setup-member" key={player.id}>
+          <PlayerName {...player} avatarSeed={player.id} avatarSize={32} />
           <button className="icon-button setup-remove-player" aria-label={`Odebrat hráče ${player.name} ze hry`} onClick={() => setSelected(ids => ids.filter(id => id !== player.id))}><CloseIcon size={18} /></button>
         </div>)}
-        <button className="setup-add-player" disabled={chosen.length >= 8} onClick={() => setPicker(true)}><PlusIcon size={22} />Přidat hráče</button>
-      </div>}
-    </section>
+        <button className="setup-add-player" aria-label="Přidat hráče" title="Přidat hráče" disabled={chosen.length >= 8} onClick={() => setPicker(true)}><PlusIcon size={22} /><span className="setup-add-player-label">Přidat hráče</span></button>
+    </SetupPlayersPanel>
     {picker && <GamePlayerDialog selected={chosen.map(p => p.id)} limit={8} onClose={() => setPicker(false)}
       onAdd={id => setSelected(ids => { const present = ids.filter(id => available.some(p => p.id === id)); return present.includes(id) || present.length >= 8 ? present : [...present, id]; })} />}
     <section className="card setup-section shooter-rules">
@@ -86,7 +87,7 @@ function ShooterSetup() {
       {settings.seconds > 0 && <p className="small shooter-rule-note">Čas běží při hře přes Autodarts po odpočtu 3–2–1. Po vypršení se pokus počítá za 0 bodů; vytáhněte šipky a potvrďte pokračování. Při ručním zadávání je čas pozastavený.</p>}
     </section>
     <div className="setup-start"><span className="muted">{chosen.length ? `${shooterLengthText(settings)} · ${playerCount(chosen.length)} · ${settings.seconds ? `${settings.seconds} s na šipku` : 'bez časového limitu'}` : 'Vyberte alespoň jednoho hráče.'}</span>
-      <button className="primary big" disabled={!chosen.length || !loaded} onClick={start}>Začít hru</button></div>
+      <button className="primary-orange setup-start-button" disabled={!chosen.length || !loaded || !showDev} onClick={start}>Začít hru</button></div>
   </div>;
 }
 
